@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>tRPG playaid : Generic Chat & Dice Roller</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            margin-top: 30px;
+            font-size: 3em;
+            background: #222233;
+        }
+
+        .userFormContainer {
+            width: 600px;
+            margin: auto
+        }
+
+        strong {
+            font-family: "Arial Narrow", Arial, sans-serif;
+        }
+
+        #messageArea {
+            display: none;
+        }
+
+        #chat {
+            height: 400px;
+            overflow: auto;
+        }
+
+        .highlight {
+            background-color: LightSkyBlue;
+        }
+
+        input[type="text"] {
+            font-size: 20pt;
+        }
+
+        #legend {
+            margin: 1em;
+            color: #cccccc;
+            font-size: 0.7em;
+        }
+        .define {
+            cursor: help;
+        }
+
+        .userlist {
+            color: #3f7c93;
+            background: #222233;
+            font-size: 0.7em;
+            line-height: 14pt;
+        }
+
+        #totalusers {
+            color: #3f7c93;
+            font-size: 0.7em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="userFormContainer">
+            <div id="userFormArea" class="row-fluid">
+                <form id="userForm">
+                    <br><br>
+                    <div class="input-group">
+                        <input type="text" class="form-control width100" id="username" placeholder="Character Name" maxlength="30">
+                        <span class="input-group-btn">
+                            <input type="submit" class="btn btn-primary" value="ENTER" />
+                        </span>
+                    </div>
+                </form>
+                <br><br>
+                <div class="text-center text-muted">
+                    (this webapp is only for temporary use)
+                </div>
+            </div>
+        </div>
+
+        <div id="messageArea" class="row">
+            <div class="row">
+                <form id="messageForm" class="container-fluid">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="message" placeholder="dice commands or chat" />
+                        <span class="input-group-btn">
+                            <input type="submit" class="btn btn-primary" value="SUBMIT" />
+                        </span>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row" id="legend" style="margin: 0 0 10px 0">
+                <span class="define" title="Lady Blackbird style">lb5=5d6</span>, <span class="define" title="Apocalypse World style">aw0=2d6+0</span>, <span class="define" title="Dragon Age">da-1=3d6-1</span>, <span class="define" title="D&D 5E, with or without inspiration">dd0=d20+0, dd3i=(d20+3)*2</span>, <span class="define" title="coin flip">d2</span>, d6, d100
+            </div>
+
+            <div class="col-md-9">
+                <div class="current" id="currentroll"></div>
+                <div class="chat" id="chat"></div>
+            </div>
+            <div class="col-md-3">
+                <div id="totalusers" class="text-center"></div>
+                <div id="users"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var username = '';
+
+        $(function() {
+            var socket = io.connect();
+            var $messageForm = $('#messageForm');
+            var $message = $('#message');
+            var $currentroll = $('#currentroll');
+            var $chat = $('#chat');
+            var $messageArea = $('#messageArea');
+            var $userFormArea = $('#userFormArea');
+            var $userForm = $('#userForm');
+            var $users = $('#users');
+            var $username = $('#username');
+            var $totalusers = $('#totalusers');
+
+            $messageForm.submit(function(e) {
+                e.preventDefault();
+                socket.emit('send message', $message.val());
+                $message.val('');
+            });
+
+            socket.on('new message', function(data) {
+                if (data.msg.match(/^<span title=/i)) {
+                    $currentroll.html('<div class="well highlight"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+                }
+                $chat.prepend('<div class="well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+            });
+
+            $userForm.submit(function(e) {
+                e.preventDefault();
+                // trim and strip special characters
+                var name = $username.val().replace(/[^A-Za-z\s]/gi, '').trim();
+                socket.emit('new user', name, function(data) {
+                    $userFormArea.hide();
+                    $messageArea.show();
+                });
+            });
+
+            socket.on('username', function(data) {
+                username = data;
+                $message.prop('placeholder', username);
+            });
+
+            socket.on('get users', function(data) {
+                var html = '';
+                for (i = 0; i < data.length; i++) {
+                    html += '<li class="list-group-item userlist">';
+                    if (data[i] == $message.attr('placeholder')) {
+                         html+= '<em>' + data[i] + '</em>';
+                    }
+                    else {
+                        html += data[i];
+                    }
+                    html += '</li>';
+                }
+                $users.html(html);
+            });
+
+            socket.on('total users', function(data) {
+                var html = '(';
+                html += data.msg + ' user';
+                if (data.msg > 1) {
+                    html += 's';
+                }
+                html += ')';
+                $totalusers.html(html);
+            });
+        });
+    </script>
+</body>
+</html>
