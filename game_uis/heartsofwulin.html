@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>tRPG Playaid : Hearts of Wulin</title>
+    <meta name="description" content="playaids for Hearts of Wulin built with Javascript">
+    <meta name="author" content="brushmen">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- custom CSS -->
+    <style>
+    body {
+        background-color: rgb(220, 217, 205);
+    }
+
+    select {
+        background-color: Gainsboro !important;
+    }
+
+    div.tooltip-inner {
+        max-width: 600px;
+        max-height: 600px;
+    }
+    .tooltip.show {
+        opacity: 1!important;
+    }
+
+    .footnote {
+        margin-top: 10px;
+        font-size: 0.8em;
+        color: #666666;
+    }
+
+    #c1, #c2, #c3, #c4 {
+        position: relative;
+        height: 100vh;
+    }
+
+    #playArea {
+        display: block;
+    }
+
+    #c1 {
+        border: 1px solid red;
+    }
+
+    #c2 {
+        border: 1px solid green;
+    }
+
+    #c3 {
+        border: 1px solid blue;
+    }
+
+    #infoArea {
+        border: 0px solid black;
+        height: 270px;
+        overflow: auto;
+        font-size: 1em;
+        line-height: 1.3em;
+        padding: 10px;
+        overflow-wrap: break-word;
+        background-color: Gainsboro;
+    }
+
+    #resultArea {
+        padding: 2px 10px;
+        font-size: 2em;
+    }
+
+    #chatSection {
+        height: 150px;
+        overflow-y: scroll;
+    }
+
+    #message {
+        height: 1.8em;
+    }
+
+    .profile .row, .profile .row-fluid {
+        position: relative; /* for hover click buttons */
+        font-size: 0.8em;
+    }
+
+    .portrait img {
+        width: 100%;
+    }
+
+    input[name=player], input[name=character],
+    input[name=faction], textarea[name=notes] {
+        width: 100%;
+    }
+
+    input[name=character] {
+        font-weight: bolder;
+    }
+    input[name=faction] {
+        font-style: italic;
+    }
+    input[name=player], textarea[name=notes] {
+        font-size: 0.7em;
+    }
+    textarea[name=notes] {
+        line-height: 1.1em;
+        min-height: 70px;
+    }
+
+    .elements input[type=checkbox],
+    .elements input[type=radio] {
+      /* Double-sized Checkboxes */
+      -ms-transform: scale(2); /* IE */
+      -moz-transform: scale(2); /* FF */
+      -webkit-transform: scale(2); /* Safari and Chrome */
+      -o-transform: scale(2); /* Opera */
+      padding: 10px;
+      margin: 0 10px;
+    }
+    .elements input[type=text] {
+        width: 40px;
+        height: 1.7em;
+        margin-left: 5px;
+    }
+    .elements [type=submit] {
+        font-size: 0.6em;
+    }
+
+    .wounded {
+        background-color: lightpink !important;
+    }
+
+    .elements .row {
+        margin: 0;
+    }
+
+    .elements {
+        position: relative; /* for hover click buttons */
+        margin-top: -10px;
+        padding-left: 15px;
+    }
+    .elements button {
+        font-weight: bolder;
+        background-color: black;
+        color: rgb(220, 217, 205);
+        text-transform: capitalize;
+    }
+
+    button.earth, button.fire, button.metal, button.water, button.wood {
+        width: 5.2em;
+    }
+
+    .earth {
+        color: PaleGreen !important;
+    }
+    .fire {
+        color: Salmon !important;
+    }
+    .metal {
+        color: Silver !important;
+    }
+    .water {
+        color: aqua !important;
+    }
+    .wood {
+        color: BurlyWood !important;
+    }
+
+    .locked {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    [name=bondslist] {
+        margin: 10px;
+        background-color: gainsboro;
+    }
+
+    button[name=bond] {
+        font-size: 0.7em;
+        margin: 2px;
+    }
+
+    .entanglements {
+        width: 100%;
+    }
+
+    .entanglements .row, .entanglements .row-fluid {
+        position: relative; /* for hover click buttons */
+    }
+
+    textarea[name=ge], textarea[name=re] {
+        line-height: 1em;
+        font-size: 1em;
+        min-height: 4.7em;
+    }
+    textarea[name=ge] {
+        border: 1px solid navy;
+        background-color: aliceblue;
+    }
+    textarea[name=re] {
+        border: 1px solid plum;
+        background-color: mistyrose;
+    }
+
+    .bottomLeftClick, .bottomRightClick, .topLeftClick, .topRightClick,
+    .lockClick, .hideClick, .randomClick, .entanglementlistClick, .movelistClick
+     {
+        position: absolute;
+        cursor: pointer;
+        opacity: 0.5;
+        z-index: 1;
+    }
+
+    .bottomLeftClick {
+        bottom: 0px;
+        left: 8px;
+    }
+
+    .bottomRightClick {
+        bottom: 0;
+        right: 0;
+    }
+
+    .topRightClick {
+        top: 0;
+        right: 5px;
+    }
+
+    .lockClick {
+        top: 0;
+        right: 60px;
+    }
+
+    .hideClick {
+        top: 0;
+        right: 30px;
+    }
+
+    .randomClick {
+        top: -13px;
+        left: 0;
+        font-size: 1.2em;
+    }
+
+    .entanglementlistClick {
+        top: 0;
+        right: 70px;
+    }
+
+    .movelistClick {
+        top: 0;
+        right: 40px;
+    }
+
+    #entanglementList {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        display: none;
+        font-size: 1em;
+        width: 700px;
+        overflow: auto;
+    }
+    #entanglementListHeader {
+        cursor: grab;
+    }
+    #fullEntanglementList {
+        height: 500px;
+        overflow: auto;
+    }
+
+    #playbookMovesList {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        display: none;
+        font-size: 1em;
+        width: 600px;
+    }
+    #playbookMovesListHeader {
+        cursor: grab;
+    }
+    #fullPlaybookMovesList_text {
+        height: 400px;
+        overflow: auto;
+    }
+
+    #loadbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 600px;
+        overflow: auto;
+        z-index: 3;
+    }
+    #loadboxjson {
+        width: 600px;
+        height: 300px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- hovering panels -->
+    <div id="entanglementList" style="display: none" class="card">
+        <h5 id="entanglementListHeader" class="card-header">Full Entanglement List</h5>
+        <div class="topRightClick" onclick="$('#entanglementList').hide();">hide</div>
+        <div class="card-body" id="fullEntanglementList"></div>
+    </div>
+    <div id="playbookMovesList" style="display: none" class="card">
+        <h5 id="playbookMovesListHeader" class="card-header">Playbook Moves List</h5>
+        <div class="topRightClick" onclick="$('#playbookMovesList').hide();">hide</div>
+        <div class="card-body" id="fullPlaybookMovesList">
+            <select id="fullPlaybookMovesList_select" class="form-control form-control-sm">
+                <option value="roles" selected="selected">Roles' Playbook Moves</option>
+                <option value="aware">Playbook Aware Moves</option>
+                <option value="bravo">Playbook Bravo Moves</option>
+                <option value="loyal">Playbook Loyal Moves</option>
+                <option value="outsider">Playbook Outsider Moves</option>
+                <option value="student">Playbook Student Moves</option>
+                <option value="unorthodox">Playbook Unorthodox Moves</option>
+            </select>
+            <div id="fullPlaybookMovesList_text"></div>
+        </div>
+    </div>
+    <div id="loadbox" style="display: none" class="card">
+        <h5 class="card-header">load JSON content</h5>
+        <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
+        <textarea id="loadboxjson" placeholder="JSON only"></textarea>
+        <button type="submit" class="btn btn-sm btn-warning">send</button>
+    </div>
+
+    <!-- main content -->
+    <div class="container-fluid">
+
+        <div id="playArea">
+            <div class="row full-height">
+                <div class="col justify-content-center align-self-center">
+                    <div class="row">
+                        <div id="c1" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
+                            <div id="p1Area" class="row">
+
+                                <select id="role1" name="role" class="form-control form-control-sm">
+                                    <option value="" disabled="disabled" selected="selected">Playbook | role</option>
+                                    <option value="aware" disabled="disabled">Aware</option>
+                                    <option value="master">master</option>
+                                    <option value="scholar">scholar</option>
+                                    <option value="travelingsifu">traveling sifu</option>
+                                    <option value="bravo" disabled="disabled">Bravo</option>
+                                    <option value="favoredeldest">favored eldest</option>
+                                    <option value="gallivant">gallivant</option>
+                                    <option value="thief">thief</option>
+                                    <option value="loyal" disabled="disabled">Loyal</option>
+                                    <option value="devotedchild">devoted child</option>
+                                    <option value="official">official</option>
+                                    <option value="swordsman">swordsman</option>
+                                    <option value="outsider" disabled="disabled">Outsider</option>
+                                    <option value="rebel">rebel</option>
+                                    <option value="trickster">trickster</option>
+                                    <option value="wanderer">wanderer</option>
+                                    <option value="student" disabled="disabled">Student</option>
+                                    <option value="hopefulapprentice">hopeful apprentice</option>
+                                    <option value="wandering monk">wandering monk</option>
+                                    <option value="youngersibling">younger sibling</option>
+                                    <option value="unorthodox" disabled="disabled">Unorthodox</option>
+                                    <option value="accidental">accidental</option>
+                                    <option value="hidden">hidden</option>
+                                    <option value="prodigy">prodigy</option>
+                                </select>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait1" name="portrait" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile1" class="form-group profile">
+
+                                                <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <div class="row-fluid">
+                                                    <div id="random_cname1" name="randomclick" class="randomClick" onclick="randomName('character',1);">🎲</div>
+                                                    <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                                </div>
+
+                                                <input type="text" id="faction1" name="faction" class="form-control form-control-sm" placeholder="faction" />
+
+                                                <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="style name, weapon, and other notes"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="elements1" class="container-fluid elements">
+                                    <div id="random_elements1" name="randomclick" class="randomClick" onclick="randomElements(1);">🎲</div>
+                                    <div id="earthGroup1" class="input-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style1" class="form-check-input position-static" value="earth" />
+                                            <button type="submit" id="earthbutton1" name="earth" class="earth btn btn-sm btn-outline-dark" title="Caution, Focus, Presence | Obsessive, Disdainful, Uncaring" onclick="rollElement(1, 'earth')">EARTH</button>
+                                            <input type="text" id="earth1" name="earth" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="earthmarked1" name="earthmarked" value="earth" />
+                                            <input type="hidden" id="wounded1" name="wounded" value="" />
+                                            <button type="submit" id="woundedbutton1" class="wounded btn btn-sm btn-link text-muted" title="-2 ongoing penalty" onclick="woundedToggle(1);">wounded?</button>
+                                        </div>
+                                    </div>
+                                    <div id="fireGroup1" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style1" class="form-check-input position-static" value="fire" />
+                                            <button type="submit" id="firebutton1" name="fire" class="fire btn btn-sm btn-outline-dark" title="Creativity, Speed, Passion | Reckless, Alienating, Scattered" onclick="rollElement(1, 'fire')">FIRE</button>
+                                            <input type="text" id="fire1" name="fire" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="firemarked1" name="firemarked" value="fire" />
+
+                                            <input type="hidden" id="xp1" name="xp" value="0" />
+                                            <button type="submit" id="markXP1" class="xp btn btn-sm btn-outline-dark" title="mark XP" onclick="updateXP(1,1);">+1 XP</button>
+                                        </div>
+                                    </div>
+                                    <div id="metalGroup1" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style1" class="form-check-input position-static" value="metal" />
+                                            <button type="submit" id="metalbutton1" name="metal" class="metal btn btn-sm btn-outline-dark" title="Control, Calculation, Reflection | Unsatisfied, Inflexible, Scared" onclick="rollElement(1, 'metal')">METAL</button>
+                                            <input type="text" id="metal1" name="metal" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="metalmarked1" name="metalmarked" value="metal" />
+
+                                            <button type="submit" id="advance1" class="xp btn btn-sm btn-outline-dark" title="spend 8 XP to advance" onclick="updateXP(1,-8);">advance</button>
+                                        </div>
+                                    </div>
+                                    <div id="waterGroup1" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style1" class="form-check-input position-static" value="water" />
+                                            <button type="submit" id="waterbutton1" name="water" class="water btn btn-sm btn-outline-dark" title="Awareness, Wisdom, Flexibility | Uncertain, Isolated, Depressed" onclick="rollElement(1, 'water')">WATER</button>
+                                            <input type="text" id="water1" name="water" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="watermarked1" name="watermarked" value="water" />
+                                        </div>
+                                    </div>
+                                    <div id="woodGroup1" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style1" class="form-check-input position-static" value="wood" />
+                                            <button type="submit" id="woodbutton1" name="wood" class="wood btn btn-sm btn-outline-dark" title="Patience, Growth, Curiosity | Overconfident, Angry, Licentious" onclick="rollElement(1, 'wood')">WOOD</button>
+                                            <input type="text" id="wood1" name="wood" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="woodmarked1" name="woodmarked" value="wood" />
+
+                                            <button type="submit" id="bondsButton1" name="bondsButton" class="btn btn-sm btn-outline-dark" title="bonds with other characters, click to show/hide list" onclick="$('#bondslist1').toggle();">bonds</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="bondslist1" name="bondslist" class="container-fluid p-0" style="display: none">
+                                </div>
+
+                                <div id="entanglements1" class="entanglements">
+                                    <div class="container-fluid p-0">
+                                        <div class="row-fluid">
+                                            <div id="random_ge1" name="randomclick" class="randomClick" onclick="randomEntanglement('g',1);">🎲</div>
+                                            <textarea id="ge1" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
+                                        </div>
+                                        <div class="row-fluid">
+                                            <div id="random_re1" name="randomclick" class="randomClick" onclick="randomEntanglement('r',1);">🎲</div>
+                                            <textarea id="re1" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="c2" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
+                            <div id="p2Area" class="row">
+                                <select id="role2" name="role" class="form-control form-control-sm">
+                                    <option value="" disabled="disabled" selected="selected">Playbook | role</option>
+                                    <option value="aware" disabled="disabled">Aware</option>
+                                    <option value="master">master</option>
+                                    <option value="scholar">scholar</option>
+                                    <option value="travelingsifu">traveling sifu</option>
+                                    <option value="bravo" disabled="disabled">Bravo</option>
+                                    <option value="favoredeldest">favored eldest</option>
+                                    <option value="gallivant">gallivant</option>
+                                    <option value="thief">thief</option>
+                                    <option value="loyal" disabled="disabled">Loyal</option>
+                                    <option value="devotedchild">devoted child</option>
+                                    <option value="official">official</option>
+                                    <option value="swordsman">swordsman</option>
+                                    <option value="outsider" disabled="disabled">Outsider</option>
+                                    <option value="rebel">rebel</option>
+                                    <option value="trickster">trickster</option>
+                                    <option value="wanderer">wanderer</option>
+                                    <option value="student" disabled="disabled">Student</option>
+                                    <option value="hopefulapprentice">hopeful apprentice</option>
+                                    <option value="wandering monk">wandering monk</option>
+                                    <option value="youngersibling">younger sibling</option>
+                                    <option value="unorthodox" disabled="disabled">Unorthodox</option>
+                                    <option value="accidental">accidental</option>
+                                    <option value="hidden">hidden</option>
+                                    <option value="prodigy">prodigy</option>
+                                </select>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait2" name="portrait" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile2" class="form-group profile">
+
+                                                <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <div class="row-fluid">
+                                                    <div id="random_cname2" name="randomclick" class="randomClick" onclick="randomName('character',2);">🎲</div>
+                                                    <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                                </div>
+
+                                                <input type="text" id="faction2" name="faction" class="form-control form-control-sm" placeholder="faction" />
+
+                                                <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="style name, weapon, and other notes"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="elements2" class="container-fluid elements">
+                                    <div id="random_elements2" name="randomclick" class="randomClick" onclick="randomElements(2);">🎲</div>
+                                    <div id="earthGroup2" class="input-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style2" class="form-check-input position-static" value="earth" />
+                                            <button type="submit" id="earthbutton2" name="earth" class="earth btn btn-sm btn-outline-dark" title="Caution, Focus, Presence | Obsessive, Disdainful, Uncaring" onclick="rollElement(2, 'earth')">EARTH</button>
+                                            <input type="text" id="earth2" name="earth" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="earthmarked2" name="earthmarked" value="earth" />
+                                            <input type="hidden" id="wounded2" name="wounded" value="" />
+                                            <button type="submit" id="woundedbutton2" class="wounded btn btn-sm btn-link text-muted" title="-2 ongoing penalty" onclick="woundedToggle(2);">wounded?</button>
+                                        </div>
+                                    </div>
+                                    <div id="fireGroup2" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style2" class="form-check-input position-static" value="fire" />
+                                            <button type="submit" id="firebutton2" name="fire" class="fire btn btn-sm btn-outline-dark" title="Creativity, Speed, Passion | Reckless, Alienating, Scattered" onclick="rollElement(2, 'fire')">FIRE</button>
+                                            <input type="text" id="fire2" name="fire" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="firemarked2" name="firemarked" value="fire" />
+                                            <input type="hidden" id="xp2" name="xp" value="0" />
+                                            <button type="submit" id="markXP2" class="xp btn btn-sm btn-outline-dark" title="mark XP" onclick="updateXP(2,1);">+1 XP</button>
+                                        </div>
+                                    </div>
+                                    <div id="metalGroup2" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style2" class="form-check-input position-static" value="metal" />
+                                            <button type="submit" id="metalbutton2" name="metal" class="metal btn btn-sm btn-outline-dark" title="Control, Calculation, Reflection | Unsatisfied, Inflexible, Scared" onclick="rollElement(2, 'metal')">METAL</button>
+                                            <input type="text" id="metal2" name="metal" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="metalmarked2" name="metalmarked" value="metal" />
+
+                                            <button type="submit" id="advance2" class="xp btn btn-sm btn-outline-dark" title="spend 8 XP to advance" onclick="updateXP(2,-8);">advance</button>
+                                        </div>
+                                    </div>
+                                    <div id="waterGroup2" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style2" class="form-check-input position-static" value="water" />
+                                            <button type="submit" id="waterbutton2" name="water" class="water btn btn-sm btn-outline-dark" title="Awareness, Wisdom, Flexibility | Uncertain, Isolated, Depressed" onclick="rollElement(2, 'water')">WATER</button>
+                                            <input type="text" id="water2" name="water" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="watermarked2" name="watermarked" value="water" />
+                                        </div>
+                                    </div>
+                                    <div id="woodGroup2" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style2" class="form-check-input position-static" value="wood" />
+                                            <button type="submit" id="woodbutton2" name="wood" class="wood btn btn-sm btn-outline-dark" title="Patience, Growth, Curiosity | Overconfident, Angry, Licentious" onclick="rollElement(2, 'wood')">WOOD</button>
+                                            <input type="text" id="wood2" name="wood" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="woodmarked2" name="woodmarked" value="wood" />
+
+                                            <button type="submit" id="bondsButton2" name="bondsButton" class="btn btn-sm btn-outline-dark" title="bonds with other characters, click to show/hide list" onclick="$('#bondslist2').toggle();">bonds</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="bondslist2" name="bondslist" class="container-fluid p-0" style="display: none">
+                                </div>
+
+                                <div id="entanglements2" class="entanglements">
+                                    <div class="container-fluid p-0">
+                                        <div class="row-fluid">
+                                            <div id="random_ge2" name="randomclick" class="randomClick" onclick="randomEntanglement('g',2);">🎲</div>
+                                            <textarea id="ge2" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
+                                        </div>
+                                        <div class="row-fluid">
+                                            <div id="random_re2" name="randomclick" class="randomClick" onclick="randomEntanglement('r',2);">🎲</div>
+                                            <textarea id="re2" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="c3" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
+                            <div id="p3Area" class="row">
+                                <select id="role3" name="role" class="form-control form-control-sm">
+                                    <option value="" disabled="disabled" selected="selected">Playbook | role</option>
+                                    <option value="aware" disabled="disabled">Aware</option>
+                                    <option value="master">master</option>
+                                    <option value="scholar">scholar</option>
+                                    <option value="travelingsifu">traveling sifu</option>
+                                    <option value="bravo" disabled="disabled">Bravo</option>
+                                    <option value="favoredeldest">favored eldest</option>
+                                    <option value="gallivant">gallivant</option>
+                                    <option value="thief">thief</option>
+                                    <option value="loyal" disabled="disabled">Loyal</option>
+                                    <option value="devotedchild">devoted child</option>
+                                    <option value="official">official</option>
+                                    <option value="swordsman">swordsman</option>
+                                    <option value="outsider" disabled="disabled">Outsider</option>
+                                    <option value="rebel">rebel</option>
+                                    <option value="trickster">trickster</option>
+                                    <option value="wanderer">wanderer</option>
+                                    <option value="student" disabled="disabled">Student</option>
+                                    <option value="hopefulapprentice">hopeful apprentice</option>
+                                    <option value="wandering monk">wandering monk</option>
+                                    <option value="youngersibling">younger sibling</option>
+                                    <option value="unorthodox" disabled="disabled">Unorthodox</option>
+                                    <option value="accidental">accidental</option>
+                                    <option value="hidden">hidden</option>
+                                    <option value="prodigy">prodigy</option>
+                                </select>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait3" name="portrait" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile3" class="form-group profile">
+
+                                                <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <div class="row-fluid">
+                                                    <div id="random_cname3" name="randomclick" class="randomClick" onclick="randomName('character',3);">🎲</div>
+                                                    <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                                </div>
+
+                                                <input type="text" id="faction3" name="faction" class="form-control form-control-sm" placeholder="faction" />
+
+                                                <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="style name, weapon, and other notes"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="elements3" class="container-fluid elements">
+                                    <div id="random_elements3" name="randomclick" class="randomClick" onclick="randomElements(3);">🎲</div>
+                                    <div id="earthGroup3" class="input-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style3" class="form-check-input position-static" value="earth" />
+                                            <button type="submit" id="earthbutton3" name="earth" class="earth btn btn-sm btn-outline-dark" title="Caution, Focus, Presence | Obsessive, Disdainful, Uncaring" onclick="rollElement(3, 'earth')">EARTH</button>
+                                            <input type="text" id="earth3" name="earth" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="earthmarked3" name="earthmarked" value="earth" />
+                                            <input type="hidden" id="wounded3" name="wounded" value="" />
+                                            <button type="submit" id="woundedbutton3" class="wounded btn btn-sm btn-link text-muted" title="-2 ongoing penalty" onclick="woundedToggle(3);">wounded?</button>
+                                        </div>
+                                    </div>
+                                    <div id="fireGroup3" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style3" class="form-check-input position-static" value="fire" />
+                                            <button type="submit" id="firebutton3" name="fire" class="fire btn btn-sm btn-outline-dark" title="Creativity, Speed, Passion | Reckless, Alienating, Scattered" onclick="rollElement(3, 'fire')">FIRE</button>
+                                            <input type="text" id="fire3" name="fire" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="firemarked3" name="firemarked" value="fire" />
+
+                                            <input type="hidden" id="xp3" name="xp" value="0" />
+                                            <button type="submit" id="markXP3" class="xp btn btn-sm btn-outline-dark" title="mark XP" onclick="updateXP(3,1);">+1 XP</button>
+                                        </div>
+                                    </div>
+                                    <div id="metalGroup3" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style3" class="form-check-input position-static" value="metal" />
+                                            <button type="submit" id="metalbutton3" name="metal" class="metal btn btn-sm btn-outline-dark" title="Control, Calculation, Reflection | Unsatisfied, Inflexible, Scared" onclick="rollElement(3, 'metal')">METAL</button>
+                                            <input type="text" id="metal3" name="metal" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="metalmarked3" name="metalmarked" value="metal" />
+
+                                            <button type="submit" id="advance3" class="xp btn btn-sm btn-outline-dark" title="spend 8 XP to advance" onclick="updateXP(3,-8);">advance</button>
+                                        </div>
+                                    </div>
+                                    <div id="waterGroup3" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style3" class="form-check-input position-static" value="water" />
+                                            <button type="submit" id="waterbutton3" name="water" class="water btn btn-sm btn-outline-dark" title="Awareness, Wisdom, Flexibility | Uncertain, Isolated, Depressed" onclick="rollElement(3, 'water')">WATER</button>
+                                            <input type="text" id="water3" name="water" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="watermarked3" name="watermarked" value="water" />
+                                        </div>
+                                    </div>
+                                    <div id="woodGroup3" class="row form-group elementGroup">
+                                        <div class="form-inline">
+                                            <input type="radio" name="style3" class="form-check-input position-static" value="wood" />
+                                            <button type="submit" id="woodbutton3" name="wood" class="wood btn btn-sm btn-outline-dark" title="Patience, Growth, Curiosity | Overconfident, Angry, Licentious" onclick="rollElement(3, 'wood')">WOOD</button>
+                                            <input type="text" id="wood3" name="wood" class="form-control form-control-sm" title="numbers only, -3 and up" />
+                                            <input type="checkbox" id="woodmarked3" name="woodmarked" value="wood" />
+
+                                            <button type="submit" id="bondsButton3" name="bondsButton" class="btn btn-sm btn-outline-dark" title="bonds with other characters, click to show/hide list" onclick="$('#bondslist3').toggle();">bonds</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="bondslist3" name="bondslist" class="container-fluid p-0" style="display: none">
+                                </div>
+
+                                <div id="entanglements3" class="entanglements">
+                                    <div class="container-fluid p-0">
+                                        <div class="row-fluid">
+                                            <div id="random_ge3" name="randomclick" class="randomClick" onclick="randomEntanglement('g',3);">🎲</div>
+                                            <textarea id="ge3" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
+                                        </div>
+                                        <div class="row-fluid">
+                                            <div id="random_re3" name="randomclick" class="randomClick" onclick="randomEntanglement('r',3);">🎲</div>
+                                            <textarea id="re3" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="c4" class="col-3">
+                            <div class="entanglementlistClick" onclick="toggleEntanglementList();">♺</div>
+                            <div class="movelistClick" onclick="togglePlaybookMovesList();">🕮</div>
+                            <div id="commonArea">
+                                <div class="row text-center">
+                                    <select id="infolist" name="infolist" class="form-control form-control-sm">
+                                        <option value="" disabled="disabled" selected="selected">Hearts of Wulin</option>
+                                        <option value="advancement">advancement</option>
+                                        <option value="bonds">bonds</option>
+                                        <option value="chargenflavortext">char-gen flavor text</option>
+                                        <option value="elementdescriptors">element descriptors</option>
+                                        <option value="markingelements">element-marking</option>
+                                        <option value="statarrays">element numbers</option>
+                                        <option value="entanglements">entanglements</option>
+                                        <option value="examplequestions">example study questions</option>
+                                        <option value="names">name options</option>
+                                        <option value="basicmoves" disabled="disabled">Basic Moves</option>
+                                        <option value="comfortandsupport">comfort & support</option>
+                                        <option value="dealwithtroops">deal with troops</option>
+                                        <option value="duel">duel (vs NPC)</option>
+                                        <option value="duelpc">duel (vs PC)</option>
+                                        <option value="heartsandminds">hearts & minds (NPC)</option>
+                                        <option value="heartsandmindspc">hearts & minds (PC)</option>
+                                        <option value="impress">impress</option>
+                                        <option value="innerconflict">inner conflict</option>
+                                        <option value="newtechnique">new technique</option>
+                                        <option value="overcome">overcome</option>
+                                        <option value="study">study</option>
+                                        <option value="xp">xp</option>
+                                        <option value="playbookmoves" disabled="disabled">Playbook Moves</option>
+                                        <option value="playbookagendas">playbook agendas</option>
+                                        <option value="accidental">accidental</option>
+                                        <option value="devotedchild">devoted child</option>
+                                        <option value="favoredeldest">favored eldest</option>
+                                        <option value="gallivant">gallivant</option>
+                                        <option value="hidden">hidden</option>
+                                        <option value="hopefulapprentice">hopeful apprentice</option>
+                                        <option value="master">master</option>
+                                        <option value="official">official</option>
+                                        <option value="prodigy">prodigy</option>
+                                        <option value="rebel">rebel</option>
+                                        <option value="scholar">scholar</option>
+                                        <option value="swordsman">swordsman</option>
+                                        <option value="thief">thief</option>
+                                        <option value="travelingsifu">traveling sifu</option>
+                                        <option value="trickster">trickster</option>
+                                        <option value="wanderer">wanderer</option>
+                                        <option value="wanderingmonk">wandering monk</option>
+                                        <option value="youngersibling">younger sibling</option>
+                                    </select>
+                                </div>
+
+                                <div id="infoArea" class="row card-body">
+                                    <p style="font-size: 0.8em">In <i>wuxia</i> melodrama, reactions and responses are heightened, and there is always something at stake. You express and communicate longings, thwarted desires, and terrible duties through fighting, revealing things through those struggles.</p>
+                                    <p style="font-size: 0.8em"><a href="https://www.kickstarter.com/projects/gauntlet/hearts-of-wulin" target="_new"><i>Hearts of Wulin</i></a> is a game by Lowell Francis and Agatha Cheng.</p>
+                                </div>
+
+                                <div class="row justify-content-center" style="border: 1px solid black">
+                                    <div id="resultArea">roll results</div>
+                                </div>
+                                <div id="chatArea">
+                                    <div class="row">
+                                        <form id="messageForm" class="container">
+                                            <div id="chatSection">
+                                                <!-- the chatSection has a set height
+                                                    but the chat obj has a dynamically
+                                                    changing height, otherwise scroll-to-bottom
+                                                    won't work -->
+                                                <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control width100" id="message" placeholder="chat" />
+                                                <span class="input-group-btn">
+                                                    <input type="submit" class="btn btn-info btn-sm" value="send" />
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap template script includes -->
+    <!-- <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/common.js"></script>
+
+    <!-- Javascript code -->
+    <script>
+        var infotext = {
+            'advancement':
+                "Trade in 8 XP for one of these:<ul><li>Add +1 to an element (at most once per element)</li><li>Add a new move from your playbook (3 times)</li><li>Add a new move from another playbook (2 times).</ul>",
+            'bonds':
+                "Use the emotional energy from friendship, rivalry, and influence. Burn/spend one bond you have to gain +1 to your roll (before or after). You may burn multiple bonds for a roll. Generate new bonds and invigorate old ones via the Comfort & Support or other playbook moves. Start with 2, one from each of your entanglements. Max +3 bond per connection. At 4+ reset it to 0, mark XP, and reveal something about them (subject to PC approval).",
+            'elementdescriptors':
+                "<table border='1'><tr><td><h5>Earth</h5></td><td><small><b>Caution, Focus, Presence</b><br><i>Obsessive, Disdainful, Uncaring</i></small></td></tr><tr><td><h5>Fire</h5></td><td><small><b>Creativity, Speed, Passion</b><br><i>Reckless, Alienating, Scattered</i></small></td></tr></tr><tr><td><h5>Metal</h5></td><td><small><b>Control, Calculation, Reflection</b><br><i>Unsatisfied, Inflexible, Scared</i></small></td></tr><tr><td><h5>Water</h5></td><td><small><b>Awareness, Wisdom, Flexibility</b><br><i>Uncertain, Isolated, Depressed</i></small></td></tr><tr><td><h5>Wood</h5></td><td><small><b>Patience, Growth, Curiosity</b><br><i>Overconfident, Angry, Licentious</i></small></td></tr></table>",
+            'entanglements':
+                "A relationship (love, rival, friend) with one person which is complicated by a second person. Choose one Romantic and one General entanglement. Involve other PCs, but check with fellow players if they're OK with that relationship. If not, revise it. Entanglements can also naturally change during play.",
+            'markingelements':
+                "<p>Often the result of a failed roll, representing suffering harm. Cannot roll with a marked element, and cannot fight when the style element is marked. Mark the element you rolled with, or mark Wounded for -2 ongoing. When you have all elements marked, you're taken out.</p><b>Clearing Marks</b><p>You may clear another character's element or Wounded mark via Comfort and Support. If no other player can support you, between scenes you may narrate a montage to clear one of your own marked elements. This should revolve around dealing with or purging the negative aspects of that marked element. At the end of a story arc, all characters may clear a marked element.</p>",
+            'comfortandsupport':
+                "Assist or clear harm from a fellow PC. On 7+ they may accept your words: they can clear a marked element or gain a bond with you. On a 10+ you may also clear an element yourself, ask them a question they must answer, or gain a bond with them.",
+            'dealwithtroops':
+                "Fight a group of foes who are collectively below your scale. Use style element. On 10+ you defeat them easily. On 6- choose: their numbers overwhelm and you must retreat (mark XP) or you win at a cost. If multiple characters fight troops and one PC retreats, the others must as well (and mark XP).",
+            'duel':
+                "Against a worthy foe. Use style element. If they are below your scale, on 7+ you win the conflict. On 10+ mark XP if you show mercy or let them escape. On 7-9 you may let them go or finish them with a cost (now or in the future). On 6- you win, but mark an element. They escape and may return at a higher scale. If they are at your scale, on a 10+ you win the conflict and may mark XP if you show mercy or let them escape. You may declare a shift in the fiction (a change of heart, impress someone, shift an entanglement). On 7-9 choose one:<ul><li>Win at a Cost: Mark an element, they escape, you lose face or other cost.</li><li>Narrate Your Loss: Mark XP. +1 Forward when you next face them.</li><li>Deadlock: You may reveal a detail or ask a question about them.</li></ul> If they are above your scale, you lose the conflict. On 7+ you may declare how you lose. On 7-9 mark an element.",
+            'duelpc':
+                "Negotiate with a PC out-of-character to achieve your story goal. Make a single offer: unspent XP, character actions, burning bonds (to reduce your influence over the narrative), changes to entanglements, letting them narrate the moment, or anything in game the GM approves. If the other player accepts and you follow through, they lose the duel/conflict and mark XP. You both mark an element if the other player rejects the offer, and they choose to win or draw in that case.",
+            'heartsandminds':
+                "Influence someone susceptible (GM decides) to your words. On 10+, they do what you want. On 7-9, they can choose to:<ul><li>Reveal Themselves: You may ask two questions of them.</li><li>Overreact: You gain bond with them.</li><li>Hesitate: You gain +1 ongoing against them. This lasts until there is a major change with them in the fiction.</li><li>Alienate: You create animosity between them and someone of your choosing</li></ul>",
+            'heartsandmindspc':
+                "Trying to influence a fellow PC.<ul><li>10+, they may mark XP if they do as you ask, or mark an element if they refuse (unless they burn a bond).</li><li>7-9, you mark an element as well if they decline.</li></ul>",
+            'impress':
+                "Act to impress a crowd or succeed at a competition. On 7+ you impress and convince; pick two options: create a bond, clear an element, or gain a favor. On a 7-9 the GM will offer you a complication or hard choice.  Use this move for public gatherings or explicit or implicit competition, (artistic performance, form demonstration, tournaments).",
+            'innerconflict':
+                "Emotional turmoil and pressure from entanglement/personal issue. Mark XP and roll anything BUT your style element.<ul><li>10+ kept yourself together</li><li>7-9 flee the scene <i>or</i> mark the element</li><li>On a miss, mark XP and things get worse.</li></ul>",
+            'new technique':
+                "Describe a montage of going off to develop a new technique. Roll +(the number of times you've seen your foe's fighting form). On 7+ you gain scale against your foe. On 7-9 there's a significant cost to learning the move. You must have observed the foe at least once. Some foes may require multiple shifts to fully gain scale on them. Study a secret stance, acquire a weapon, conduct a stratagem, weaken them, cheat, fight alongside an adversary, a team up with mutual bonds...",
+            'overcome':
+                "Doing something under pressure.<ul><li>10+, you do it.</li><li>7-9, complication (a worse outcome or a hard choice)</li><li>On a miss, your attempt fails in a terrible way.</li></ul>",
+            'study':
+                "On 7+ you gain basic information and... 7-9 gives you one hold, 10+ gives you two. Options:<ul><li>Ask about a situation or place (escape routes, hidden details, threats, dangers)</li><li>Ask about a person (motivation, desires, intentions, means of manipulation)</li><li>Learn a person's scale</li><li>Reveal a detail - declare something which changes or adds to the established fiction significantly</li></ul>",
+            'xp':
+                "<ul><li>Mark XP both when roll and if you fail an <b>Inner Conflict</b> roll.</li><li>Some moves offer it you take a loss in a conflict or agree to another PC's pressure.</li><li>At the end of a session, mark XP if you interacted with your entanglement.</li></ul>",
+
+            'examplequestions':
+                "Aware<ul><li>What is everyone overlooking?</li><li>Master: Who benefits from their anger?</li><li>Scholar: What ancient legend surrounds this place?</li><li>Traveling Sifu: Why have they come here?</li></ul>Bravo<ul><li>What's the best way out of this place?</li><li>Eldest: Who here know my parent?</li><li>Gallivant: What's the most popular entertainment locale?</li><li>Thief: Who else here has criminal intent?</li></ul>Loyal<ul><li>Who is in charge here?</li><li>Devoted: How can I bring honor to my family?</li><li>Offical: Who here looks the shiftiest?</li><li>Swordsman: Where did they learn their style?</li></ul>Outsider<ul><li>What's wrong with this place?</li><li>Rebel: What's the best way around offical attention?</li><li>Trickster: Who is most nervous about being revealed?</li><li>Wanderer: Who here needs my help?</li></ul>Student<ul><li>How can I impress everyone?</li><li>Apprentice: What isn't my master telling me?</li><li>Monk: What is the history of this temple?</li><li>Sibling: What has my sibling done?</li></ul>Unorthodox<ul><li>What's the best place to hide?</li><li>Accidental: Who seems most upset by my apparent skill?</li><li>Hidden: Who seems most suspcious of me?</li><li>Prodigy: What here shouldn't I break?</li></ul>",
+
+            'names':
+                '<table border="1"><tr><th><center>given name*</center></th><th><center>possible interpretations</center></th></tr><tr><td>Ban</td><td>(masculine) <b>class, board, handle</b>; (feminine) <i>petal</i>; (neutral) spot, partner</td></tr><tr><td>Chao</td><td><b>tide</b>; super</td></tr><tr><td>Hai</td><td>sea</td></tr><tr><td>Hao</td><td><b>vast, heroic, weasel bristle</b>; <i>good</i>; bright</td></tr><tr><td>Huan</td><td><b>joyous, fantasy, lustrous, pillar</b>; <i>ring, call, dissolve</i></td></tr><tr><td>Hui</td><td><b>splendor, converge, emblem</b>; <i>favor, intelligent, plants</i>; regret</td></tr><tr><td>Jian</td><td><b>sword, arrow, firm, simple</b>; build</td></tr><tr><td>Jing</td><td><b>chaste tree, scenary, respect</b>; <i>clean, quiet</i></td></tr><tr><td>Lian</td><td><b>connection, refine</b>; <i>lotus, sympathy, longing</i></td></tr><tr><td>Ling</td><td><b>hill, ridge, rise high, command, lead</b>; <i>quick, spirit, bell, feather</i></td></tr><tr><td>Mei</td><td><b>eyebrow, mongoose</b>; <i>sister, beautiful, rose, charm</i>; plum</td></tr><tr><td>Pan</td><td><b>coil, judge</b>; <i>hope</i></td></tr><tr><td>Shan</td><td><b>mountain, flash</b>; <i>coral, kind</i></td></tr><tr><td>Shu</td><td><b>book, vertical, method, number, uncle, tree</b>; <i>relax, virtuous</i>; distant</td></tr><tr><td>Su</td><td><b>lodging, common, solemn, speed</b>; <i>dawn</i> unadorned, narrate, sincere, crisp, millet</td></tr><tr><td>Tao</td><td><b>wave, hide, pottery, cleanse</b>; <i>wave, peach, pottery</i></td></tr><tr><td>Tian</td><td><b>sky, farm</b>; <i>peaceful, sweet</i></td></tr><tr><td>Ting</td><td><b>main hall, thunderclap，sandbank, raised path, listen</b>; <i>graceful, dragonfly, listen</i></td></tr><tr><td>Yue</td><td><b>surpass, treaty, music, bright</b>; <i>pleased, music</i>; moon</td></tr><tr><td>Yun</td><td><b>cloud, transport, permit, evenly</b>; <i>rhyme, common rue, profoundity</i></td></tr><tr><td>Wei</td><td><b>might, defend, great</b>; <i>royal fern, precious, miniature</i></td></tr></table><small>*you can also combine syllables (at most 2 per given name), or even offer other suggestions if you know some Chinese</small><p><b>Surnames</b>: Bai, Chen, Dai, Fan, Gao, Han, Hu, Huangfu, Jin, Kang, Lai, Li, Liu, Lu, Murong, Nangong, Ren, Shao, Song, Su, Sun, Tan, Tang, Tao, Wang, Wei, Wu, Yang, Yuan, Zhao</p>',
+
+            'statarrays':
+                "Assign one of the following set of numbers to your elements:<ul><li>Array 1: +2, +1, +1, 0, -1</li><li>Array 2: +2, +2, 0, 0, -1</li><li>Array 3: +1, +1, +1, 0, 0</li></ul>",
+
+            'chargenflavortext':
+                "<h5>Appearance</h5><p>beautiful, burning eyes, chiseled features, close cropped hair, crooked smile, flawless skin, gentle face, glowing skin, hairless, handsome, hopeful eyes, lively eyes, long and flowing locks, long single braid, lustrous hair, muscled, open face, pallid skin, petite, piercing eyes, pigtails, porcelain skin, relaxed smile, rough eyes, rounded features, scarred, solidly-built, stern grin, stony eyes, stormy eyes, stubble and shadow, tanned skin, tattooed, unassuming, unflinching gaze, unkempt hair, vulpine look, warm eyes, well-kept beard, wild beard.</p><h5>Dress</h5><p>bare-armed, brightly-dyed clothes, clan-marked garb, colorful silks, commoner's clothes, concealing hat, courtly garb, dark and stealthy dress, elegant costume, excessively ornamented, flowing dress, fur-lined gear, intricately patterned outfit, martial dress, meditation robes, modest clothing, official garb, ornate wear, ragged garb, resplendent with insignia, road worn clothes, simple jewelry, stylish dress, temple clothes, traveler's dress, veiled, worn and dirty robes.</p><h5>Weapon</h5><p>Bow; flexible (chains, ropes, whips, cloth); improvised; massive (axe, hammer, greatsword); paired (knives, wind-fire wheels, sticks); sabre; sword; staff; spear; thrown; unusual or gimmick.</p><h5>Style Name*</h5><p>Black Crane, Eight Trigram, Fist of Precise Thought, Pouncing Falcon, Mystic Spiral, Merciful Tear, Quiet Sage's Steps, Seeking Pilgrim, Shadow Brother, Storm Master, Sun and Moon, Thousand Sting Palm, Way of the Grace</p><p><small>(*offer suggestions!)</small></p><h5>Example Factions*</h5><p>Frost Palace, Starlight Escort Bureau, School of Shooting Star, Two Venoms Sect, Divine Guidance, Society of Heaven and Earth, Beggars' Union, Peacekeepers, Warrior Poet Society, Red Shield Agency, Shadowfangs</p><p><small>*any of these may be considered by your group's setting as <b>righteous</b> (aka <b>orthodox</b>) if they follow the mainstream morality and code of conduct (think Red Cross, <abbr title='United Nations'>UN</abbr>, PeaceCorp), or <b>unrighteous</b> (aka <b>unorthodox</b>) if they disregard those rules (i.e. most cults that advocate for violence, <abbr title='Islamic State of Iraq and the Levant'>ISIL</abbr> being an extreme case), or <b>ambiguous</b> if it's hard to generalize (i.e. most corporations or organizations like the <abbr title='National Rifle Association'>NRA</abbr>). A faction can also start out in your setting as <i>destroyed</i>.</small></p>",
+
+            'playbookagendas':
+                "<ul><li>Aware: Show how wisdom provides solutions</li><li>Bravo: Enjoy every moment</li><li>Loyal: Express tension between duty and self</li><li>Outsider: Act against convention</li><li>Student: Revel in naïveté</li><li>Unorthodox: Conceal your truth</li></ul>",
+            'master':
+                "You're a paragon of calm and thoughtfulness. To stop a conflict with an NPC...<ul><li>10+, you cool tempers.</li><li>7-9, you have a moment to negotiate. You must offer the aggressors something they want or they will press their assault.</li><li>On a miss you draw their ire to you.</li></ul>",
+            'scholar':
+                "You're a gifted scholar. When you successfully Study based on history, research, or informants, you always gain an additional 1 Hold. You gain +1 Forward to act on this information.",
+            'travelingsifu':
+                "Your travels have taught you telltale signs and markings giving away faction members. At a glance you can pick out what group or organization someone belongs to. When to attempt to pierce someone's disguise, roll. On a hit you identify them and may ask a question as per the Study move. You take +1 ongoing for the scene while they maintain the disguise. On a 7-9 they notice your attention. On a miss you badly misidentify the target.",
+            'favoredeldest':
+                "You're the blessed one everyone expects to head your family, but you may not be worthy. One parent may spoil and defend you when the other rails at your behavior. But you always have coin; everywhere merchants and innkeeps set the finest table for you and your entourage. You can defer payment; they know your family is good for it.",
+            'gallivant':
+                "You travel from place to place celebrating, gambling, and leaving a trail of broken hearts. Your bad reputation only adds to your aura. Though not wealthy, you know how to stay ahead of problems. When you would suffer social, legal, or financial consequences, name someone and roll. On 7+ they suffer instead. On a 7-9 they know it was you. On a miss you cannot evade your debts and your scapegoat learns of your trickery.",
+            'thief':
+                "You have a charming smile and live well, but behind the scenes you indulge in a life of crime. You're not a common criminal; you simply deserve the finer things in life and only steal from those who can afford it: bloated nobles and corrupt officials. You have a criminal identity with a legendary name. You also have a foil - a magistrate or investigating official - who pursues you but passes you information via their bumbling.",
+            'devotedchild':
+                "You're loyal to your family and they support you. Once per session you may call in a favor: a letter of introduction, entrance to a private ceremony, or support for a wild plan. They may ask favors or have other expectations for you.",
+            'official':
+                "You are a magistrate, judge, or civil servant, giving you a measure of authority. You have connections who slip you leads and offer assistance. Choose a contact type: street beggars, court hangers-on, members of a particular faction, etc.. You can always obtain basic information or minor help, so long as it doesn't cost them or put them in danger. For hard-to-find information or dangerous favors, you offer them something they want.",
+            'swordsman':
+                "All in the wulin world have learned combat, but only a few have devoted themselves as deeply as you. You serve your family and clan by striving to be the best knight. You have an additional Wounded condition. When you mark your first Wounded, you're bloodied and cut, but suffer no penalty. When you mark your second Wounded you take -2 Ongoing.",
+            'rebel':
+                "You rebel against something: a corrupt official, your original faction, the Empire itself. When you call on your fellow rebels for help, roll. On a hit you secretly assemble a small group to aid you. On a 7-9 choose one: it takes time, you cannot do this again until you've performed a quest, the group's small in number, you attract unwanted attention. On a miss your group's caught before they can gather.",
+            'trickster':
+                "You're a trickster, happy-go-lucky and smart. You know how to use the rules of the wulin and outside world to your advantage. You may use Hearts & Minds against those who would not otherwise be susceptible to your words. If you miss, you harden their heart and may not use that against them in the future. ",
+            'wanderer':
+                "You have restlessly traveled the land. When you arrive in a new town or region, roll. On a hit the locals remember you favorably; gain a bond with an NPC. On a 10 or greater, they owe you a debt of gratitude. On a miss you learn of tragedy or betrayal you left in your wake.",
+            'hopefulapprentice':
+                "You have to prove yourself and your natural talent. When you battle someone above your Scale you do not lose immediately. You may mark any element to keep your clearly superior foe busy. This gives others breathing room to perform other actions, protect people, or get something they came for. If you do this to cover the group's escape, then everyone gets away, including yourself.",
+            'wanderingmonk':
+                "You belong to a temple, but have decided (or been told to) explore the temporal world. When wearing your temple robes, locals treat you with respect and even bandits may think twice before attacking. You may ask for and be given hospitality while travelling. Decide a vow which could cause you problems during your journeys.",
+            'youngersibling':
+                "You understand devotion and dedication even in the face of suffering. When you burn a bond with a person to gain a bonus on your roll, you gain +2 instead of +1.",
+            'accidental':
+                "You say you don't know martial arts and you believe that. But somehow you tumble through conflicts and flummox opponents. You have a style element, but no style or weapons beyond what you mistakenly pick up. It could be luck, a curse, or forgotten teaelementngs. The first time you fight a named opponent, you gain +1 Forward. However you must always show your opponent mercy.",
+            'hidden':
+                "You hide your martial skills. You flee enemies, run from duty, or protect someone secretly. When you fight—against named foes or mooks—you may hide your stance. They will not recognize your skill. If you win at a cost, you may offer discovery. On a miss your opponent realizes you're unusual. You have +1 ongoing to Hearts & Minds to convince someone that you're ordinary. If another PC tries to pierce your disguise, resolve that as a PC vs. PC duel. At any time you may choose to fully reveal yourself. Choose a role from a different playbook and completely replace that move with this one.",
+            'prodigy':
+                "You have great power, perhaps beyond your ability to control. You may be untrained, cursed, or gifted with these technique. Once per session, you may roll an additional die after rolling and take the two highest results. However on a 7-9 result, you create problematic fallout.",
+
+            'ashesoftime':
+                "Add +1 to when you deal with Inner Conflict.",
+            'clansofintrigue':
+                "Choose a faction with which you have +1 Forward on social interactions. They regard you as an honored guest until proven otherwise.",
+            'finalmaster':
+                "When you declare a plan, roll. On a 10+ hold 2. On a 7-9 hold 1. While carrying out the plan, you can spend your hold to: add +1 Forward to a roll, clear an element, or have a vital item at hand. On a miss you hold 1, but the tables are turned on you at some point.",
+            'fivedeadlyvenoms':
+                "You can immediately spot and identify any kind of poison or potion before it's consumed in your presence. If someone has been poisoned, you have +1 Forward to treat and heal them with Overcome.",
+            'hiddendragon':
+                "You can build strange devices and gadgets. Say what you wish to create and the GM will tell you what you need (nothing, time, materials, assistance, secret lore). Once you have that, roll. On a 10+ you build it. On a 7-9 its effect is brief or unstable. On a miss the device has the opposite effect you intend.",
+            'thepromise':
+                "When you attempt to keep someone from dying in your presence, roll. On a 10+they stay in this world, though may spend time in a coma or need rest to fully recover. On a 7-9 you may keep them alive, but you must pay a significant cost. On a miss their death haunts you as an entanglement.",
+            'stormrider':
+                "Once per scene you may travel to anywhere within line of sight. You move like a blur. This can be accomplished regardless of height or distance as long as nothing completely bars your way.",
+            'atouchofzen':
+                "While you have your style element marked, you may use another element for martial actions.",
+
+            'comedrinkwithme':
+                "As long as you interact with someone, you hold their attention. You may lead them to a secluded location. If they wish to extricate themselves, they must mark an element or cause themselves major embarasssment. Doesn't work in violent situations.",
+            'goldenknight':
+                "You have a lavish wardrobe. Whenever you would look bedraggled or dirty, you're clean and spotless in the next shot, in the same outfit or a new one. Gain one of the following NPCs as a retainer: Butler, Assistant, Consort or Advisor. Name them and give them a short description.",
+            'headsforsale':
+                "When you ask your contacts for something rare or illegal, roll. On a hit you get what you want. On a 10+ they have something extra. On a 7-9 there's a cost or complication. Choose one: takes time, uses up your on-hand wealth, attracts attention, or requires a service. On a miss, word gets back to the wrong people.",
+            'ittakesathief':
+                "You can slip from bonds and pass through locked doors and window as if they were open. This extends to attack and defense--your body moves elegantly so as to not wrinkle your outfit or spill your wine.",
+            'laughinginthewind':
+                "You have a chosen art (song, dance, calligraphy, etc). When you express yourself via that, roll. On a 10+ choose three. On a 7-9 choose two.<ul><li>People understand your message.</li><li>You draw the interest and attention of one person present, tell the GM who.</li><li>You clear or mark an element on a PC present.</li><li>You begin to change popular opinion. Tell the GM what you hope for (consumes two choices). On a miss, you cross paths with an artistic rival or offend someone important</li></ul>",
+            'legendofthefox':
+                "At a glance you may pick out the wealthiest or most influential person in a room. When you Study in a formal or official setting you have +1 Hold for choices regardless of roll. You gain +1 Forward acting on the answers.",
+            'thiefofthieves':
+                "When you Study a place looking for a way in, on a hit you find access in addition to any other questions. When you break into a location, roll. On a hit you enter quietly. On a 7-9 you must pay a cost if you're leading in others (mark element, burn bond, raise suspcions, etc.). On a miss you find yourself in over your head. The GM will say where you went wrong.",
+            'tracingshadow':
+                "When you spend time interacting with someone to read their web of connections, roll. On a hit you learn their entanglements and a secret they would prefer remain hidden. Take +1 Forward for Hearts & Minds on them. On a 7-9 your target's aware of your workings. On a miss they learn your entanglements.",
+
+            'flyingdaggers':
+                "You may burn a bond with someone to arrive at their location. If you consent, others may burn a bond with you to have you show up in the nick of time. Say how you arrived so fortuitously.",
+            'heavenswordanddragonsabre':
+                "You possess a legendary blade which can be recognized wherever you go. You gain +1 when you Deal with Troops or Impress someone from the martial world.",
+            'legendofthemountain':
+                "When you defend someone or something, roll. On a hit you keep them safe and choose one. On a 7-9 you suffer harm or complicate the situation.<ul><li>Take control of something</li><li>Change the location of the conflict</li><li>Gain a bond with the person protected</li></ul>On a miss they or someone else suffer worse for your efforts.",
+            'paladinsintroubledtimes':
+                "When you seek advice from a senior, either in the present or a flashback, roll. On a hit they tell you what to do. Mark XP if you follow their advice. On a 10+, take +1 Ongoing to follow through. On a 7-9 you gain +1 Forward. On a miss they don't have time for you because of shocking events; mark an element.",
+            'rageofthetiger':
+                "When someone lies or breaks a promise to you and you find out, you gain a bond with them. In addition to normal options, you can spend this to have one of their plans or activities go awry. Say what happens. If you burn this bond in an action against them, add +2 to your roll.",
+            'strifeformastery':
+                "When you give NPCs an order based on authority they respect, roll. On a hit they choose one: obey, step aside, muster a weak assult, or freeze. On a 10+, pick one option they may not choose and take +1 Forward against them. On a miss, choose: mark an element or have someone important regard this as overstepping your place.",
+            'trailoftheeverlastinghero':
+                "When you hunt someone, roll. On a hit you know exactly where to find them and can track them until you do. On a 10+, they're not alerted and you take +1 Forward against them. On a miss someone unpleasant finds you first.",
+            'twowondroustigers':
+                "When you Comfort & Support an ally and immediately burn the bond you create, you give them +2 instead of +1.",
+
+            'allmenarebrothers':
+                "You may appear as another faction to those who do not know the truth. They accept this until proven otherwise.",
+            'adeadlysecret':
+                "You know the martial world well. When you meet first meet someone from another faction or group you may ask about or declare one detail of their reputation or their clan's activities.",
+            'haveswordwilltravel':
+                'Once per session you may announce your presence in the perfect place to "help" someone, ignoring time, distance, or plausibility.',
+            'heroesshednotears':
+                "When you reject someone's comfort, friendship, love, or support, clear an element and take a bond with them.",
+            'houseoftraps':
+                "When you reveal a trap you've secretly set, roll. On a hit your opponent trips into it and you get an opportunity. On a 10+ take +2 forward against them. On a miss the trap raises the stakes and consequences.",
+            'theimpostor':
+                "You can assume a perfect disguise. If you're impersonating someone specific you must have seen them and have their garb. When you might be challenged, roll. On a hit your disguise fools them. On a 7-9 they have a delayed suspicion. On a miss your disguise falls apart at the wrong moment.",
+            'reignofassassins':
+                "When you become undetectable using shadows and concealment, roll. On a hit no one can see or interact with you until you decide they can. You can break this by choice or attacking. On a 7-9 you remain hidden but leave some trace behind or alert a foe. On a miss your attempt fails and leaves you vulnerable.",
+            'royaltramp':
+                "You may attempt to escape a situation, even when surprised. When you try to escape, roll. On a hit you get away and take another with you. On a 7-9 choose a complication:<ul><li>You must mark an element.</li><li>You end up in another dangerous situation.</li><li>You leave evidence behind.</li><li>You lose something valuable.</li></ul>On a miss you leave yourself vulnerable.",
+
+            'bladeheart':
+                "When you attempt to change the loyalty or purpose of a worthy agent of the Villain, roll. On a 10+ your words reach them. They will act to aid you right now. They may come with you, go to face their master, or flee. On a 7-9 your words make them hesitate. Choose if this plants doubt in their mind or if they take inadvertent action to assist you. On a fail they fool you with a seeming change of heart.",
+            'facetofate':
+                "At start of session roll 2d6 without any element. On a 6- mark XP and the GM gains a soft move from fate for later use. On a 7+ note the die roll. At any time during the session you may swap this roll in for one of yours or your allies. The swapped-out roll goes away and no one marks XP for it. If the roll has not been swapped by the end of the session, it goes away.",
+            'theproudyouth':
+                "When you seek the guidance of an elder, tell them a problem you face and ask them a question about that. They will answer it honestly and tell you what to do. You gain 1 Study hold. If you listen to the elder's advice, take +1 Ongoing  for the problem. If you go your own way, mark XP.",
+            'rageandpassion':
+                "Roll after someone has committed a social faux pas. On a hit, if it is simply in the fiction, you may edit, or redact something said into the kindest compliment. If it is a failed interaction test, on a hit you reduce the effect from the MC Hard Move to a Soft One. Depending on the situation, a 10+ may skip over it completely. In either case, on a miss you worsen the offense.",
+            'sacrifice':
+                "When you mark the Wounded condition, all of your allies gain +1 Forward.",
+            'saviorofthesoul':
+                "You're inexperienced, but somehow you alone are the voice of reason here. When you offer advice to another PC and they ignore it, you take +1 Ongoing during any attempts to bail them out of whatever mess they got themselves into.",
+            'smilingproudwanderer':
+                "You're just here to have an adventure. It's all an excuse to see the world. Once per scene, you may ask one question from Study without rolling.",
+            'stateofdivinity':
+                "When you use Comfort & Support in a conflict situation to clear an ally's Wounded condition, you may clear a element on someone as well (including yourself).",
+
+            'everlastingchivalry':
+                "You have +1 Ongoing when interacting with common, salt-of-the-earth folk. You know how to show them you're one of their own.",
+            'fearlessfighters':
+                "When you have your style element marked, you may opt to continue fighting by rolling +# of elements marked (max. +3). If you do so and have to mark an element, you must mark Wounded and cannot continue fighting.",
+            'thegoldenlion':
+                "You have a loyal pet. It has been trained and responds to your commands. Describe its attributes. Once per session your pet may intercept a physical threat; they take the injury and are out of action until the next session.",
+            'hisnameisnobody':
+                "When you deliberately head off alone into a dangerous situation, roll and mark XP. On a 10+ you're ready for the challenge; take +1 Forward. On a 7-9, you're unready—the enemy can act before you (even the scale, seize something, change the locale, reveal a trap, close off escape, frame you). On a miss you fall into their trap or ambush.",
+            'monkeyfistfloatingsnake':
+                "When you defeat a named foe, you may humiliate them comically if you show them mercy. You don't mark XP but instead gain a bond with them. You may also choose a person or group who now views your opponent in a different way. Say who and how they now see them.",
+            'kidwiththegoldenarm':
+                "When you try to break something which can be broken, roll. On a hit you break it. On a 10+ you do so spectacularly or with impressive control. You may create cracks, trace characters, shatter into powder, break later, or collapse something massive (like an inn). On a 7-9, you simply break it or you may take the 10+ result by marking element. On a miss choose: mark element or have your breaking go horribly awry.",
+            'shadowboxing':
+                "A secret group or order aid you. You may not be aware of their assistance. Once per session you can flashback to some preparation, interference, or negotiation they've done on your behalf. Describe it and roll. On a hit, they succeed. On a 7-9 they do so with attention or reduced effect. On a miss their interference causes you more trouble than help.",
+            'atasteofcoldsteel':
+                "When you Study a situation looking for potential trouble, you may freely ask one of these two questions in addition to your regular hold.<ul><li>Who here is looking to cause trouble?</li><li>What trouble is X looking to cause?</li></ul>You gain +1 Forward when you interfere with that trouble"
+        };
+
+        var r_ent = [
+            "I cannot choose between [ ] and [ ].",
+            "I disguised myself to get close to [ ], but [ ], their lover, suspects and hates me.",
+            "I disguised myself to get close to [ ], but [ ], their lover, is falling for me.",
+            "I fled from [ ] because of the heartache, but [ ], their lover, has called me back to honor a debt.",
+            "I know [ ] desires me, but [ ], who I pine for, loves them.",
+            "I lost to [ ] in order to maintain the affections of [ ].",
+            "I love [ ], who I overlooked for too long; now they love [ ].",
+            "I love [ ], but [ ] --a leader of my faction-- has forbidden it.",
+            "I love [ ], but my family member [ ] is their sworn enemy.",
+            "I love [ ], but my teacher, [ ], killed someone dear to them.",
+            "I love [ ], but their family member, [ ], is a villain.",
+            "I love [ ], but my family member, [ ], is a legendary villain.",
+            "I love [ ], but their family member, [ ], has sworn revenge against me.",
+            "I love [ ], but I have sworn revenge against their family member, [ ].",
+            "I love [ ], but their sibling, [ ], considers me beneath them.",
+            "I love [ ], but they are engaged to [ ], who I respect.",
+            "I love [ ], but I know a dark secret about, [ ], who they adore.",
+            "I love [ ], but they are wed to [ ], who I serve.",
+            "I love [ ], but they are wed to [ ], my sibling.",
+            "I am wed to [ ], but I know they actually pine for [ ].",
+            "I pursue [ ] despite knowing that my friend, [ ], pines for them.",
+            "I rejected [ ], but [ ] --who I desire-- loves them.",
+            "I still pursue [ ], who rejected me, despite the interference of [ ], who holds an unrequited love.",
+            "My friend [ ] and I vie for the attention of [ ] despite their indifference to both of us.",
+            "There is mutual unrequited love between [ ] and I because of my duty to [ ].",
+            "[ ] advised me not to pursue [ ], but secretly woo'd them.",
+            "My teacher, [ ], and I share an unspoken love because of the shame it would bring to [ ].",
+            "[ ] has become jealous of the attention [ ] pays to me instead of them.",
+            "I am engaged to [ ], but have fallen in love with their sibling, [ ].",
+            "I love [ ] from an enemy clan, and [ ] blackmails me about my passion.",
+            "I love [ ] but I cannot tell them the truth about what happened to their lover [ ].",
+            "I love [ ], but their duty to [ ] draws them away.",
+            "[ ] openly pursues me, but to avoid a scandal I've hidden my relationship with [ ].",
+            "I humiliated myself in front of [ ], who I desire, and [ ] will let no one forget it.",
+            "A prophecy has kept [ ] and I apart and [ ] is determined to keep it that way.",
+            "[ ] and I love one another, but that will change if they learn of my history with [ ].",
+            "I brought my lover [ ]'s sibling [ ] to justice.",
+            "I have been promised to [ ] and [ ] wants to get rid of me for that.",
+            "I have been promised to the awful [ ], but I find their friend [ ] much more interesting.",
+            "[ ] has disguised themselves to pursue me, but my friend [ ] has begun to resent them.",
+            "I love [ ] but [ ], has seduced their family with wealth, status, and power."
+        ];
+
+        var g_ent = [
+            "My sibling [ ] disparages me, and my parent, [ ], won't condemn them for some reason.",
+            "My rival [ ] speaks ill of me, but my mentor [ ] strangely ignores the situation.",
+            "[ ], my rival, knows about the bad actions I did to the family of my friend, [ ].",
+            "Local authority [ ] hints they know of my shady dealings against my mentor [ ] and their family.",
+            "[ ], my rival, has sworn to kill me, but I have promised [ ] that I will not harm them.",
+            "I brought my sworn ally [ ]'s sibling [ ] to justice.",
+            "I suspect my friend [ ]'s parent is the villain [ ].",
+            "I allowed my friend [ ]'s sibling [ ] to escape justice.",
+            "[ ], an authority of my faction, has ordered me to undercut [ ], who I respect.",
+            "[ ], my clan leader, has told me to spy on my comrade, [ ].",
+            "My teacher, [ ], has passed me over in favor of [ ], my rival.",
+            "I have discovered my friend, [ ], has hidden their true power from me but told [ ], another friend.",
+            "I have discovered my sibling [ ] has been in contact with [ ] from an enemy clan.",
+            "I have discovered my friend [ ] has been consorting with [ ] from an enemy clan.",
+            "I have hidden my true identity from [ ] because of my past with [ ].",
+            "I found that [ ] has hidden their true identity from everyone because of their past with [ ].",
+            "I've learned my friend [ ] has been betrayed by their teacher [ ] but they will never believe me.",
+            "I've learned my friend [ ] has been lied to by their parent [ ], but they will never believe me.",
+            "I have promised my teacher, [ ], that I will destroy the family of my friend, [ ].",
+            "I have promised my sibling, [ ], that I will destroy my friend, [ ].",
+            "I have hidden [ ], who is wanted by my friend [ ] for their crimes.",
+            "I have hidden [ ], who is a threat to my respected clan senior, [ ]",
+            "I discovered my sibling [ ] has been learning techniques from [ ], master of an enemy clan.",
+            "I learned my friend [ ] studied secrets with [ ], a heretical master.",
+            "I promised my friend [ ] that I would aid the troublemaker [ ].",
+            "I promised my sibling [ ] that I would help my rival [ ].",
+            "I owe loyalty to my elder sibling, [ ], despite how they treat their spouse, [ ].",
+            "I remain loyal to my master, [ ], despite how they treat my younger sibling, [ ].",
+            "I rejected [ ] and now they have sworn vengeance against me and my friend, [ ].",
+            "I suspect [ ] of evil, but [ ], who I respect, believes in them.",
+            "My friend [ ], suspects [ ] of evil, but I remain steadfastly loyal.",
+            "I swore to [ ] that I would protect [ ], but they would be offended if they knew.",
+            "I took part in a crime against [ ], my friend [ ]'s sibling.",
+            "I took part in a crime against [ ], my sibling [ ]'s lover.",
+            "[ ] has chosen me as heir, but [ ], who I've known all my life, resents it.",
+            "My senior, [ ], treats me badly, but I give them loyalty despite [ ]'s disapproval.",
+            "[ ] chose my long-time friend, [ ], as heir and I resent it.",
+            "My clan senior, [ ], suspects that my friend [ ] works against our faction.",
+            "My friend, [ ], is an agent for [ ] of an enemy clan, but I do not know it.",
+            "My spouse, [ ], secretly works for [ ] of an enemy clan, but I do not know it.",
+            "My master, [ ], has secretly trained me as part of a revenge plot against my friend, [ ].",
+            "My master, [ ], has trained my sibling [ ] as part of a revenge plot against my family.",
+            "My friend, [ ], has rejected my sibling [ ]'s declarations of love.",
+            "My sibling, [ ], has rejected my friend [ ]'s declarations of love.",
+            "My friend, [ ], has been exiled from my school, but my teacher [ ], will not tell me why.",
+            "My sibling, [ ], has been sent away from our family by my parent, [ ], without explanation.",
+            "I believe my parent, [ ], has been seduced with evil intent by [ ].",
+            "I believe my sibling [ ], has seduced [ ] for evil ends.",
+            "My teacher, [ ], disapproves of me, and my friend [ ], agrees with them.",
+            "My parent, [ ], disapproves of me, and my sibling [ ] won't stand up to them.",
+            "My peer, [ ], and I defeated the powerful [ ], but only I gained credit and now they resent it.",
+            "My sibling, [ ], and I were separated at birth and [ ] raised them to destroy my clan.",
+            "My sibling [ ] loves our clan enemy, [ ].",
+            "My sibling [ ] has fallen in love with my rival, [ ].",
+            "My parent, [ ], abandoned me to be raised by [ ], but now they're returned.",
+            "[ ] and I both seek revenge against [ ], but must be the one to strike the killing blow.",
+            "I have learned about my elder sibling [ ]'s affair with [ ] which may doom our family.",
+            "My friend, [ ], hates [ ], but refuses to tell me why.",
+            "My friend, [ ], has lied to our teacher, [ ], but will not explain why.",
+            "An enemy, [ ], has come to me to change their ways, but I know my friend, [ ], will never believe them."
+        ];
+
+        var generals = fillArrayWithNumbers(g_ent.length);
+        var romantics = fillArrayWithNumbers(r_ent.length);
+
+        var portraits = [];
+        var elements = ['earth', 'fire', 'metal', 'water', 'wood'];
+
+        var room = 'test';
+        var socket = io('/heartsofwulin');
+
+        // prep element effects
+        dragElement(document.getElementById("entanglementList"));
+        dragElement(document.getElementById("playbookMovesList"));
+
+        // socket receive
+
+        socket.on('connect', function() {
+            // get room name from URL ending, make sure it's not malicious text
+            var pathparts = window.location.href.split('?');
+            pathparts[1] = sanitize(pathparts[1], 'alphanumeric');
+            if (pathparts[1]) {
+                room = pathparts[1];
+            }
+            //console.log('trying to join room ' + room);
+            socket.emit("join room", room);
+        });
+
+        socket.on('username', function(data) {
+            updateUserName(data);
+        });
+
+        socket.on('user list', function(data) {
+            updateUserList(data);
+        });
+
+        socket.on('roll result', function(data) {
+            var user = data.user;
+            var e = data.element;
+            var result = data.result;
+            updateResult(result);
+            // add roll info to chat
+            var html = '<div class="well"><strong>' + user + '</strong> rolled with ' + e + ', ' + result + '</div>';
+            updateChat(html);
+        });
+
+        socket.on('new message', function(data) {
+            var $message = $('#message');
+            var message = data.message;
+            var user = data.user;
+            var type = data.type;
+            var html = '';
+
+            if (type == "rollresult") {
+                updateResult(message);
+                html += '<div class="well"><strong>' + user + '</strong> (' + message + ')</div>';
+            }
+            else if (type == "using bonds") {
+                html += '<div class="well">(' + message + ')</div>';
+            }
+            else if (type == "updateusername") {
+                var currentname = $message.prop('placeholder');
+                var names = message.split('|');
+                var oldname = names[0];
+                var newname = names[1];
+                if ((oldname == currentname) && (oldname != newname)) {
+                    updateUserName(newname); // change the correct user's name
+                }
+                if (oldname != newname) {
+                    html += '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
+                }
+            }
+            else if(type == 'newgame') {
+                html += '<div class="well text-muted">' + user + ' started a new game</div>';
+            }
+            else if (type == 'savegame') {
+                var filename = 'how_' + room + '_' + getTodayString() + '.json';
+                // generate the file to download locally
+                download(filename, message);
+                html += '<div class="well text-muted">' + user + ' is saving game data</div>';
+            }
+            else if (type == 'loadgame') {
+                $('#loadbox').show();
+            }
+            else { // should be regular chat message
+                html += '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
+            }
+
+            updateChat(html);
+        });
+
+        socket.on('update portrait', function(data) {
+            updatePortrait(data.index, data.url);
+        });
+
+        socket.on('update field', function(data) {
+            var field = data.field;
+            var number = data.number;
+            var value = data.value;
+
+            //console.log('client receiving field ' + field + ' number ' + number + ' value ' + value);
+
+            if (field == 'style') {
+                var $radiobutton = $('#' + value + 'Group' + number + ' :input[type=radio]');
+                $radiobutton.prop('checked', true);
+            }
+            else if (field == 'earthmarked' || field == 'firemarked' || field == 'metalmarked' ||
+                     field == 'watermarked' || field == 'woodmarked') {
+                $('#' + field + number).prop('checked', value);
+                var ele = field.split('marked')[0];
+                if (value) {
+                    $('#' + ele + 'button' + number).addClass('locked');
+                }
+                else {
+                    $('#' + ele + 'button' + number).removeClass('locked');
+                }
+            }
+            else if (field == 'wounded') {
+                var $wounded = $('#wounded' + number);
+                if (value) {
+                    $wounded.val('wounded');
+                }
+                else {
+                    $wounded.val('');
+                }
+                woundedEffects(number, value);
+            }
+            else {
+                $('#' + field + number).val(value);
+
+                if (field == 'xp') {
+                    updateXPButtons(number, value);
+                }
+            }
+
+            socket.emit('save current');
+            //console.log('client update field');
+        });
+
+        socket.on('update client', function(data) {
+            var users = data.users;
+            var p = data.profiles;
+
+            updateUserList(users);
+
+            for (var j = 0; j < p.length; j++) {
+
+                $('#role' + (j+1)).val(p[j]['role']);
+
+                updatePortrait(j, p[j]['portrait']);
+
+                $('#player' + (j+1)).val(p[j]['player']);
+                $('#character' + (j+1)).val(p[j]['character']);
+                $('#faction' + (j+1)).val(p[j]['faction']);
+                $('#notes' + (j+1)).val(p[j]['notes']);
+
+                for (var i = 0; i < elements.length; i++) {
+
+                    var $radiobutton = $('#' + elements[i] + 'Group' + (j+1) + ' :input[type=radio]');
+                    var $buttons = $('#' + elements[i] + 'Group' + (j+1) + ' :input[type=submit]');
+                    var $checkbox = $('#' + elements[i] + 'Group' + (j+1) + ' :input[type=checkbox]');
+
+                    if (p[j]['style'] == $radiobutton.val()) {
+                        $radiobutton.prop('checked', true);
+                    }
+                    else {
+                        $radiobutton.prop('checked', false);
+                    }
+                    if (p[j]['marked'] && p[j]['marked'].indexOf($checkbox.val()) !== -1) {
+                        // check the box
+                        $checkbox.prop('checked', true);
+                        // only lock the element button
+                        $($buttons[0]).addClass('locked');
+                    } else {
+                        $checkbox.prop('checked', false);
+                        $($buttons[0]).removeClass("locked");
+                    }
+
+                    var ele = elements[i];
+                    $('#' + ele + (j+1)).val(p[j][ele]);
+                }
+                if (p[j]['wounded']) {
+                    $('#wounded' + (j+1)).val('wounded');
+                }
+                else {
+                    $('#wounded' + (j+1)).val('');
+                }
+                woundedEffects((j+1), p[j]['wounded']);
+
+                fillBondsList((j+1), p[j]['bonds']);
+
+                $('#xp' + (j+1)).val(p[j]['xp']);
+                updateXPButtons((j+1), p[j]['xp']);
+
+                $('#ge' + (j+1)).val(p[j]['ge']);
+                $('#re' + (j+1)).val(p[j]['re']);
+            }
+
+            socket.emit('save current');
+        });
+
+        socket.on('update bonds', function(data) {
+            var index = data.index;
+            var bonds = data.bonds;
+            fillBondsList(index, bonds);
+
+            socket.emit('save current');
+        });
+
+        socket.on('togglelock profile', function(data) {
+            var id = data.profileid;
+            var lockit = data.lockit;
+
+            if (lockit) {
+                lockInputs(id);
+            }
+            else {
+                unlockInputs(id);
+            }
+        });
+
+        socket.on('locked profiles', function(data) {
+            var locked = data;
+            var list = ['p1Area', 'p2Area', 'p3Area'];
+
+            for (var i = 0; i < list.length; i++) {
+                if (locked.indexOf(list[i]) !== -1) {
+                    lockInputs(list[i]);
+                }
+                else {
+                    unlockInputs(list[i]);
+                }
+            }
+        });
+
+        // socket send
+
+        $('#messageForm').submit(function(e) {
+            var $message = $('#message');
+            e.preventDefault();
+            socket.emit('send message', $message.val());
+            $message.val('');
+        });
+
+        $('#loadbox button[type=submit]').click(function(e) {
+            e.preventDefault();
+            // load JSON textfield
+            socket.emit('load json', $('#loadboxjson').val());
+            // hide the loadbox
+            $('#loadbox').hide();
+        });
+
+        $('[name=role], input[name=player], input[name=character], input[name=faction], textarea[name=notes], textarea[name=ge], textarea[name=re], input[name=xp], input[name=earth], input[name=fire], input[name=metal], input[name=water], input[name=wood]').each(function () {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var v = $(this).val();
+                var i = $(this).prop('id');
+                i = i.slice(-1); // last letter of id is the count number
+                i = parseInt(i) - 1;
+
+                //console.log('sending ' + field + ' ' + i + ' ' + v);
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+
+        $('input[type=radio]').each(function () {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                // style doesn't have id, use name
+                var field = $(this).prop('name');
+                var v = $(this).val();
+                var i = field.slice(-1); // last letter of name is the count number
+                i = parseInt(i) - 1;
+
+                //console.log('sending ' + field + ' ' + i + ' ' + v);
+                socket.emit('update field', {'field': 'style', 'index': i, 'value': v});
+            });
+        });
+
+        $('#elements1 input[type=checkbox], #elements2 input[type=checkbox], #elements3 input[type=checkbox]').each(function() {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var v = $(this).prop('checked');
+                var i = $(this).prop('id');
+                i = i.slice(-1); // last letter of id is the count number
+                i = parseInt(i) - 1;
+                var element = null;
+
+                if (field == 'earthmarked') {
+                    element = 'earth';
+                }
+                else if (field == 'firemarked') {
+                    element = 'fire';
+                }
+                else if (field == 'metalmarked') {
+                    element = 'metal';
+                }
+                else if (field == 'watermarked') {
+                    element = 'water';
+                }
+                else if (field == 'woodmarked') {
+                    element = 'wood';
+                }
+                if (v) {
+                    $('#' + element + 'button' + (i+1)).addClass('locked');
+                }
+                else {
+                    $('#' + element + 'button' + (i+1)).removeClass('locked');
+                }
+
+                socket.emit('update marked', {'index': i, 'element': element, 'ismarked': v});
+            });
+        });
+
+        function woundedToggle(n=1) {
+            var i = n-1;
+            var value = $('#wounded' + n).val();
+            var wounded = true;
+            if (value == 'wounded') {
+                wounded = false;
+                $('#wounded' + n).val('');
+            }
+            else {
+                $('#wounded' + n).val('wounded');
+            }
+            socket.emit('update wounded', {'field': 'wounded', 'index': i, 'value': wounded});
+        }
+
+        function rollElement(n=1,e='earth') {
+            var v = $('#' + e + n).val();
+            v = v ? v : 0;
+            var command = 'how' + parseInt(v);
+            socket.emit('roll dice', {'command': command, 'element': e});
+        }
+
+        function updateXP(n=1, v=0) {
+            var $xp = $('#xp' + n);
+            var xp = parseInt($xp.val());
+            xp = xp ? xp : 0;
+            var i = n-1;
+            var newval = xp + v;
+            if (newval < 0) {
+                alert("you don't have enough xp to advance");
+            } else {
+                $xp.val(newval);
+                socket.emit('update field', {'field': 'xp', 'index': i, 'value': newval});
+                updateXPButtons(n, newval);
+            }
+        }
+
+        function portraitURL(number) {
+            var url = prompt("paste in the URL of the image");
+            if (url) {
+                // try to check if image can be loaded
+                var img = new Image();
+                img.src = url;
+                img.onload = function(){
+                    portraits[number] = url;
+                    // send info to server
+                    socket.emit('update portrait', {'index': (number-1), 'url': url});
+                };
+                img.onerror = function(){
+                    alert("image cannot be loaded");
+                }
+            }
+        }
+
+        function randomEntanglement(type="g",n=1) {
+            var html = '';
+
+            if (type == "g") {
+                generals = shuffle(generals);
+                html = g_ent[generals[0]];
+            } else {
+                romantics = shuffle(romantics);
+                html = r_ent[romantics[0]];
+            }
+            $('#' + type + 'e' + n).html(html);
+            socket.emit('update field', {'field': type + 'e', 'index': (n-1), 'value': html});
+        }
+
+        function toggleInputLocks(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                if ($(subElements[i]).prop('disabled')) {
+                    $(subElements[i]).prop('disabled', false);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': false});
+                }
+                else {
+                    $(subElements[i]).prop('disabled', true);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': true});
+                }
+            }
+        }
+
+        // local UI related
+
+        function updateUserName(user) {
+            $('#message').prop('placeholder', user);
+        }
+
+        function updateUserList(list) {
+            $('#message').prop('title', list.length + ' user(s): ' + list.join(', '));
+        }
+
+        function updateResult(html) {
+            if (html) {
+                $('#resultArea').html(html);
+            }
+        }
+
+        function updateChat(html) {
+            if (html) {
+                var $chat = $('#chat');
+                $chat.append(html);
+                $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+        function updateXPButtons(n=0, value=0) {
+            value = value < 0 ? 0 : value;
+            var html = '+1 XP ' + value;
+            $('#markXP' + n).html(html);
+        }
+
+        $('#infolist').on('change', function() {
+            // only update locally
+            var $infolist = $('#infolist');
+            var $infoArea = $('#infoArea');
+
+            $infoArea.html(infotext[$infolist.val()]);
+        });
+
+        function updatePortrait(i=0, url) {
+            portraits[i] = url;
+            var $e = $('#portrait' + (i+1));
+            // hovering tooltip should show the image without distorted porportions
+            $e.prop('src', url);
+            // force browser to use new image instead of cached image
+            $e.tooltip('dispose');
+            $e.tooltip({
+                html: true,
+                placement: 'right',
+                title: '<img src="' + url + '" height="500" />'
+            });
+        }
+
+        function woundedEffects(n=1, wounded=true) {
+            var $e = $('#woundedbutton' + n);
+            if (wounded) {
+                $e.removeClass('text-muted');
+                $e.addClass('text-danger');
+                $e.html('WOUNDED');
+
+                // redden the element fields
+                $('#elements' + n + ' input[type=text]').addClass('wounded');
+            } else {
+                $e.removeClass('text-danger');
+                $e.addClass('text-muted');
+                $e.html('wounded?');
+                // remove the red
+                $('#elements' + n + ' input[type=text]').removeClass('wounded');
+            }
+        }
+
+        function toggleEntanglementList() {
+            var $list = $('#entanglementList');
+            var $detail = $('#fullEntanglementList');
+            var html = '';
+            var i;
+
+            html += '<div class="row">';
+            html += '<div class="col">';
+
+            html += '<em>General</em><br/>';
+            for (i = 0; i < g_ent.length; i++) {
+                html += g_ent[i] + '<br/>';
+            }
+
+            html += '</div><div class="col">';
+
+            html += '<em>Romantic</em><br/>';
+            for (i = 0; i < r_ent.length; i++) {
+                html += r_ent[i] + '<br />';
+            }
+
+            html += '</div></div>';
+
+            $detail.html(html);
+
+            $list.toggle();
+        }
+
+        $('#fullPlaybookMovesList_select').on('change', function() {
+            var html = getPlaybookMoves($('#fullPlaybookMovesList_select').val());
+            $('#fullPlaybookMovesList_text').html(html);
+        });
+
+        function togglePlaybookMovesList() {
+            var $list = $('#playbookMovesList');
+            var $playbook = $('#fullPlaybookMovesList_select');
+            var $detail = $('#fullPlaybookMovesList_text');
+            var html = getPlaybookMoves($playbook.val());
+            $detail.html(html);
+
+            $list.toggle();
+        }
+
+        function getPlaybookMoves(op) {
+            var html = '';
+
+            switch(op) {
+                case 'aware':
+                    html += '<h3>Master</h3>';
+                    html += infotext['master'];
+                    html += '<br/>';
+                    html += '<h3>Scholar</h3>';
+                    html += infotext['scholar'];
+                    html += '<br/>';
+                    html += '<h3>Traveling Sifu</h3>';
+                    html += infotext['travelingsifu'];
+                    html += '<br/>';
+                    html += '<h3>Ashes of Time</h3>';
+                    html += infotext['ashesoftime'];
+                    html += '<br/>';
+                    html += '<h3>Clans of Intrigue</h3>';
+                    html += infotext['clansofintrigue'];
+                    html += '<br/>';
+                    html += '<h3>Final Master</h3>';
+                    html += infotext['finalmaster'];
+                    html += '<br/>';
+                    html += '<h3>Five Deadly Venoms</h3>';
+                    html += infotext['fivedeadlyvenoms'];
+                    html += '<br/>';
+                    html += '<h3>Hidden Dragon</h3>';
+                    html += infotext['hiddendragon'];
+                    html += '<br/>';
+                    html += '<h3>The Promise</h3>';
+                    html += infotext['thepromise'];
+                    html += '<br/>';
+                    html += '<h3>Storm Rider</h3>';
+                    html += infotext['stormrider'];
+                    html += '<br/>';
+                    html += '<h3>A Touch of Zen</h3>';
+                    html += infotext['atouchofzen'];
+                    html += '<br/>';
+
+                    break;
+                case 'bravo':
+                    html += '<h3>Favored Eldest</h3>';
+                    html += infotext['favoredeldest'];
+                    html += '<br/>';
+                    html += '<h3>Gallivant</h3>';
+                    html += infotext['gallivant'];
+                    html += '<br/>';
+                    html += '<h3>Thief</h3>';
+                    html += infotext['thief'];
+                    html += '<br/>';
+                    html += '<h3>Come Drink With Me</h3>';
+                    html += infotext['comedrinkwithme'];
+                    html += '<br/>';
+                    html += '<h3>Golden Knight</h3>';
+                    html += infotext['goldenknight'];
+                    html += '<br/>';
+                    html += '<h3>Heads For Sale</h3>';
+                    html += infotext['headsforsale'];
+                    html += '<br/>';
+                    html += '<h3>It Takes A Thief</h3>';
+                    html += infotext['ittakesathief'];
+                    html += '<br/>';
+                    html += '<h3>Laughing In the Wind</h3>';
+                    html += infotext['laughinginthewind'];
+                    html += '<br/>';
+                    html += '<h3>Legend of the Fox</h3>';
+                    html += infotext['legendofthefox'];
+                    html += '<br/>';
+                    html += '<h3>Thief of Thieves</h3>';
+                    html += infotext['thiefofthieves'];
+                    html += '<br/>';
+                    html += '<h3>Tracing Shadow</h3>';
+                    html += infotext['tracingshadow'];
+                    html += '<br/>';
+
+                    break;
+                case 'loyal':
+                    html += '<h3>Devoted Child</h3>';
+                    html += infotext['devotedchild'];
+                    html += '<br/>';
+                    html += '<h3>Official</h3>';
+                    html += infotext['official'];
+                    html += '<br/>';
+                    html += '<h3>Swordsman</h3>';
+                    html += infotext['swordsman'];
+                    html += '<br/>';
+                    html += '<h3>Flying Daggers</h3>';
+                    html += infotext['flyingdaggers'];
+                    html += '<br/>';
+                    html += '<h3>Heaven Sword And Dragon Sabre</h3>';
+                    html += infotext['heavenswordanddragonsabre'];
+                    html += '<br/>';
+                    html += '<h3>Legend of the Mountain</h3>';
+                    html += infotext['legendofthemountain'];
+                    html += '<br/>';
+                    html += '<h3>Paladins In Troubled Times</h3>';
+                    html += infotext['paladinsintroubledtimes'];
+                    html += '<br/>';
+                    html += '<h3>Rage of the Tiger</h3>';
+                    html += infotext['rageofthetiger'];
+                    html += '<br/>';
+                    html += '<h3>Strife For Mastery</h3>';
+                    html += infotext['strifeformastery'];
+                    html += '<br/>';
+                    html += '<h3>Trail of the Everlasting Hero</h3>';
+                    html += infotext['trailoftheeverlastinghero'];
+                    html += '<br/>';
+                    html += '<h3>Two Wondrous Tigers</h3>';
+                    html += infotext['twowondroustigers'];
+                    html += '<br/>';
+
+                    break;
+                case 'outsider':
+                    html += '<h3>Rebel</h3>';
+                    html += infotext['rebel'];
+                    html += '<br/>';
+                    html += '<h3>Trickster</h3>';
+                    html += infotext['trickster'];
+                    html += '<br/>';
+                    html += '<h3>Wanderer</h3>';
+                    html += infotext['wanderer'];
+                    html += '<br/>';
+                    html += '<h3>All Men Are Brothers</h3>';
+                    html += infotext['allmenarebrothers'];
+                    html += '<br/>';
+                    html += '<h3>A Deadly Secret</h3>';
+                    html += infotext['adeadlysecret'];
+                    html += '<br/>';
+                    html += '<h3>Have Sword, Will Travel</h3>';
+                    html += infotext['haveswordwilltravel'];
+                    html += '<br/>';
+                    html += '<h3>Heroes Shed No Tears</h3>';
+                    html += infotext['heroesshednotears'];
+                    html += '<br/>';
+                    html += '<h3>House of Traps</h3>';
+                    html += infotext['houseoftraps'];
+                    html += '<br/>';
+                    html += '<h3>The Impostor</h3>';
+                    html += infotext['theimpostor'];
+                    html += '<br/>';
+                    html += '<h3>Reign of Assassins</h3>';
+                    html += infotext['reignofassassins'];
+                    html += '<br/>';
+                    html += '<h3>Royal Tramp</h3>';
+                    html += infotext['royaltramp'];
+                    html += '<br/>';
+
+                    break;
+                case 'student':
+                    html += '<h3>Hopeful Apprentice</h3>';
+                    html += infotext['hopefulapprentice'];
+                    html += '<br/>';
+                    html += '<h3>Wandering Monk</h3>';
+                    html += infotext['wanderingmonk'];
+                    html += '<br/>';
+                    html += '<h3>Younger Sibling</h3>';
+                    html += infotext['youngersibling'];
+                    html += '<br/>';
+                    html += '<h3>Blade Heart</h3>';
+                    html += infotext['bladeheart'];
+                    html += '<br/>';
+                    html += '<h3>Face To Fate</h3>';
+                    html += infotext['facetofate'];
+                    html += '<br/>';
+                    html += '<h3>The Proud Youth</h3>';
+                    html += infotext['theproudyouth'];
+                    html += '<br/>';
+                    html += '<h3>Rage And Passion</h3>';
+                    html += infotext['rageandpassion'];
+                    html += '<br/>';
+                    html += '<h3>Sacrifice</h3>';
+                    html += infotext['sacrifice'];
+                    html += '<br/>';
+                    html += '<h3>Savior of the Soul</h3>';
+                    html += infotext['saviorofthesoul'];
+                    html += '<br/>';
+                    html += '<h3>Smiling, Proud Wanderer</h3>';
+                    html += infotext['smilingproudwanderer'];
+                    html += '<br/>';
+                    html += '<h3>State of Divinity</h3>';
+                    html += infotext['stateofdivinity'];
+                    html += '<br/>';
+
+                    break;
+                case 'unorthodox':
+                    html += '<h3>Accidental</h3>';
+                    html += infotext['accidental'];
+                    html += '<br/>';
+                    html += '<h3>Hidden</h3>';
+                    html += infotext['hidden'];
+                    html += '<br/>';
+                    html += '<h3>Prodigy</h3>';
+                    html += infotext['prodigy'];
+                    html += '<br/>';
+                    html += '<h3>Everlasting Chivalry</h3>';
+                    html += infotext['everlastingchivalry'];
+                    html += '<br/>';
+                    html += '<h3>Fearless Fighters</h3>';
+                    html += infotext['fearlessfighters'];
+                    html += '<br/>';
+                    html += '<h3>The Golden Lion</h3>';
+                    html += infotext['thegoldenlion'];
+                    html += '<br/>';
+                    html += '<h3>His Name Is Nobody</h3>';
+                    html += infotext['hisnameisnobody'];
+                    html += '<br/>';
+                    html += '<h3>Monkey Fist, Floating Snake</h3>';
+                    html += infotext['monkeyfistfloatingsnake'];
+                    html += '<br/>';
+                    html += '<h3>Kid with the Golden Arm</h3>';
+                    html += infotext['kidwiththegoldenarm'];
+                    html += '<br/>';
+                    html += '<h3>Shadow Boxing</h3>';
+                    html += infotext['shadowboxing'];
+                    html += '<br/>';
+                    html += '<h3>A Taste of Cold Steel</h3>';
+                    html += infotext['atasteofcoldsteel'];
+                    html += '<br/>';
+                    break;
+                default:
+                    html += '<h3>Master</h3>';
+                    html += infotext['master'];
+                    html += '<br/>';
+                    html += '<h3>Scholar</h3>';
+                    html += infotext['scholar'];
+                    html += '<br/>';
+                    html += '<h3>Traveling Sifu</h3>';
+                    html += infotext['travelingsifu'];
+                    html += '<br/>';
+
+                    html += '<h3>Favored Eldest</h3>';
+                    html += infotext['favoredeldest'];
+                    html += '<br/>';
+                    html += '<h3>Gallivant</h3>';
+                    html += infotext['gallivant'];
+                    html += '<br/>';
+                    html += '<h3>Thief</h3>';
+                    html += infotext['thief'];
+                    html += '<br/>';
+
+                    html += '<h3>Devoted Child</h3>';
+                    html += infotext['devotedchild'];
+                    html += '<br/>';
+                    html += '<h3>Official</h3>';
+                    html += infotext['official'];
+                    html += '<br/>';
+                    html += '<h3>Swordsman</h3>';
+                    html += infotext['swordsman'];
+                    html += '<br/>';
+
+                    html += '<h3>Rebel</h3>';
+                    html += infotext['rebel'];
+                    html += '<br/>';
+                    html += '<h3>Trickster</h3>';
+                    html += infotext['trickster'];
+                    html += '<br/>';
+                    html += '<h3>Wanderer</h3>';
+                    html += infotext['wanderer'];
+                    html += '<br/>';
+
+                    html += '<h3>Hopeful Apprentice</h3>';
+                    html += infotext['hopefulapprentice'];
+                    html += '<br/>';
+                    html += '<h3>Wandering Monk</h3>';
+                    html += infotext['wanderingmonk'];
+                    html += '<br/>';
+                    html += '<h3>Younger Sibling</h3>';
+                    html += infotext['youngersibling'];
+                    html += '<br/>';
+
+                    html += '<h3>Accidental</h3>';
+                    html += infotext['accidental'];
+                    html += '<br/>';
+                    html += '<h3>Hidden</h3>';
+                    html += infotext['hidden'];
+                    html += '<br/>';
+                    html += '<h3>Prodigy</h3>';
+                    html += infotext['prodigy'];
+                    html += '<br/>';
+            }
+
+            return html;
+        }
+
+        function fillBondsList(n=1, list) {
+            var $bondslist = $('#bondslist' + n);
+            var bondstotal = 0;
+            var html = '<div class="text-center"><strong>bonds with...</strong></div>';
+
+            if (list) {
+                for (var i = 0; i < list.length; i++) {
+                    var name = list[i]['name'];
+                    var bonds = list[i]['amount'];
+                    bondstotal += parseInt(bonds);
+                    html += '<button id="bond' + n + '_' + (i+1) + '" name="bond" class="btn btn-sm btn-dark" onclick="promptBondUpdate(\'update bond amount with ' + name + '\', ' + (n-1) + ', \'' + name + '\')" title="click to update bonds value">';
+                    html += name + ' (' + bonds + ')';
+                    html += '</button>';
+                }
+            }
+
+            html += '<div class="input-group" style="margin: 5px 0">';
+            html += '<input type="text" id="addBondName' + n + '" class="form-control form-control-sm" placeholder="new bond\'s name" />';
+            html += '<button type="submit" id="addBond' + n + '" name="addBond" class="btn btn-sm btn-info" onclick="addBond(' + n + ')">add</button>';
+            html += '</div>';
+
+            $('#bondsButton' + n).html(bondstotal + ' bonds ⮟');
+
+            $bondslist.html(html);
+        }
+
+        function promptBondUpdate(promptText, index, bondName) {
+            var amount = parseInt(prompt(promptText));
+            if (!amount) {
+                amount = 0;
+            }
+            socket.emit('update bonds', {'index': index, 'name': bondName, 'amount': amount});
+        }
+
+        $('button[name=addBond]').submit(function(e) {
+            e.preventDefault();
+            alert('test');
+        });
+
+        function addBond(n=1) {
+            var name = $('#addBondName' + n).val();
+            var amount = 1; // starts with 1
+
+            name = sanitize(name, 'name');
+            if (name) {
+                socket.emit('update bonds', {'index': (n-1), 'name': name, 'amount': amount});
+            }
+        }
+
+        function lockableInputs(id) {
+            var subElements = $('#' + id).find('select[name=role], input[name=player], input[name=character], input[name=faction], textarea[name=notes], input[name=earth], input[name=fire], input[name=metal], input[name=water], input[name=wood], input[type=radio], textarea[name=ge], textarea[name=re], .randomClick');
+
+            return subElements;
+        }
+
+        function lockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                if (subElements[i].tagName == 'DIV') {
+                    $(subElements[i]).addClass('locked');
+                }
+                else {
+                    $(subElements[i]).prop('disabled', true);
+                }
+            }
+        }
+
+        function unlockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                if (subElements[i].tagName == 'DIV') {
+                    $(subElements[i]).removeClass('locked');
+                }
+                else {
+                    $(subElements[i]).prop('disabled', false);
+                }
+            }
+        }
+
+        function randomElements(n=1) {
+            var styles = ['earth', 'fire', 'metal', 'water', 'water'];
+            var lists = [
+                ['2', '1', '1', '0', '-1'],
+                ['2', '2', '0', '0', '-1'],
+                ['1', '1', '1', '0', '0']
+            ];
+            lists = shuffle(lists); // shuffle possible arrays
+
+            styles = shuffle(styles);
+            socket.emit('update field', {'field': 'style', 'index': (n-1), 'value': styles[0]});
+
+            var list = shuffle(lists[0]); // shuffle the numbers in the random array
+            socket.emit('update field', {'field': 'earth', 'index': (n-1), 'value': list[0]});
+            socket.emit('update field', {'field': 'fire', 'index': (n-1), 'value': list[1]});
+            socket.emit('update field', {'field': 'metal', 'index': (n-1), 'value': list[2]});
+            socket.emit('update field', {'field': 'water', 'index': (n-1), 'value': list[3]});
+            socket.emit('update field', {'field': 'wood', 'index': (n-1), 'value': list[4]});
+        }
+
+        function randomName(type='character', n=1) {
+            var html = '';
+
+            if (type == 'character') {
+                html = randomCharacterName();
+            }
+            $('#' + type + n).html(html);
+            socket.emit('update field', {'field': type, 'index': (n-1), 'value': html});
+        }
+
+        function randomCharacterName() {
+            var surnames = [
+                'Zhao', 'Shao', 'Sun', 'Li', 'Zhang', 'Liang', 'Zheng', 'Wang', 'Jiang', 'Hu', 'Tan', 'Wu', 'Yang', 'Cheng', 'Chen', 'Gao', 'Wan', 'Bao', 'Ma', 'Kong', 'Liu', 'Zhou', 'Zhong', 'Pan', 'Yu', 'Lan', 'Fan', 'Hua', 'Guan', 'Jin', 'Lin', 'Shan',
+                'Shang', 'Wei', 'Wen', 'Feng', 'Yan', 'Bai', 'Su', 'Tang', 'Yuan', 'Song', 'NanGong', 'MuRong', 'HuangFu', 'OuYang', 'SiTu', 'SiMa', 'Yuwen'
+            ];
+
+            var givennames = [
+                'Li', 'Chao', 'Wei', 'Wen', 'Na', 'Min', 'Jing', 'Yong', 'Yan', 'Jie', 'Lei', 'Jun', 'Juan', 'Tao', 'Lang', 'Ping', 'Gui', 'Ban', 'Hai', 'Shan', 'Tian', 'Huan', 'Hui', 'Jian', 'Lian', 'Ling', 'Mei', 'Pan', 'Shu', 'Yue', 'Yun', 'Yuan', 'Song', 'Ju', 'Yao', 'Ai', 'Su', 'Tai', 'ChaoYang', 'GuiYing', 'WuWei', 'Long', 'Hu', 'Dao', 'Gong', 'Bei', 'Nan', 'Ya', 'YeYing', 'DaPeng', 'TuLong', 'YiTian', 'ShaoLong', 'ShaoHu', 'ShaoLang', 'Guang', 'Huang', 'YueYa', 'BaiHui', 'HongChen', 'WeiMin', 'WanLi', 'JianCheng', 'YongChun', 'BaiHu', 'RuYi', 'FoShan',  'YunHao', 'TaiShan', 'TianShan', 'SuWen', 'WenShan', 'WenTian', 'WenHai', 'YunHai'
+            ];
+
+            surnames = shuffle(surnames);
+            givennames = shuffle(givennames);
+
+            var name = surnames[0] + ', ' + givennames[0];
+
+            return name;
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>tRPG Playaid : Generic Chat & Dice Roller</title>
+    <meta name="description" content="general-purpose dice roller chat built with Javascript">
+    <meta name="author" content="brushmen">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- custom CSS -->
+    <style>
+        body {
+            margin-top: 30px;
+            font-size: 2em;
+            background: #222233;
+        }
+
+        strong {
+            font-family: "Arial Narrow", Arial, sans-serif;
+        }
+
+        #chatSection {
+            height: 400px;
+            overflow: auto;
+        }
+
+        .well {
+            background-color: rgb(220, 217, 205);
+            margin: 2px;
+            padding-left: 5px;
+        }
+
+        .highlight {
+            background-color: LightSkyBlue;
+        }
+
+        input[type="text"] {
+            font-size: 14pt;
+        }
+
+        #legend {
+            margin: 1em;
+            color: #666666;
+            font-size: 0.4em;
+        }
+        .define {
+            cursor: help;
+        }
+
+        .userlist {
+            color: #3f7c93;
+            background-color: #222233;
+            font-size: 0.5em;
+            line-height: 1.2em;
+        }
+
+        #totalusers {
+            color: #3f7c93;
+            font-size: 0.5em;
+        }
+
+        #whiteboard {
+            height: 95%;
+            margin-top: -18px;
+            margin-left: -10px;
+        }
+
+        .selected {
+            pointer-events: none;
+            border: 2px solid white;
+        }
+
+        #strokeOptions {
+            padding-top: -20px;
+            margin-top: -20px;
+        }
+        #strokeOptions button {
+            background-color: rgb(220, 217, 205);
+        }
+
+        #black-btn {
+            background-color: rgb(0,0,0) !important;
+        }
+        #red-btn {
+            background-color: rgb(204, 0, 0) !important;
+        }
+        #green-btn {
+            background-color: rgb(0, 153, 51) !important;
+        }
+        #blue-btn {
+            background-color: rgb(0, 102, 255) !important;
+        }
+        #brown-btn {
+            background-color: rgb(134, 89, 45) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col col-md-7 col-s-12">
+
+                <div id="messageArea" class="col col-md-12 col-sm-2">
+                    <form id="messageForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" id="message" placeholder="dice commands or chat" />
+                            <input type="submit" class="btn btn-sm btn-info" value="submit" />
+                        </div>
+                    </form>
+                </div>
+
+                <div class="row" id="legend" style="margin: 2px 0 2px 20px">
+                    <span class="define" title="Lady Blackbird style">lb5=5d6</span>, <span class="define" title="Apocalypse World style">aw0=2d6+0</span>, <span class="define" title="Dragon Age">da-1=3d6-1</span>, <span class="define" title="D&D 5E, with or without inspiration">dd0=d20+0, dd3i=(d20+3)*2</span>, <span class="define" title="coin flip">d2</span>, d6, d100
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 p-0 overflow-auto">
+                        <div id="totalusers"></div>
+                        <div id="users"></div>
+                        <div class="text-muted" style="font-size: 0.5em; margin-top: 2em">/n alias</div>
+                    </div>
+
+                    <div class="col-md-10">
+                        <div id="resultArea"></div>
+                        <div id="chatSection">
+                            <!-- the chatSection has a set height
+                                but the chat obj has a dynamically
+                                changing height, otherwise scroll-to-bottom
+                                won't work -->
+                            <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="text-muted" style="position: absolute; top: 0; right: 2em; font-size: 0.5em; padding: 0; margin: 0; z-index: 2">(scratchpad content is not saved!)</span>
+
+            <div class="col col-md-5 col-sm-1">
+                <div id="strokeOptions" class="btn-group">
+                    <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
+                    <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🖾</button>
+                    <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">🞅</button>
+                    <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">🞅</button>
+                    <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">🞅</button>
+                    <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">🞅</button>
+                    <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">🞅</button>
+                </div>
+                <div id="whiteboard" class="row"></div>
+            </div>
+        </div>
+        <div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap template script includes -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/common.js"></script>
+
+    <!-- Javascript code -->
+    <script>
+        var room = 'test';
+        var socket = io('/dicechat');
+
+        // socket receive
+
+        socket.on('connect', function() {
+            // get room name from URL ending, make sure it's not malicious text
+            var pathparts = window.location.href.split('?');
+            pathparts[1] = sanitize(pathparts[1], 'alphanumeric');
+            if (pathparts[1]) {
+                room = pathparts[1];
+            }
+            //console.log('trying to join room ' + room);
+            socket.emit("join room", room);
+        });
+
+        socket.on('username', function(data) {
+            updateUserName(data);
+        });
+
+        socket.on('user list', function(data) {
+            updateUserList(data);
+        });
+
+        socket.on('new message', function(data) {
+            var $message = $('#message');
+            var message = data.message;
+            var user = data.user;
+            var type = data.type;
+            var html = '';
+
+            if (type == 'updateusername') {
+                var currentname = $message.prop('placeholder');
+                var names = message.split('|');
+                var oldname = names[0];
+                var newname = names[1];
+                if ((oldname == currentname) && (oldname != newname)) {
+                    updateUserName(newname); // change the correct user's name
+                }
+                if (oldname != newname) {
+                    html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
+                }
+            }
+            else if (type == 'rollresult') {
+                html = '<div class="well highlight"><strong>' + user + '</strong>: ' + message + '</div>';
+                updateResult(html);
+                html = '<div class="well"><strong>' + user + '</strong> ( ' + message + ' )</div>';
+            }
+            else { // should be regular chat message
+                html = '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
+            }
+            updateChat(html);
+        });
+
+        // socket send
+
+        $('#messageForm').submit(function(e) {
+            var $message = $('#message');
+            e.preventDefault();
+            socket.emit('send message', $message.val());
+            $message.val('');
+        });
+
+        // whiteboard area, new p5 instance
+
+        const sketchpad = ( sketch ) => {
+
+            let color = '#000';
+            let stroke = 2;
+            let buttonlist = ['erase-btn', 'black-btn','red-btn','green-btn','blue-btn','brown-btn'];
+            let pg; // graphics buffer
+
+            sketch.setup = function() {
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.offsetWidth;
+                var height = canvasDiv.offsetHeight;
+                sketch.createCanvas(width, height);
+                pg = sketch.createGraphics(width, height); // graphics buffer
+                sketch.background(220, 217, 205);
+                pg.background(220, 217, 205); // graphics buffer
+            };
+
+            $('#clear-btn, #erase-btn, #black-btn, #red-btn, #green-btn, #blue-btn, #brown-btn').each(function() {
+                $(this).click(function(e) {
+                    e.preventDefault();
+
+                    if ($(this).prop('id') == 'clear-btn') {
+                        if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
+                            sketch.background("rgb(220, 217, 205)");
+                            stroke = 2;
+                            var data = {
+                                'background': 'rgb(220, 217, 205)'
+                            };
+                            socket.emit('sketchpad', {'action': 'clear', 'params': data});
+                        }
+                    }
+                    else if ($(this).prop('id') == 'erase-btn') {
+                        color = "rgb(220, 217, 205)";
+                        stroke = 10;
+                    }
+                    else if ($(this).prop('id') == 'black-btn') {
+                        color = "rgb(0, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'red-btn') {
+                        color = "rgb(204, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'green-btn') {
+                        color = "rgb(0, 153, 51)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'blue-btn') {
+                        color = "rgb(0, 102, 255)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'brown-btn') {
+                        color = "rgb(134, 89, 45)";
+                        stroke = 2;
+                    }
+                    highlightColor($(this).prop('id'), buttonlist);
+
+                    function highlightColor(selected, list) {
+                        for (var c in list) {
+                            if (list[c] == selected) {
+                                $('#' + list[c]).addClass('selected');
+                            }
+                            else {
+                                $('#' + list[c]).removeClass('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            sketch.mouseDragged = function() {
+                sketch.noStroke();
+                sketch.stroke(color);
+                pg.stroke(color); // graphics buffer
+                sketch.strokeWeight(stroke);
+                pg.strokeWeight(stroke); // graphics buffer
+                sketch.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY);
+                pg.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY); // graphics buffer
+
+                var data = {
+                    'mouseX': sketch.mouseX,
+                    'mouseY': sketch.mouseY,
+                    'pmouseX': sketch.pmouseX,
+                    'pmouseY': sketch.pmouseY,
+                    'color': color,
+                    'stroke': stroke
+                };
+                socket.emit('sketchpad', {'action': 'draw line', 'params': data});
+            };
+
+            socket.on('sketchpad', function(data) {
+                var action = data.action;
+                var params = data.params;
+
+                if (action == 'draw line') {
+                    sketch.noStroke();
+                    sketch.stroke(params.color);
+                    pg.stroke(params.color); // graphics buffer
+                    sketch.strokeWeight(params.stroke);
+                    pg.strokeWeight(params.stroke); // graphics buffer
+                    sketch.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY);
+                    pg.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY); // graphics buffer
+                }
+                else if (action == 'clear') {
+                    sketch.background(params.background);
+                    pg.background(params.background); // graphics buffer
+                }
+            });
+
+            sketch.windowResized = function () {
+                //sketch.centerCanvas();
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.clientWidth;
+                var height = canvasDiv.clientHeight;
+                sketch.resizeCanvas(width, height);
+                sketch.image(pg, 0, 0); // redraw onto canvas from the buffer
+            };
+        };
+        let myp5 = new p5(sketchpad, 'whiteboard');
+
+        // other local UI related
+
+        function updateUserName(user) {
+            $('#message').prop('placeholder', user);
+        }
+
+        function updateUserList(list) {
+            var html = '';
+            for (i = 0; i < list.length; i++) {
+                html += '<div class="userlist">';
+                if (list[i] == $('#message').prop('placeholder')) {
+                     html += '<em>' + list[i] + '</em>';
+                }
+                else {
+                    html += list[i];
+                }
+                html += '</div>';
+            }
+            $('#users').html(html);
+
+            html = '(' + list.length + ' user';
+            if (list.length > 1) {
+                html += 's';
+            }
+            html += ')';
+            $('#totalusers').html(html);
+        }
+
+        function updateResult(html) {
+            if (html) {
+                $('#resultArea').html(html);
+            }
+        }
+
+        function updateChat(html) {
+            if (html) {
+                var $chat = $('#chat');
+                $chat.append(html);
+                $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+    </script>
+</body>
+</html>
