@@ -1,8 +1,8 @@
 # tRPG Playaid Server
 server-client interface used for playing tRPG without account registrations
 
-main modules used: node.js, socket.io, express, path, fs
-main JS libraries used: Bootstrap, JQuery
+main NodeJS modules used: socket.io, express, path, fs
+main JS libraries used: Bootstrap, JQuery, P5
 
 # Demo
 https://trpgplayaids-demo.herokuapp.com/
