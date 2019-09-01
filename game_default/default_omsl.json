@@ -1,0 +1,131 @@
+{
+	"omsl": {
+		"roles": {
+            "mundane": {
+                "name": null,
+                "pronoun": null,
+                "notes": null,
+                "problem": null,
+                "activities": [
+                    {
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					}
+                ]
+            },
+			"supernatural": {
+                "name": null,
+                "pronoun": null,
+                "notes": null,
+                "problem": null,
+				"supernaturaltype": null,
+                "activities": [
+                    {
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					}
+                ]
+			}
+        },
+        "shared": {
+            "relationship": null,
+            "activities": [
+                {
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					},
+					{
+						"time": null,
+						"activity": null
+					}
+            ]
+        },
+        "ourday": {
+            "activities": [
+                {
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+                {
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+                {
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				},
+				{
+					"time": null,
+					"activity": null
+				}
+            ],
+            "indicesofactivitygonewrong": []
+        },
+        "timerstate": null,
+        "scenelength": null
+	}
+}
