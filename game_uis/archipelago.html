@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>tRPG Playaid : Archipelago</title>
+    <meta name="description" content="playaids for Archipelago built with Javascript">
+    <meta name="author" content="brushmen">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- custom CSS -->
+    <style>
+    body {
+        background-color: rgb(220, 217, 205);
+    }
+
+    div.tooltip-inner {
+        max-width: 700px;
+        max-height: 550px;
+        color: black;
+        font-size: 2.2em;
+    }
+    .tooltip.show {
+        opacity: 1!important;
+    }
+
+    .fate, .resolution {
+        text-align: center;
+    }
+    button[name=fatebutton], .fate {
+        background-color: #bee1f3;
+    }
+    button[name=resolutionbutton], .resolution {
+        background-color: #fbeeb3;
+    }
+    button[name=fatebutton], button[name=resolutionbutton] {
+        display: inline;
+        font-size: 1em;
+        padding: 5px;
+    }
+
+    .top-left-corner {
+        position: relative;
+    }
+
+    #c1, #c2, #c3, #c4 {
+        position: relative;
+        height: 100vh;
+    }
+
+    #c1 {
+        border: 1px solid red;
+    }
+
+    #c2 {
+        border: 1px solid green;
+    }
+
+    #c3 {
+        border: 1px solid blue;
+    }
+
+    .portrait img {
+        width: 100%;
+    }
+
+    input[name=player], input[name=character],
+    input[name=ownedelement], textarea[name=notes],
+    textarea[name=destiny] {
+        width: 100%;
+    }
+    input[name=character] {
+        font-weight: bolder;
+    }
+    input[name=ownedelement] {
+        font-style: italic;
+    }
+    input[name=player], textarea[name=notes] {
+        font-size: 0.8em;
+    }
+    textarea[name=notes] {
+        line-height: 1.2em;
+        min-height: 75px;
+        resize: vertical;
+    }
+
+    textarea[name=destiny] {
+        min-height: 270px;
+        line-height: 1em;
+    }
+
+    #infoArea {
+        border: 0px solid black;
+        height: 210px;
+        overflow: auto;
+        font-size: 1em;
+        line-height: 1.3em;
+        padding: 10px;
+        overflow-wrap: break-word;
+        background-color: Gainsboro;
+    }
+
+    #cardArea {
+        text-align: center;
+        height: 150px;
+        width: 100%;
+        overflow: auto;
+    }
+    #card {
+        border: 1px solid black;
+        padding: 0.7em 1em;
+        line-height: 1.2em;
+        font-size: 1em;
+    }
+
+    #chatSection {
+        height: 120px;
+        overflow-y: scroll;
+    }
+
+    #message {
+        height: 1.8em;
+    }
+
+    .bottomLeftClick, .bottomRightClick, .topLeftClick, .topRightClick,
+    .lockClick, .hideClick, .scratchpadClick {
+        position: absolute;
+        cursor: pointer;
+        opacity: 0.5;
+        z-index: 1;
+    }
+    #cardbuttons {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .bottomLeftClick {
+        bottom: 0;
+        left: 5px;
+    }
+
+    .bottomRightClick {
+        bottom: 0;
+        right: 5px;
+    }
+
+    .topRightClick {
+        top: 0;
+        right: 5px;
+    }
+
+    .lockClick {
+        top: 0;
+        right: 30px;
+    }
+
+    .hideClick {
+        top: 0;
+        right: 5px;
+    }
+
+    .scratchpadClick {
+        top: 0;
+        right: 30px;
+    }
+
+    #cardbuttons {
+        bottom: 10px;
+        right: 0;
+    }
+
+    #loadbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 600px;
+        overflow: auto;
+        z-index: 3;
+    }
+    #loadboxjson {
+        width: 600px;
+        height: 300px;
+    }
+
+    #scratchpadArea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 3;
+    }
+    #scratchpadAreaHeader {
+        cursor: grab;
+        padding: 0 30px;
+        height: 1.5em;
+        font-size: 1em;
+    }
+
+    #whiteboard {
+        width: 700px;
+        height: 500px;
+        margin-top: -20px;
+        margin-left: -10px;
+        background-color: rgb(220, 217, 205);
+    }
+
+    .selected {
+        pointer-events: none;
+        border: 2px solid orange;
+        color: orange;
+    }
+
+    #strokeOptions {
+        padding-top: -20px;
+        margin-top: -20px;
+    }
+    #strokeOptions button {
+        background-color: rgb(220, 217, 205);
+    }
+
+    #black-btn {
+        background-color: rgb(0,0,0) !important;
+    }
+    #red-btn {
+        background-color: rgb(204, 0, 0) !important;
+    }
+    #green-btn {
+        background-color: rgb(0, 153, 51) !important;
+    }
+    #blue-btn {
+        background-color: rgb(0, 102, 255) !important;
+    }
+    #brown-btn {
+        background-color: rgb(134, 89, 45) !important;
+    }
+    </style>
+</head>
+<body>
+    <!-- hovering panels -->
+    <div id="loadbox" style="display: none" class="card">
+        <h5 class="card-header">load JSON content</h5>
+        <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
+        <textarea id="loadboxjson" placeholder="JSON only"></textarea>
+        <button type="submit" class="btn btn-sm btn-warning">send</button>
+    </div>
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
+         hiding it can only make it invisible, not by removing it from DOM -->
+    <div id="scratchpadArea" style="visibility: hidden" class="card">
+        <h5 id="scratchpadAreaHeader" class="card-header">scratchpad (nothing here is saved!)</h5>
+        <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1 p-0">
+                    <div id="strokeOptions" class="btn-group-vertical">
+                        <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
+                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🖾</button>
+                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">🞅</button>
+                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">🞅</button>
+                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">🞅</button>
+                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">🞅</button>
+                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">🞅</button>
+                    </div>
+                </div>
+                <div id="whiteboard" class="col-11 p-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- main content -->
+    <div class="container-fluid">
+        <div id="playArea">
+            <div class="row full-height">
+                <div class="col justify-content-center align-self-center">
+                    <div class="row">
+
+                        <div id="c1" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
+                            <div id="p1Area" class="row">
+
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile1" name="profile" class="form-group">
+                                                <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                                <input type="text" id="ownedelement1" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
+
+                                                <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
+                                <div class="col-12">
+                                    <textarea id="destiny1" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="c2" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
+                            <div id="p2Area" class="row">
+
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile2" name="profile" class="form-group">
+                                                <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                                <input type="text" id="ownedelement2" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
+
+                                                <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
+                                <div class="col-12">
+                                    <textarea id="destiny2" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="c3" class="col-3">
+                            <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
+                            <div id="cardbuttons" class="container">
+                                <div class="btn-group" style="width: 100%">
+                                    <button id="resolutionbutton" name="resolutionbutton" class="btn btn-sm btn-outline-dark resolution" style="width: 100%" title="draw from resolution deck">resolution</button>
+                                    <button id="fatebutton" name="fatebutton" class="btn btn-sm btn-outline-dark fate" style="width: 100%" title="draw from fate deck">fate</button>
+                                </div>
+                            </div>
+
+                            <div id="p3Area" class="row">
+
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4 portrait p-0">
+                                            <img src="" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                        </div>
+                                        <div class="col-8 p-0">
+                                            <div id="profile3" name="profile" class="form-group">
+                                                <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                                <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                                <input type="text" id="ownedelement3" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
+
+                                                <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
+                                <div class="col-12">
+                                    <textarea id="destiny3" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="c4" class="col-3">
+                            <div class="scratchpadClick" onclick="toggleScratchpad();">🗒</div>
+                            <div id="commonArea">
+                                <div class="row text-center">
+                                    <select id="infolist" name="infolist" class="form-control form-control-sm">
+                                        <option value="" disabled="disabled" selected="selected">Archipelago</option>
+                                        <option value="onyourturn">On your turn...</option>
+                                        <option value="onanyonesturn">On anyone's turn...</option>
+                                    </select>
+                                </div>
+                                <div id="infoArea" class="row card-body">
+                                    <p>Players take turns directing and playing out a part of their character's story, leading them towards their selected point of destiny, while other players interact with and influence that story.</p>
+                                    <p><a href="https://norwegianstyle.wordpress.com/2012/09/20/archipelago-iii/" target="_new"><i>Archipelago III</i></a> is a game by Matthijs Holter.</p>
+                                </div>
+
+                                <div class="row justify-content-center">
+                                    <div id="cardArea" data-toggle="tooltip" title="">
+                                        <div id="card"></div>
+                                    </div>
+                                </div>
+
+                                <div id="chatArea">
+                                    <div class="row">
+                                        <form id="messageForm" class="container">
+                                            <div id="chatSection">
+                                                <!-- the chatSection has a set height
+                                                    but the chat obj has a dynamically
+                                                    changing height, otherwise scroll-to-bottom
+                                                    won't work -->
+                                                <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control width100" id="message" placeholder="chat" />
+                                                <span class="input-group-btn">
+                                                    <input type="submit" class="btn btn-info btn-sm" value="send" />
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap template script includes -->
+    <!-- <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <!-- Javascript code -->
+    <script>
+        var infotext = {
+            'onyourturn':
+                "<p>You MUST...</p><ul><li>Set the stage: give initial directions to the other players</li><li>Portray your character</li><li>Finish scene when ready</li></ul></p><p>You <i>CAN</i>...<ul><li>draw fate (once per session; interpreted by another player)</li></ul>",
+            "onanyonesturn":
+                '<p>...including your own, you <i>CAN</i>...</p><ul><li>Create or play a secondary character</li><li>Describe events and the environment</li><li>Say "Try a different way"</li><li>Say "Help"</li><li>Say "Harder"</li><li>Say "Describe that in detail"</li><li>Say "That might not be quite so easy" (once per turn; draw resolution, interpreted by another player)</li><li>Say "I would like an interlude after that" (only once per turn, keep it short)</li><li>Veto narration related to elements you own</li></ul>'
+        };
+
+        var portraits = [];
+
+        var room = 'test';
+        var socket = io('/archipelago');
+
+        // prep element effects
+        dragElement(document.getElementById("scratchpadArea"));
+
+        // socket receive
+
+        socket.on('connect', function() {
+            // get room name from URL ending, make sure it's not malicious text
+            var pathparts = window.location.href.split('?');
+            pathparts[1] = sanitize(pathparts[1], 'alphanumeric');
+            if (pathparts[1]) {
+                room = pathparts[1];
+            }
+            // console.log('trying to join room ' + room);
+            socket.emit("join room", room);
+        });
+
+        socket.on('username', function(data) {
+            updateUserName(data);
+        });
+
+        socket.on('user list', function(data) {
+            updateUserList(data);
+        });
+
+        socket.on('new message', function(data) {
+            var $message = $('#message');
+            var message = data.message;
+            var user = data.user;
+            var type = data.type;
+            var html = '';
+
+            if (type == 'updateusername') {
+                var currentname = $message.prop('placeholder');
+                var names = message.split('|');
+                var oldname = names[0];
+                var newname = names[1];
+                if ((oldname == currentname) && (oldname != newname)) {
+                    updateUserName(newname); // change the correct user's name
+                }
+                if (oldname != newname) {
+                    html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
+                }
+            }
+            else if(type == 'newgame') {
+                html = '<div class="well text-muted">' + user + ' started a new game</div>';
+            }
+            else if (type == 'savegame') {
+                var filename = 'archipelago_' + room + '_' + getTodayString() + '.json';
+                // generate the file to download locally
+                download(filename, message);
+                html = '<div class="well text-muted">' + user + ' is saving game data</div>';
+            }
+            else if (type == 'loadgame') {
+                $('#loadbox').show();
+            }
+            else if (type == 'clearcard') {
+                updateCard('');
+                socket.emit('save current');
+            }
+            else if (type == 'rollresult') {
+                html = '<div class="well"><strong>' + user + '</strong> ( ' + message + ' )</div>';
+            }
+            else { // should be regular chat message
+                html = '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
+            }
+            updateChat(html);
+        });
+
+        socket.on('update portrait', function(data) {
+            updatePortrait(data.index, data.url);
+        });
+
+        socket.on('update card', function(data) {
+            var card = data.card;
+            var type = data.type;
+            var remaining = data.remaining;
+
+            $('#' + type + 'button').prop('title', remaining + ' left before reshuffling');
+
+            var html = '<div id="card" class="' + type + '">' + card + '</div>';
+            updateCard(html);
+            socket.emit('save current');
+        });
+
+        socket.on('update field', function(data) {
+            var field = data.field;
+            var number = data.number;
+            var value = data.value;
+
+            $('#' + field + number).val(value);
+
+            socket.emit('save current');
+        });
+
+        socket.on('update client', function(data) {
+            var users = data.users;
+            var info = data.info;
+            var p = info['profiles'];
+
+            updateUserList(users);
+
+            for (var i = 0; i < p.length; i++) {
+
+                updatePortrait(i, p[i]['portrait']);
+
+                $('#player' + (i+1)).val(p[i]['player']);
+                $('#character' + (i+1)).val(p[i]['character']);
+                $('#ownedelement' + (i+1)).val(p[i]['ownedelement']);
+                $('#notes' + (i+1)).val(p[i]['notes']);
+                $('#destiny' + (i+1)).val(p[i]['destiny']);
+
+                if (info['currentcard']) {
+                    var card = info['currentcard'];
+                    var cardtype = info['currentcardtype'];
+                    var html = '<div id="card" class="' + cardtype + '">' + card + '</div>';
+                    updateCard(html);
+                }
+
+                socket.emit('save current');
+            }
+        });
+
+        socket.on('togglelock profile', function(data) {
+            var id = data.profileid;
+            var lockit = data.lockit;
+
+            if (lockit) {
+                lockInputs(id);
+            }
+            else {
+                unlockInputs(id);
+            }
+        });
+
+        socket.on('locked profiles', function(data) {
+            var locked = data;
+            var list = ['p1Area', 'p2Area', 'p3Area'];
+
+            for (var i = 0; i < list.length; i++) {
+                if (locked.indexOf(list[i]) !== -1) {
+                    lockInputs(list[i]);
+                }
+                else {
+                    unlockInputs(list[i]);
+                }
+            }
+        });
+
+        // socket send
+
+        $('#messageForm').submit(function(e) {
+            var $message = $('#message');
+            e.preventDefault();
+            socket.emit('send message', $message.val());
+            $message.val('');
+        });
+
+        $('#loadbox button[type=submit]').click(function(e) {
+            e.preventDefault();
+            // load JSON textfield
+            socket.emit('load json', $('#loadboxjson').val());
+            // hide the loadbox
+            $('#loadbox').hide();
+        });
+
+        $('button[name=resolutionbutton], button[name=fatebutton]').each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+                if ($(this).prop('name') == "resolutionbutton") {
+                    socket.emit('draw card', 'resolution');
+                }
+                else {
+                    socket.emit('draw card', 'fate');
+                }
+            });
+        });
+
+        $('#p1Area input[type=text], #p1Area textarea, #p2Area input[type=text], #p2Area textarea, #p3Area input[type=text], #p3Area textarea').each(function() {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var i = $(this).prop('id');
+                var v = $(this).val();
+                i = i.slice(-1); // last letter of index is the count number
+                i = parseInt(i) - 1;
+                //console.log('field ' + field + ' index ' + i + ' value ' + v);
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+
+        function toggleInputLocks(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                if ($(subElements[i]).prop('disabled')) {
+                    $(subElements[i]).prop('disabled', false);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': false});
+                }
+                else {
+                    $(subElements[i]).prop('disabled', true);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': true});
+                }
+            }
+        }
+
+        // local UI related
+
+        function updateUserName(user) {
+            $('#message').prop('placeholder', user);
+        }
+
+        function updateUserList(list) {
+            $('#message').prop('title', list.length + ' user(s): ' + list.join(', '));
+        }
+
+        function updateChat(html) {
+            if (html) {
+                var $chat = $('#chat');
+                $chat.append(html);
+                $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+        function updateCard(html) {
+            $cardArea = $('#cardArea');
+            $cardArea.html(html);
+
+            if (html) {
+                // force browser to use new image instead of cached image
+                $cardArea.tooltip('dispose');
+                $cardArea.tooltip({
+                    html: true,
+                    placement: 'left',
+                    title: html
+                });
+            }
+            else {
+                $cardArea.tooltip('dispose');
+            }
+        }
+
+        $('#infolist').on('change', function() {
+            // only update locally
+            var $infolist = $('#infolist');
+            var $infoArea = $('#infoArea');
+
+            $infoArea.html(infotext[$infolist.val()]);
+        });
+
+        function updatePortrait(i=0, url) {
+            portraits[i] = url;
+            var $e = $('#portrait' + (i+1));
+            // hovering tooltip should show the image without distorted porportions
+            $e.prop('src', url);
+            // force browser to use new image instead of cached image
+            $e.tooltip('dispose');
+            $e.tooltip({
+                html: true,
+                placement: 'right',
+                title: '<img src="' + url + '" height="500" />'
+            });
+        }
+
+        function portraitURL(number) {
+            var url = prompt("paste in the URL of the image");
+            if (url) {
+                // try to check if image can be loaded
+                var img = new Image();
+                img.src = url;
+                img.onload = function(){
+                    portraits[number] = url;
+                    // send info to server
+                    socket.emit('update portrait', {'index': (number-1), 'url': url});
+                };
+                img.onerror = function(){
+                    alert("image cannot be loaded");
+                }
+            }
+        }
+
+        function lockableInputs(id) {
+            var subElements = $('#' + id).find('input[name=player], input[name=character], input[name=ownedelement], textarea[name=destiny]');
+
+            return subElements;
+        }
+
+        function lockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                $(subElements[i]).prop('disabled', true);
+            }
+        }
+
+        function unlockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                $(subElements[i]).prop('disabled', false);
+            }
+        }
+
+        // whiteboard area, new p5 instance
+
+        const sketchpad = ( sketch ) => {
+
+            let color = '#000';
+            let stroke = 2;
+            let buttonlist = ['erase-btn', 'black-btn','red-btn','green-btn','blue-btn','brown-btn'];
+            let pg; // graphics buffer
+
+            sketch.setup = function() {
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.offsetWidth;
+                var height = canvasDiv.offsetHeight;
+                sketch.createCanvas(width, height);
+                pg = sketch.createGraphics(width, height); // graphics buffer
+                sketch.background(220, 217, 205);
+                pg.background(220, 217, 205); // graphics buffer
+            };
+
+            $('#clear-btn, #erase-btn, #black-btn, #red-btn, #green-btn, #blue-btn, #brown-btn').each(function() {
+                $(this).click(function(e) {
+                    e.preventDefault();
+
+                    if ($(this).prop('id') == 'clear-btn') {
+                        if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
+                            sketch.background("rgb(220, 217, 205)");
+                            stroke = 2;
+                            var data = {
+                                'background': 'rgb(220, 217, 205)'
+                            };
+                            socket.emit('sketchpad', {'action': 'clear', 'params': data});
+                        }
+                    }
+                    else if ($(this).prop('id') == 'erase-btn') {
+                        color = "rgb(220, 217, 205)";
+                        stroke = 10;
+                    }
+                    else if ($(this).prop('id') == 'black-btn') {
+                        color = "rgb(0, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'red-btn') {
+                        color = "rgb(204, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'green-btn') {
+                        color = "rgb(0, 153, 51)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'blue-btn') {
+                        color = "rgb(0, 102, 255)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'brown-btn') {
+                        color = "rgb(134, 89, 45)";
+                        stroke = 2;
+                    }
+                    highlightColor($(this).prop('id'), buttonlist);
+
+                    function highlightColor(selected, list) {
+                        for (var c in list) {
+                            if (list[c] == selected) {
+                                $('#' + list[c]).addClass('selected');
+                            }
+                            else {
+                                $('#' + list[c]).removeClass('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            sketch.mouseDragged = function() {
+                sketch.noStroke();
+                sketch.stroke(color);
+                pg.stroke(color); // graphics buffer
+                sketch.strokeWeight(stroke);
+                pg.strokeWeight(stroke); // graphics buffer
+                sketch.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY);
+                pg.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY); // graphics buffer
+
+                var data = {
+                    'mouseX': sketch.mouseX,
+                    'mouseY': sketch.mouseY,
+                    'pmouseX': sketch.pmouseX,
+                    'pmouseY': sketch.pmouseY,
+                    'color': color,
+                    'stroke': stroke
+                };
+                socket.emit('sketchpad', {'action': 'draw line', 'params': data});
+            };
+
+            socket.on('sketchpad', function(data) {
+                var action = data.action;
+                var params = data.params;
+
+                if (action == 'draw line') {
+                    sketch.noStroke();
+                    sketch.stroke(params.color);
+                    pg.stroke(params.color); // graphics buffer
+                    sketch.strokeWeight(params.stroke);
+                    pg.strokeWeight(params.stroke); // graphics buffer
+                    sketch.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY);
+                    pg.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY); // graphics buffer
+                }
+                else if (action == 'clear') {
+                    sketch.background(params.background);
+                    pg.background(params.background); // graphics buffer
+                }
+            });
+
+            sketch.windowResized = function () {
+                //sketch.centerCanvas();
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.clientWidth;
+                var height = canvasDiv.clientHeight;
+                sketch.resizeCanvas(width, height);
+                sketch.image(pg, 0, 0); // redraw onto canvas from the buffer
+            };
+        };
+        let myp5 = new p5(sketchpad, 'whiteboard');
+
+        function toggleScratchpad() {
+            if ( $('#scratchpadArea').css('visibility') == 'hidden' ) {
+                $('#scratchpadArea').css('visibility','visible');
+            }
+            else {
+                $('#scratchpadArea').css('visibility','hidden');
+            }
+        }
+    </script>
+</body>
+</html>
