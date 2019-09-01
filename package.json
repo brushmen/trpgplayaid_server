@@ -1,0 +1,17 @@
+{
+  "name": "trpgplayaid_server",
+  "version": "1.0.0",
+  "description": "tRPG playaid server",
+  "engines": {
+    "node": "10.3.0"
+  },
+  "scripts": {
+    "start": "node server_trpgplayaids"
+  },
+  "author": "brushmen",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  }
+}
