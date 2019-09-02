@@ -47,7 +47,7 @@
         position: relative;
     }
 
-    #c1, #c2, #c3, #c4 {
+    #c1, #c2, #c3, #c4, #c5, #c6 {
         position: relative;
         height: 100vh;
     }
@@ -64,6 +64,10 @@
         border: 1px solid blue;
     }
 
+    #c4 {
+        border: 1px solid aliceblue;
+    }
+
     .portrait img {
         width: 100%;
     }
@@ -76,21 +80,25 @@
     input[name=character] {
         font-weight: bolder;
     }
-    input[name=ownedelement] {
+    textarea[name=ownedelement] {
         font-style: italic;
+        min-height: 70px;
     }
-    input[name=player], textarea[name=notes] {
+    input[name=player], textarea[name=notes], textarea[name=ownedelement] {
         font-size: 0.8em;
     }
-    textarea[name=notes] {
+    textarea[name=ownedelement], textarea[name=notes] {
         line-height: 1.2em;
-        min-height: 75px;
         resize: vertical;
+    }
+    textarea[name=notes] {
+        min-height: 90px;
     }
 
     textarea[name=destiny] {
-        min-height: 270px;
+        min-height: 300px;
         line-height: 1em;
+        font-size: 1em;
     }
 
     #infoArea {
@@ -133,10 +141,6 @@
         opacity: 0.5;
         z-index: 1;
     }
-    #cardbuttons {
-        position: absolute;
-        z-index: 1;
-    }
 
     .bottomLeftClick {
         bottom: 0;
@@ -168,9 +172,17 @@
         right: 30px;
     }
 
-    #cardbuttons {
-        bottom: 10px;
-        right: 0;
+    #mapClick, #npcClick {
+        padding: 5px 0;
+        cursor: pointer;
+        font-size: 1.5em;
+    }
+    #mapClick {
+        margin-left: -5px;
+    }
+    #npcClick {
+        margin-left: 20px;
+        font-size: 1.5em;
     }
 
     #loadbox {
@@ -186,6 +198,22 @@
         height: 300px;
     }
 
+    #worldviewbox, #npcviewbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        overflow: auto;
+        z-index: 3;
+    }
+    #worldviewboxHeader, #npcviewboxHeader {
+        padding: 0 10px;
+        cursor: move;
+    }
+    #worldviewImage, #npcviewImage {
+        max-height: 470px;
+    }
+
     #scratchpadArea {
         position: absolute;
         top: 0;
@@ -193,7 +221,7 @@
         z-index: 3;
     }
     #scratchpadAreaHeader {
-        cursor: grab;
+        cursor: move;
         padding: 0 30px;
         height: 1.5em;
         font-size: 1em;
@@ -246,6 +274,24 @@
         <textarea id="loadboxjson" placeholder="JSON only"></textarea>
         <button type="submit" class="btn btn-sm btn-warning">send</button>
     </div>
+    <div id="worldviewbox" style="display: none" class="card">
+        <h5 id="worldviewboxHeader" class="card-header">world/landscape/map</h5>
+        <div class="topRightClick" onclick="$('#worldviewbox').hide();">hide</div>
+        <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.rX5fOHl4DGPgssIBadPcdgHaGH%26pid%3DApi&f=1" id="worldviewImage" alt="world view image" title="" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="worldviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('worldviewImage', 'worldviewImageURL');">load image</button>
+        </div>
+    </div>
+    <div id="npcviewbox" style="display: none" class="card">
+        <h5 id="npcviewboxHeader" class="card-header">character/object image</h5>
+        <div class="topRightClick" onclick="$('#npcviewbox').hide();">hide</div>
+        <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.JcKapE5KkPjeZBPQu7HIRgHaGk%26pid%3DApi&f=1" id="npcviewImage" alt="character or object image" title="" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="npcviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('npcviewImage', 'npcviewImageURL');">load image</button>
+        </div>
+    </div>
     <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
          hiding it can only make it invisible, not by removing it from DOM -->
     <div id="scratchpadArea" style="visibility: hidden" class="card">
@@ -276,110 +322,150 @@
                 <div class="col justify-content-center align-self-center">
                     <div class="row">
 
-                        <div id="c1" class="col-3">
+                        <div id="c1" class="col-2">
                             <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                             <div id="p1Area" class="row">
 
                                 <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-4 portrait p-0">
+                                    <div id="profile1" name="profile" class="row form-group">
+
+                                        <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                        <div class="col-5 portrait p-0">
                                             <img src="" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
                                         </div>
-                                        <div class="col-8 p-0">
-                                            <div id="profile1" name="profile" class="form-group">
-                                                <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+                                        <div class="col-7 p-0">
+                                            <textarea id="ownedelement1" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
 
-                                                <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
-
-                                                <input type="text" id="ownedelement1" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
-
-                                                <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
-                                            </div>
+                                            <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
-                                <div class="col-12">
-                                    <textarea id="destiny1" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
+                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
+                                <div class="col-12 p-0">
+                                    <textarea id="destiny1" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
                                 </div>
 
                             </div>
                         </div>
 
-                        <div id="c2" class="col-3">
+                        <div id="c2" class="col-2">
                             <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                             <div id="p2Area" class="row">
 
                                 <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-4 portrait p-0">
+                                    <div id="profile2" name="profile" class="row form-group">
+
+                                        <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                        <div class="col-5 portrait p-0">
                                             <img src="" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
                                         </div>
-                                        <div class="col-8 p-0">
-                                            <div id="profile2" name="profile" class="form-group">
-                                                <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+                                        <div class="col-7 p-0">
+                                            <textarea id="ownedelement2" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
 
-                                                <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
-
-                                                <input type="text" id="ownedelement2" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
-
-                                                <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
-                                            </div>
+                                            <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
-                                <div class="col-12">
-                                    <textarea id="destiny2" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
+                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
+                                <div class="col-12 p-0">
+                                    <textarea id="destiny2" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
                                 </div>
 
                             </div>
                         </div>
 
-                        <div id="c3" class="col-3">
+                        <div id="c3" class="col-2">
                             <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
-                            <div id="cardbuttons" class="container">
-                                <div class="btn-group" style="width: 100%">
+                            <div id="p3Area" class="row">
+
+                                <div class="container-fluid">
+                                    <div id="profile3" name="profile" class="row form-group">
+
+                                        <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                        <div class="col-5 portrait p-0">
+                                            <img src="" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <textarea id="ownedelement3" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
+
+                                            <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
+                                <div class="col-12 p-0">
+                                    <textarea id="destiny3" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="c4" class="col-2">
+                            <div class="lockClick" onclick="toggleInputLocks('p4Area');">🔒</div>
+                            <div class="hideClick" onclick="$('#p4Area').toggle();">👁</div>
+                            <div id="p4Area" class="row">
+
+                                <div class="container-fluid">
+                                    <div id="profile4" name="profile" class="row form-group">
+
+                                        <input type="text" id="player4" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character4" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+
+                                        <div class="col-5 portrait p-0">
+                                            <img src="" id="portrait4" data-toggle="tooltip" alt="image for character 4" onclick="portraitURL(4);" title="" />
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <textarea id="ownedelement4" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
+
+                                            <textarea id="notes4" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
+                                <div class="col-12 p-0">
+                                    <textarea id="destiny4" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="c5" class="col-1 container-fluid">
+
+                            <div id="worldview" class="row" style="margin: 5px 0">
+                                <div class="col col-6 p-0">
+                                    <div id="mapClick" onclick="$('#worldviewbox').toggle();">🗺</div>
+                                </div>
+                                <div class="col col-6 p-0">
+                                    <div id="npcClick" onclick="$('#npcviewbox').toggle();">🖼</div>
+                                </div>
+                            </div>
+
+                            <div id="cardbuttons" class="row p-0">
+                                <div class="btn-group-vertical" style="width: 100%">
                                     <button id="resolutionbutton" name="resolutionbutton" class="btn btn-sm btn-outline-dark resolution" style="width: 100%" title="draw from resolution deck">resolution</button>
                                     <button id="fatebutton" name="fatebutton" class="btn btn-sm btn-outline-dark fate" style="width: 100%" title="draw from fate deck">fate</button>
                                 </div>
                             </div>
-
-                            <div id="p3Area" class="row">
-
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-4 portrait p-0">
-                                            <img src="" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
-                                        </div>
-                                        <div class="col-8 p-0">
-                                            <div id="profile3" name="profile" class="form-group">
-                                                <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
-
-                                                <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
-
-                                                <input type="text" id="ownedelement3" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)" />
-
-                                                <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 align-self-initial text-dark font-weight-bolder text-center">DESTINY</div>
-                                <div class="col-12">
-                                    <textarea id="destiny3" name="destiny" class="form-control form-control-lg destiny" placeholder="destiny point"></textarea>
-                                </div>
-
-                            </div>
                         </div>
 
-                        <div id="c4" class="col-3">
+                        <div id="c6" class="col-3">
                             <div class="scratchpadClick" onclick="toggleScratchpad();">🗒</div>
                             <div id="commonArea">
                                 <div class="row text-center">
@@ -457,6 +543,8 @@
 
         // prep element effects
         dragElement(document.getElementById("scratchpadArea"));
+        dragElement(document.getElementById("worldviewbox"));
+        dragElement(document.getElementById("npcviewbox"));
 
         // socket receive
 
@@ -523,6 +611,10 @@
             updateChat(html);
         });
 
+        socket.on('update image', function(data) {
+            updateImage(data.field, data.url);
+        });
+
         socket.on('update portrait', function(data) {
             updatePortrait(data.index, data.url);
         });
@@ -555,6 +647,12 @@
             var p = info['profiles'];
 
             updateUserList(users);
+            if (info['currentmap']) {
+                updateImage('currentmap', info['currentmap']);
+            }
+            if (info['currentimage']) {
+                updateImage('currentimage', info['currentimage']);
+            }
 
             for (var i = 0; i < p.length; i++) {
 
@@ -632,7 +730,7 @@
             });
         });
 
-        $('#p1Area input[type=text], #p1Area textarea, #p2Area input[type=text], #p2Area textarea, #p3Area input[type=text], #p3Area textarea').each(function() {
+        $('#p1Area input[type=text], #p1Area textarea, #p2Area input[type=text], #p2Area textarea, #p3Area input[type=text], #p3Area textarea, #p4Area input[type=text], #p4Area textarea').each(function() {
             $(this).on('change', function(e) {
                 e.preventDefault();
                 var field = $(this).prop('name');
@@ -656,6 +754,35 @@
                     $(subElements[i]).prop('disabled', true);
                     socket.emit('togglelock profile', {'profileid': id, 'lockit': true});
                 }
+            }
+        }
+
+        function portraitURL(number) {
+            var url = prompt("paste in the URL of the image");
+            if (url) {
+                // try to check if image can be loaded
+                var img = new Image();
+                img.src = url;
+                img.onload = function(){
+                    portraits[number] = url;
+                    // send info to server
+                    socket.emit('update portrait', {'index': (number-1), 'url': url});
+                };
+                img.onerror = function(){
+                    alert("image cannot be loaded");
+                }
+            }
+        }
+
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+
+            if (imgID == 'worldviewImage') {
+                socket.emit('update image', {'field': 'currentmap', 'url': imgURL});
+            }
+            else if (imgID == 'npcviewImage') {
+                socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
             }
         }
 
@@ -703,6 +830,15 @@
             $infoArea.html(infotext[$infolist.val()]);
         });
 
+        function updateImage(field='currentmap', url) {
+            if (field == 'currentmap') {
+                $('#worldviewImage').prop('src', url);
+            }
+            else if (field == 'currentimage') {
+                $('#npcviewImage').prop('src', url);
+            }
+        }
+
         function updatePortrait(i=0, url) {
             portraits[i] = url;
             var $e = $('#portrait' + (i+1));
@@ -717,25 +853,8 @@
             });
         }
 
-        function portraitURL(number) {
-            var url = prompt("paste in the URL of the image");
-            if (url) {
-                // try to check if image can be loaded
-                var img = new Image();
-                img.src = url;
-                img.onload = function(){
-                    portraits[number] = url;
-                    // send info to server
-                    socket.emit('update portrait', {'index': (number-1), 'url': url});
-                };
-                img.onerror = function(){
-                    alert("image cannot be loaded");
-                }
-            }
-        }
-
         function lockableInputs(id) {
-            var subElements = $('#' + id).find('input[name=player], input[name=character], input[name=ownedelement], textarea[name=destiny]');
+            var subElements = $('#' + id).find('input[name=player], input[name=character], textarea[name=ownedelement], textarea[name=destiny]');
 
             return subElements;
         }
