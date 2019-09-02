@@ -96,7 +96,17 @@ module.exports = function(app, socketio, helper) {
             if (!gamedata[room]) {
                 gamedata[room] = {};
             }
+            gamedata[room]['currentmap'] = null;
+            gamedata[room]['currentimage'] = null;
             gamedata[room]['profiles'] = [
+                {
+                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
+                    'player': null,
+                    'character': null,
+                    'ownedelement': null,
+                    'notes': null,
+                    'destiny': null
+                },
                 {
                     'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
                     'player': null,
@@ -250,6 +260,15 @@ module.exports = function(app, socketio, helper) {
             socket.broadcast.to(room).emit('togglelock profile', {'profileid': id, 'lockit': lockit});
         });
 
+        socket.on('update image', function(data) {
+            var room = socket.room;
+            var field = data.field;
+            var url = data.url;
+            gamedata[room][field] = url;
+            // send to everyone else but sender
+            socket.broadcast.to(room).emit('update image', data);
+        });
+
         socket.on('update portrait', function(data) {
             var room = socket.room;
             gamedata[room]['profiles'][data.index]['portrait'] = data.url;
@@ -328,7 +347,9 @@ module.exports = function(app, socketio, helper) {
                 var info = {
                     'profiles': data['profiles'],
                     'currentcard': data['currentcard'],
-                    'currentcardtype': data['currentcardtype']
+                    'currentcardtype': data['currentcardtype'],
+                    'currentmap': data['currentmap'],
+                    'currentimage': data['currentimage']
                 };
 
                 io.to(room).emit('update client', {'users': users[room], 'info': info});
