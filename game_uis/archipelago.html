@@ -18,6 +18,10 @@
         background-color: rgb(220, 217, 205);
     }
 
+    select {
+        background-color: Gainsboro !important;
+    }
+
     div.tooltip-inner {
         max-width: 700px;
         max-height: 550px;
@@ -539,7 +543,8 @@
         var portraits = [];
 
         var room = 'test';
-        var socket = io('/archipelago');
+        var gamehandle = 'archipelago';
+        var socket = io('/' + gamehandle);
 
         // prep element effects
         dragElement(document.getElementById("scratchpadArea"));
@@ -590,7 +595,7 @@
                 html = '<div class="well text-muted">' + user + ' started a new game</div>';
             }
             else if (type == 'savegame') {
-                var filename = 'archipelago_' + room + '_' + getTodayString() + '.json';
+                var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
                 // generate the file to download locally
                 download(filename, message);
                 html = '<div class="well text-muted">' + user + ' is saving game data</div>';
@@ -600,7 +605,7 @@
             }
             else if (type == 'clearcard') {
                 updateCard('');
-                socket.emit('save current');
+                save();
             }
             else if (type == 'rollresult') {
                 html = '<div class="well"><strong>' + user + '</strong> ( ' + message + ' )</div>';
@@ -613,10 +618,12 @@
 
         socket.on('update image', function(data) {
             updateImage(data.field, data.url);
+            save();
         });
 
         socket.on('update portrait', function(data) {
             updatePortrait(data.index, data.url);
+            save();
         });
 
         socket.on('update card', function(data) {
@@ -628,17 +635,15 @@
 
             var html = '<div id="card" class="' + type + '">' + card + '</div>';
             updateCard(html);
-            socket.emit('save current');
+            save();
         });
 
         socket.on('update field', function(data) {
             var field = data.field;
             var number = data.number;
             var value = data.value;
-
             $('#' + field + number).val(value);
-
-            socket.emit('save current');
+            save();
         });
 
         socket.on('update client', function(data) {
@@ -670,8 +675,7 @@
                     var html = '<div id="card" class="' + cardtype + '">' + card + '</div>';
                     updateCard(html);
                 }
-
-                socket.emit('save current');
+                save();
             }
         });
 
@@ -784,6 +788,10 @@
             else if (imgID == 'npcviewImage') {
                 socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
             }
+        }
+
+        function save(type='current') {
+            socket.emit('save ' + type);
         }
 
         // local UI related

@@ -267,7 +267,7 @@
         overflow: auto;
     }
     #entanglementListHeader {
-        cursor: grab;
+        cursor: move;
     }
     #fullEntanglementList {
         height: 500px;
@@ -284,7 +284,7 @@
         width: 600px;
     }
     #playbookMovesListHeader {
-        cursor: grab;
+        cursor: move;
     }
     #fullPlaybookMovesList_text {
         height: 400px;
@@ -1128,7 +1128,8 @@
         var elements = ['earth', 'fire', 'metal', 'water', 'wood'];
 
         var room = 'test';
-        var socket = io('/heartsofwulin');
+        var gamehandle = 'heartsofwulin';
+        var socket = io('/' + gamehandle);
 
         // prep element effects
         dragElement(document.getElementById("entanglementList"));
@@ -1165,6 +1166,10 @@
             updateChat(html);
         });
 
+        function save(type='current') {
+            socket.emit('save ' + type);
+        }
+
         socket.on('new message', function(data) {
             var $message = $('#message');
             var message = data.message;
@@ -1195,7 +1200,7 @@
                 html += '<div class="well text-muted">' + user + ' started a new game</div>';
             }
             else if (type == 'savegame') {
-                var filename = 'how_' + room + '_' + getTodayString() + '.json';
+                var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
                 // generate the file to download locally
                 download(filename, message);
                 html += '<div class="well text-muted">' + user + ' is saving game data</div>';
@@ -1212,6 +1217,7 @@
 
         socket.on('update portrait', function(data) {
             updatePortrait(data.index, data.url);
+            save();
         });
 
         socket.on('update field', function(data) {
@@ -1253,8 +1259,7 @@
                     updateXPButtons(number, value);
                 }
             }
-
-            socket.emit('save current');
+            save();
             //console.log('client update field');
         });
 
@@ -1316,16 +1321,14 @@
                 $('#ge' + (j+1)).val(p[j]['ge']);
                 $('#re' + (j+1)).val(p[j]['re']);
             }
-
-            socket.emit('save current');
+            save();
         });
 
         socket.on('update bonds', function(data) {
-            var index = data.index;
+            var number = data.number;
             var bonds = data.bonds;
-            fillBondsList(index, bonds);
-
-            socket.emit('save current');
+            fillBondsList(number, bonds);
+            save();
         });
 
         socket.on('togglelock profile', function(data) {
@@ -1540,7 +1543,7 @@
             }
         }
 
-        function updateXPButtons(n=0, value=0) {
+        function updateXPButtons(n=1, value=0) {
             value = value < 0 ? 0 : value;
             var html = '+1 XP ' + value;
             $('#markXP' + n).html(html);
