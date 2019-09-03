@@ -105,6 +105,7 @@ module.exports = function(app, socketio, helper) {
                 },
 
                 {
+                    'role': null,
                     'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.EZ4unkciUjvtKmMRl6FsSgHaKe%26pid%3DApi&f=1',
                     'player': null,
                     'character': null,
@@ -352,7 +353,7 @@ module.exports = function(app, socketio, helper) {
             }
 
             gamedata[room]['profiles'][index] = p;
-            //io.to(room).emit('update bonds', {'index': index, 'bonds': p['bonds']});
+            //io.to(room).emit('update bonds', {'number': (index+1), 'bonds': p['bonds']});
             updateClients(room); // forces client-side to refresh
         });
 
