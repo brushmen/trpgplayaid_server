@@ -11,6 +11,7 @@
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
 
     <!-- custom CSS -->
     <style>
@@ -20,14 +21,6 @@
 
     select {
         background-color: Gainsboro !important;
-    }
-
-    div.tooltip-inner {
-        max-width: 600px;
-        max-height: 600px;
-    }
-    .tooltip.show {
-        opacity: 1!important;
     }
 
     .footnote {
@@ -87,10 +80,6 @@
         font-size: 0.8em;
     }
 
-    .portrait img {
-        width: 100%;
-    }
-
     input[name=player], input[name=character],
     input[name=faction], textarea[name=notes] {
         width: 100%;
@@ -121,7 +110,7 @@
       margin: 0 10px;
     }
     .elements input[type=text] {
-        width: 40px;
+        width: 2.1em;
         height: 1.7em;
         margin-left: 5px;
     }
@@ -169,11 +158,6 @@
         color: BurlyWood !important;
     }
 
-    .locked {
-        pointer-events: none;
-        opacity: 0.5;
-    }
-
     [name=bondslist] {
         margin: 10px;
         background-color: gainsboro;
@@ -206,38 +190,12 @@
         background-color: mistyrose;
     }
 
-    .bottomLeftClick, .bottomRightClick, .topLeftClick, .topRightClick,
-    .lockClick, .hideClick, .randomClick, .entanglementlistClick, .movelistClick
+    .randomClick, .entanglementlistClick, .movelistClick
      {
         position: absolute;
         cursor: pointer;
         opacity: 0.5;
         z-index: 1;
-    }
-
-    .bottomLeftClick {
-        bottom: 0px;
-        left: 8px;
-    }
-
-    .bottomRightClick {
-        bottom: 0;
-        right: 0;
-    }
-
-    .topRightClick {
-        top: 0;
-        right: 5px;
-    }
-
-    .lockClick {
-        top: 0;
-        right: 60px;
-    }
-
-    .hideClick {
-        top: 0;
-        right: 30px;
     }
 
     .randomClick {
@@ -289,19 +247,6 @@
     #fullPlaybookMovesList_text {
         height: 400px;
         overflow: auto;
-    }
-
-    #loadbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 600px;
-        overflow: auto;
-        z-index: 3;
-    }
-    #loadboxjson {
-        width: 600px;
-        height: 300px;
     }
     </style>
 </head>
@@ -386,7 +331,7 @@
                                                 <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
 
                                                 <div class="row-fluid">
-                                                    <div id="random_cname1" name="randomclick" class="randomClick" onclick="randomName('character',1);">🎲</div>
+                                                    <div id="random_cname1" name="randomclick" class="randomClick" onclick="randomName('character',1);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                                     <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
                                                 </div>
 
@@ -400,7 +345,7 @@
                                 </div>
 
                                 <div id="elements1" class="container-fluid elements">
-                                    <div id="random_elements1" name="randomclick" class="randomClick" onclick="randomElements(1);">🎲</div>
+                                    <div id="random_elements1" name="randomclick" class="randomClick" onclick="randomElements(1);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                     <div id="earthGroup1" class="input-group elementGroup">
                                         <div class="form-inline">
                                             <input type="radio" name="style1" class="form-check-input position-static" value="earth" />
@@ -459,11 +404,11 @@
                                 <div id="entanglements1" class="entanglements">
                                     <div class="container-fluid p-0">
                                         <div class="row-fluid">
-                                            <div id="random_ge1" name="randomclick" class="randomClick" onclick="randomEntanglement('g',1);">🎲</div>
+                                            <div id="random_ge1" name="randomclick" class="randomClick" onclick="randomEntanglement('g',1);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="ge1" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
                                         </div>
                                         <div class="row-fluid">
-                                            <div id="random_re1" name="randomclick" class="randomClick" onclick="randomEntanglement('r',1);">🎲</div>
+                                            <div id="random_re1" name="randomclick" class="randomClick" onclick="randomEntanglement('r',1);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="re1" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
                                         </div>
                                     </div>
@@ -513,7 +458,7 @@
                                                 <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
 
                                                 <div class="row-fluid">
-                                                    <div id="random_cname2" name="randomclick" class="randomClick" onclick="randomName('character',2);">🎲</div>
+                                                    <div id="random_cname2" name="randomclick" class="randomClick" onclick="randomName('character',2);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                                     <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
                                                 </div>
 
@@ -527,7 +472,7 @@
                                 </div>
 
                                 <div id="elements2" class="container-fluid elements">
-                                    <div id="random_elements2" name="randomclick" class="randomClick" onclick="randomElements(2);">🎲</div>
+                                    <div id="random_elements2" name="randomclick" class="randomClick" onclick="randomElements(2);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                     <div id="earthGroup2" class="input-group elementGroup">
                                         <div class="form-inline">
                                             <input type="radio" name="style2" class="form-check-input position-static" value="earth" />
@@ -585,11 +530,11 @@
                                 <div id="entanglements2" class="entanglements">
                                     <div class="container-fluid p-0">
                                         <div class="row-fluid">
-                                            <div id="random_ge2" name="randomclick" class="randomClick" onclick="randomEntanglement('g',2);">🎲</div>
+                                            <div id="random_ge2" name="randomclick" class="randomClick" onclick="randomEntanglement('g',2);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="ge2" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
                                         </div>
                                         <div class="row-fluid">
-                                            <div id="random_re2" name="randomclick" class="randomClick" onclick="randomEntanglement('r',2);">🎲</div>
+                                            <div id="random_re2" name="randomclick" class="randomClick" onclick="randomEntanglement('r',2);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="re2" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
                                         </div>
                                     </div>
@@ -639,7 +584,7 @@
                                                 <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
 
                                                 <div class="row-fluid">
-                                                    <div id="random_cname3" name="randomclick" class="randomClick" onclick="randomName('character',3);">🎲</div>
+                                                    <div id="random_cname3" name="randomclick" class="randomClick" onclick="randomName('character',3);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                                     <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
                                                 </div>
 
@@ -653,7 +598,7 @@
                                 </div>
 
                                 <div id="elements3" class="container-fluid elements">
-                                    <div id="random_elements3" name="randomclick" class="randomClick" onclick="randomElements(3);">🎲</div>
+                                    <div id="random_elements3" name="randomclick" class="randomClick" onclick="randomElements(3);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                     <div id="earthGroup3" class="input-group elementGroup">
                                         <div class="form-inline">
                                             <input type="radio" name="style3" class="form-check-input position-static" value="earth" />
@@ -712,11 +657,11 @@
                                 <div id="entanglements3" class="entanglements">
                                     <div class="container-fluid p-0">
                                         <div class="row-fluid">
-                                            <div id="random_ge3" name="randomclick" class="randomClick" onclick="randomEntanglement('g',3);">🎲</div>
+                                            <div id="random_ge3" name="randomclick" class="randomClick" onclick="randomEntanglement('g',3);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="ge3" name="ge" class="form-control form-control-md" placeholder="General Entanglement"></textarea>
                                         </div>
                                         <div class="row-fluid">
-                                            <div id="random_re3" name="randomclick" class="randomClick" onclick="randomEntanglement('r',3);">🎲</div>
+                                            <div id="random_re3" name="randomclick" class="randomClick" onclick="randomEntanglement('r',3);"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/022-dice.png" class="icon-16" alt="dice icon"></div>
                                             <textarea id="re3" name="re" class="form-control form-control-md" placeholder="Romantic Entanglement"></textarea>
                                         </div>
                                     </div>
@@ -726,7 +671,7 @@
 
                         <div id="c4" class="col-3">
                             <div class="entanglementlistClick" onclick="toggleEntanglementList();">♺</div>
-                            <div class="movelistClick" onclick="togglePlaybookMovesList();">🕮</div>
+                            <div class="movelistClick" onclick="togglePlaybookMovesList();">🗒</div>
                             <div id="commonArea">
                                 <div class="row text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">
@@ -864,7 +809,7 @@
                 "Aware<ul><li>What is everyone overlooking?</li><li>Master: Who benefits from their anger?</li><li>Scholar: What ancient legend surrounds this place?</li><li>Traveling Sifu: Why have they come here?</li></ul>Bravo<ul><li>What's the best way out of this place?</li><li>Eldest: Who here know my parent?</li><li>Gallivant: What's the most popular entertainment locale?</li><li>Thief: Who else here has criminal intent?</li></ul>Loyal<ul><li>Who is in charge here?</li><li>Devoted: How can I bring honor to my family?</li><li>Offical: Who here looks the shiftiest?</li><li>Swordsman: Where did they learn their style?</li></ul>Outsider<ul><li>What's wrong with this place?</li><li>Rebel: What's the best way around offical attention?</li><li>Trickster: Who is most nervous about being revealed?</li><li>Wanderer: Who here needs my help?</li></ul>Student<ul><li>How can I impress everyone?</li><li>Apprentice: What isn't my master telling me?</li><li>Monk: What is the history of this temple?</li><li>Sibling: What has my sibling done?</li></ul>Unorthodox<ul><li>What's the best place to hide?</li><li>Accidental: Who seems most upset by my apparent skill?</li><li>Hidden: Who seems most suspcious of me?</li><li>Prodigy: What here shouldn't I break?</li></ul>",
 
             'names':
-                '<table border="1"><tr><th><center>given name*</center></th><th><center>possible interpretations</center></th></tr><tr><td>Ban</td><td>(masculine) <b>class, board, handle</b>; (feminine) <i>petal</i>; (neutral) spot, partner</td></tr><tr><td>Chao</td><td><b>tide</b>; super</td></tr><tr><td>Hai</td><td>sea</td></tr><tr><td>Hao</td><td><b>vast, heroic, weasel bristle</b>; <i>good</i>; bright</td></tr><tr><td>Huan</td><td><b>joyous, fantasy, lustrous, pillar</b>; <i>ring, call, dissolve</i></td></tr><tr><td>Hui</td><td><b>splendor, converge, emblem</b>; <i>favor, intelligent, plants</i>; regret</td></tr><tr><td>Jian</td><td><b>sword, arrow, firm, simple</b>; build</td></tr><tr><td>Jing</td><td><b>chaste tree, scenary, respect</b>; <i>clean, quiet</i></td></tr><tr><td>Lian</td><td><b>connection, refine</b>; <i>lotus, sympathy, longing</i></td></tr><tr><td>Ling</td><td><b>hill, ridge, rise high, command, lead</b>; <i>quick, spirit, bell, feather</i></td></tr><tr><td>Mei</td><td><b>eyebrow, mongoose</b>; <i>sister, beautiful, rose, charm</i>; plum</td></tr><tr><td>Pan</td><td><b>coil, judge</b>; <i>hope</i></td></tr><tr><td>Shan</td><td><b>mountain, flash</b>; <i>coral, kind</i></td></tr><tr><td>Shu</td><td><b>book, vertical, method, number, uncle, tree</b>; <i>relax, virtuous</i>; distant</td></tr><tr><td>Su</td><td><b>lodging, common, solemn, speed</b>; <i>dawn</i> unadorned, narrate, sincere, crisp, millet</td></tr><tr><td>Tao</td><td><b>wave, hide, pottery, cleanse</b>; <i>wave, peach, pottery</i></td></tr><tr><td>Tian</td><td><b>sky, farm</b>; <i>peaceful, sweet</i></td></tr><tr><td>Ting</td><td><b>main hall, thunderclap，sandbank, raised path, listen</b>; <i>graceful, dragonfly, listen</i></td></tr><tr><td>Yue</td><td><b>surpass, treaty, music, bright</b>; <i>pleased, music</i>; moon</td></tr><tr><td>Yun</td><td><b>cloud, transport, permit, evenly</b>; <i>rhyme, common rue, profoundity</i></td></tr><tr><td>Wei</td><td><b>might, defend, great</b>; <i>royal fern, precious, miniature</i></td></tr></table><small>*you can also combine syllables (at most 2 per given name), or even offer other suggestions if you know some Chinese</small><p><b>Surnames</b>: Bai, Chen, Dai, Fan, Gao, Han, Hu, Huangfu, Jin, Kang, Lai, Li, Liu, Lu, Murong, Nangong, Ren, Shao, Song, Su, Sun, Tan, Tang, Tao, Wang, Wei, Wu, Yang, Yuan, Zhao</p>',
+                '<table border="1"><tr><th><center>given name*</center></th><th><center>possible interpretations</center></th></tr><tr><td>Ban</td><td>(masculine) <b>class, board, handle</b>; (feminine) <i>petal</i>; (neutral) spot, partner</td></tr><tr><td>Chao</td><td><b>tide</b>; super</td></tr><tr><td>Hai</td><td>sea</td></tr><tr><td>Hao</td><td><b>vast, heroic, weasel bristle</b>; <i>good</i>; bright</td></tr><tr><td>Huan</td><td><b>joyous, fantasy, lustrous, pillar</b>; <i>ring, call, dissolve</i></td></tr><tr><td>Hui</td><td><b>splendor, converge, emblem</b>; <i>favor, intelligent, plants</i>; regret</td></tr><tr><td>Jian</td><td><b>sword, arrow, firm, simple</b>; build</td></tr><tr><td>Jing</td><td><b>chaste tree, scenary, respect</b>; <i>clean, quiet</i></td></tr><tr><td>Lian</td><td><b>connection, refine</b>; <i>lotus, sympathy, longing</i></td></tr><tr><td>Ling</td><td><b>hill, ridge, rise high, command, lead</b>; <i>quick, spirit, bell, feather</i></td></tr><tr><td>Mei</td><td><b>eyebrow, mongoose</b>; <i>sister, beautiful, rose, charm</i>; plum</td></tr><tr><td>Pan</td><td><b>coil, judge</b>; <i>hope</i></td></tr><tr><td>Shan</td><td><b>mountain, flash</b>; <i>coral, kind</i></td></tr><tr><td>Shu</td><td><b>book, vertical, method, number, uncle, tree</b>; <i>relax, virtuous</i>; distant</td></tr><tr><td>Su</td><td><b>lodging, common, solemn, speed</b>; <i>dawn</i> unadorned, narrate, sincere, crisp, millet</td></tr><tr><td>Tao</td><td><b>wave, hide, pottery, cleanse</b>; <i>wave, peach, pottery</i></td></tr><tr><td>Tian</td><td><b>sky, farm</b>; <i>peaceful, sweet</i></td></tr><tr><td>Ting</td><td><b>main hall, thunderclap，sandbank, raised path, listen</b>; <i>graceful, dragonfly, listen</i></td></tr><tr><td>Yu</td><td><b>fish</b>; feather, jade, rain, spoken word, residual</td></tr><tr><td>Yue</td><td><b>surpass, treaty, music, bright</b>; <i>pleased, music</i>; moon</td></tr><tr><td>Yun</td><td><b>cloud, transport, permit, evenly</b>; <i>rhyme, common rue, profoundity</i></td></tr><tr><td>Wei</td><td><b>might, defend, great</b>; <i>royal fern, precious, miniature</i></td></tr></table><small>*you can also combine syllables (at most 2 per given name), or even offer other suggestions if you know some Chinese</small><p><b>Surnames</b>: Bai, Chen, Dai, Fan, Gao, Han, Hu, Huangfu, Jin, Kang, Lai, Li, Liu, Lu, Murong, Nangong, Ren, Shao, Song, Su, Sun, Tan, Tang, Tao, Wang, Wei, Wu, Yang, Yuan, Zhao</p>',
 
             'statarrays':
                 "Assign one of the following set of numbers to your elements:<ul><li>Array 1: +2, +1, +1, 0, -1</li><li>Array 2: +2, +2, 0, 0, -1</li><li>Array 3: +1, +1, +1, 0, 0</li></ul>",
@@ -1937,7 +1882,7 @@
             html += '<button type="submit" id="addBond' + n + '" name="addBond" class="btn btn-sm btn-info" onclick="addBond(' + n + ')">add</button>';
             html += '</div>';
 
-            $('#bondsButton' + n).html(bondstotal + ' bonds ⮟');
+            $('#bondsButton' + n).html(bondstotal + ' bonds ▼');
 
             $bondslist.html(html);
         }

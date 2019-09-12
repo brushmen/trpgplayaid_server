@@ -11,15 +11,12 @@
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
 
     <!-- custom CSS -->
     <style>
     body {
         background-color: #e5dae2;
-    }
-
-    .full-height {
-        height: 100vh;
     }
 
     .text-shared {
@@ -147,63 +144,12 @@
         display: none;
     }
 
-    .locked {
-        pointer-events: none;
-        opacity: 0.8;
-    }
-
-    .inactive {
-        poiter-events: none;
-        opacity: 0.2;
-    }
-
     #ourday select {
         background-color: #c9daf8 !important;
         overflow: auto;
     }
     option:not(:checked) {
         background-color: white;
-    }
-
-    .bottomLeftClick, .bottomRightClick, .topLeftClick, .topRightClick,
-    .hideClick {
-        position: absolute;
-        cursor: pointer;
-        opacity: 0.5;
-        z-index: 1;
-    }
-
-    .bottomLeftClick {
-        bottom: 0;
-        left: 5px;
-    }
-
-    .bottomRightClick {
-        bottom: 0;
-        right: 5px;
-    }
-
-    .topRightClick {
-        top: 0;
-        right: 5px;
-    }
-
-    .hideClick {
-        top: 0;
-        right: 5px;
-    }
-
-    #loadbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 600px;
-        overflow: auto;
-        z-index: 3;
-    }
-    #loadboxjson {
-        width: 600px;
-        height: 300px;
     }
     </style>
 </head>
@@ -524,7 +470,8 @@
         };
 
         var room = 'test';
-        var socket = io('/omsl');
+        var gamehandle = 'omsl';
+        var socket = io('/' + gamehandle);
 
         // socket receive
 
@@ -538,6 +485,10 @@
             socket.emit("join room", room);
         });
 
+        function save(type='current') {
+            socket.emit('save ' + type);
+        }
+
         socket.on('new message', function(data) {
             var message = data.message;
             var type = data.type;
@@ -546,9 +497,10 @@
 
             if (type == 'newgame') {
                 html = '<div class="well text-muted">' + role + ' started a new game</div>';
+                setTimer('unset');
             }
             else if (type == 'savegame') {
-                var filename = 'omsl_' + room + '_' + getTodayString() + '.json';
+                var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
                 // generate the file to download locally
                 download(filename, message);
                 html = '<div class="well text-muted">' + role + ' is saving game data</div>';
@@ -573,9 +525,15 @@
         });
 
         socket.on('unlock timer', function() {
-            $('#setscenetimer').removeClass('locked');
+            unlockTimer();
             $('#scenetimer').html('scene length');
         });
+        function unlockTimer() {
+            $('#setscenetimer').removeClass('locked');
+        }
+        function lockTimer() {
+            $('#setscenetimer').addClass('locked');
+        }
 
         socket.on('update timer', function(data) {
             var newstate = data.newstate;
@@ -607,8 +565,7 @@
             else if (field == 'time' || field == 'activity') {
                 $('#' + role + ucFirstLetter(field) + number).val(value);
             }
-
-            socket.emit('save current');
+            save();
         });
 
         socket.on('update client', function(data) {
@@ -716,6 +673,12 @@
                     else {
                         $(this).removeClass('goeswrong');
                     }
+                    if (indices && indices.length > 0) {
+                        unlockTimer();
+                    }
+                    else {
+                        lockTimer();
+                    }
                 }
                 else { // default text
                     $(this).html('activity ' + (index + 1));
@@ -725,7 +688,7 @@
                     $(this).removeClass('text-supernatural-dark');
                 }
             });
-            socket.emit('save current');
+            save();
         });
 
         // socket send
@@ -859,6 +822,9 @@
 
         function setTimer(newstate) {
             socket.emit('update timer', newstate);
+            if (newstate == 'unset') {
+                $('#scenetimer').html('00:00');
+            }
         }
 
         function setClock(scenelength) {

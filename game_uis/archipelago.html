@@ -11,6 +11,7 @@
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
 
     <!-- custom CSS -->
     <style>
@@ -20,16 +21,6 @@
 
     select {
         background-color: Gainsboro !important;
-    }
-
-    div.tooltip-inner {
-        max-width: 700px;
-        max-height: 550px;
-        color: black;
-        font-size: 2.2em;
-    }
-    .tooltip.show {
-        opacity: 1!important;
     }
 
     .fate, .resolution {
@@ -138,68 +129,9 @@
         height: 1.8em;
     }
 
-    .bottomLeftClick, .bottomRightClick, .topLeftClick, .topRightClick,
-    .lockClick, .hideClick, .scratchpadClick {
-        position: absolute;
-        cursor: pointer;
-        opacity: 0.5;
-        z-index: 1;
-    }
-
-    .bottomLeftClick {
-        bottom: 0;
-        left: 5px;
-    }
-
-    .bottomRightClick {
-        bottom: 0;
-        right: 5px;
-    }
-
-    .topRightClick {
-        top: 0;
-        right: 5px;
-    }
-
-    .lockClick {
-        top: 0;
-        right: 30px;
-    }
-
-    .hideClick {
-        top: 0;
-        right: 5px;
-    }
-
-    .scratchpadClick {
-        top: 0;
-        right: 30px;
-    }
-
     #mapClick, #npcClick {
-        padding: 5px 0;
         cursor: pointer;
         font-size: 1.5em;
-    }
-    #mapClick {
-        margin-left: -5px;
-    }
-    #npcClick {
-        margin-left: 20px;
-        font-size: 1.5em;
-    }
-
-    #loadbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 600px;
-        overflow: auto;
-        z-index: 3;
-    }
-    #loadboxjson {
-        width: 600px;
-        height: 300px;
     }
 
     #worldviewbox, #npcviewbox {
@@ -218,55 +150,10 @@
         max-height: 470px;
     }
 
-    #scratchpadArea {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 3;
-    }
-    #scratchpadAreaHeader {
-        cursor: move;
-        padding: 0 30px;
-        height: 1.5em;
-        font-size: 1em;
-    }
-
-    #whiteboard {
-        width: 700px;
-        height: 500px;
-        margin-top: -20px;
-        margin-left: -10px;
-        background-color: rgb(220, 217, 205);
-    }
-
     .selected {
         pointer-events: none;
         border: 2px solid orange;
         color: orange;
-    }
-
-    #strokeOptions {
-        padding-top: -20px;
-        margin-top: -20px;
-    }
-    #strokeOptions button {
-        background-color: rgb(220, 217, 205);
-    }
-
-    #black-btn {
-        background-color: rgb(0,0,0) !important;
-    }
-    #red-btn {
-        background-color: rgb(204, 0, 0) !important;
-    }
-    #green-btn {
-        background-color: rgb(0, 153, 51) !important;
-    }
-    #blue-btn {
-        background-color: rgb(0, 102, 255) !important;
-    }
-    #brown-btn {
-        background-color: rgb(134, 89, 45) !important;
     }
     </style>
 </head>
@@ -306,12 +193,12 @@
                 <div class="col-1 p-0">
                     <div id="strokeOptions" class="btn-group-vertical">
                         <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
-                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🖾</button>
-                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">🞅</button>
-                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">🞅</button>
-                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">🞅</button>
-                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">🞅</button>
-                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">🞅</button>
+                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🧼</button>
+                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">✎</button>
+                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">✎</button>
+                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">✎</button>
+                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">✎</button>
+                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">✎</button>
                     </div>
                 </div>
                 <div id="whiteboard" class="col-11 p-0"></div>
@@ -453,11 +340,11 @@
                         <div id="c5" class="col-1 container-fluid">
 
                             <div id="worldview" class="row" style="margin: 5px 0">
-                                <div class="col col-6 p-0">
-                                    <div id="mapClick" onclick="$('#worldviewbox').toggle();">🗺</div>
+                                <div class="col col-6 p-0 text-center">
+                                    <div id="mapClick" onclick="$('#worldviewbox').toggle();" title="share a picture of scene or location with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/203-earth.png" class="icon-sm" alt="globe icon"></div>
                                 </div>
-                                <div class="col col-6 p-0">
-                                    <div id="npcClick" onclick="$('#npcviewbox').toggle();">🖼</div>
+                                <div class="col col-6 p-0 text-center">
+                                    <div id="npcClick" onclick="$('#npcviewbox').toggle();" title="share a picture of NPC or object with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/014-image.png" class="icon-sm" alt="picture icon"></div>
                                 </div>
                             </div>
 
@@ -470,7 +357,7 @@
                         </div>
 
                         <div id="c6" class="col-3">
-                            <div class="scratchpadClick" onclick="toggleScratchpad();">🗒</div>
+                            <div class="scratchpadClick" onclick="toggleScratchpad();">🖍</div>
                             <div id="commonArea">
                                 <div class="row text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">

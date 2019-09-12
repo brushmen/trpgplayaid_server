@@ -4,13 +4,14 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>tRPG Playaid : Generic Chat & Dice Roller</title>
+    <title>tRPG Playaid : Dice Chat</title>
     <meta name="description" content="general-purpose dice roller chat built with Javascript">
     <meta name="author" content="brushmen">
 
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
 
     <!-- custom CSS -->
     <style>
@@ -64,7 +65,47 @@
             font-size: 0.5em;
         }
 
+        .topRightClick {
+            position: absolute;
+            cursor: pointer;
+            opacity: 0.5;
+            z-index: 1;
+            font-size: 14pt;
+        }
+        .topRightClick {
+            top: 0;
+            right: 5px;
+        }
+
+        #imageClick {
+            padding: 5px 0;
+            cursor: pointer;
+            font-size: 1.5em;
+        }
+        #imageClick {
+            color: #666666;
+            font-size: 1.5em;
+        }
+        #imagebox {
+            position: absolute;
+            top: 0;
+            left: 60%;
+            padding: 10px;
+            overflow: auto;
+            z-index: 3;
+        }
+        #imageboxHeader {
+            padding: 0 10px;
+            cursor: move;
+        }
+        #imageboxImage {
+            min-height: 300px;
+            max-height: 470px;
+        }
+
         #whiteboard {
+            width: 600px;
+            height: 500px;
             height: 95%;
             margin-top: -18px;
             margin-left: -10px;
@@ -73,6 +114,10 @@
         .selected {
             pointer-events: none;
             border: 2px solid white;
+        }
+
+        .icon-md {
+            background-color: rgb(220, 217, 205);
         }
 
         #strokeOptions {
@@ -101,6 +146,17 @@
     </style>
 </head>
 <body>
+    <!-- hovering panels -->
+    <div id="imagebox" style="display: none" class="card">
+        <h5 id="imageboxHeader" class="card-header">image view</h5>
+        <div class="topRightClick" onclick="$('#imagebox').hide();">hide</div>
+        <img src="" id="imageboxImage" alt="shared image" title="" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="imageboxURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageboxImage', 'imageboxURL');">load image</button>
+        </div>
+    </div>
+
     <div class="container">
 
         <div class="row">
@@ -110,7 +166,7 @@
                     <form id="messageForm">
                         <div class="input-group">
                             <input type="text" class="form-control form-control-sm" id="message" placeholder="dice commands or chat" />
-                            <input type="submit" class="btn btn-sm btn-info" value="submit" />
+                            <input type="submit" class="btn btn-sm btn-info" value="send" />
                         </div>
                     </form>
                 </div>
@@ -123,7 +179,9 @@
                     <div class="col-md-2 p-0 overflow-auto">
                         <div id="totalusers"></div>
                         <div id="users"></div>
-                        <div class="text-muted" style="font-size: 0.5em; margin-top: 2em">/n alias</div>
+                        <div class="text-muted" style="font-size: 0.5em; margin-top: 2em" title="type '/n newname' to change your alias to 'newname'">/n alias</div>
+
+                        <div id="imageClick" onclick="$('#imagebox').toggle();" title="show an image to the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/014-image.png" class="icon-md" alt="picture icon"></div>
                     </div>
 
                     <div class="col-md-10">
@@ -133,23 +191,23 @@
                                 but the chat obj has a dynamically
                                 changing height, otherwise scroll-to-bottom
                                 won't work -->
-                            <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                            <div class="chat" id="chat"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <span class="text-muted" style="position: absolute; top: 0; right: 2em; font-size: 0.5em; padding: 0; margin: 0; z-index: 2">(scratchpad content is not saved!)</span>
+            <span class="text-muted" style="position: absolute; top: 0; right: 2em; font-size: 0.5em; padding: 0; margin: 0; z-index: 2">(no content is saved)</span>
 
             <div class="col col-md-5 col-sm-1">
                 <div id="strokeOptions" class="btn-group">
                     <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
-                    <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🖾</button>
-                    <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">🞅</button>
-                    <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">🞅</button>
-                    <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">🞅</button>
-                    <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">🞅</button>
-                    <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">🞅</button>
+                    <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🧼</button>
+                    <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">✎</button>
+                    <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">✎</button>
+                    <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">✎</button>
+                    <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">✎</button>
+                    <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">✎</button>
                 </div>
                 <div id="whiteboard" class="row"></div>
             </div>
@@ -171,6 +229,9 @@
     <script>
         var room = 'test';
         var socket = io('/dicechat');
+
+        // prep element effects
+        dragElement(document.getElementById("imagebox"));
 
         // socket receive
 
@@ -393,6 +454,23 @@
                 var $chat = $('#chat');
                 $chat.append(html);
                 $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+        socket.on('update image', function(data) {
+            updateImage(data.field, data.url);
+        });
+        function updateImage(field='currentmap', url) {
+            if (field == 'currentimage') {
+                $('#imageboxImage').prop('src', url);
+            }
+        }
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+
+            if (imgID == 'imageboxImage') {
+                socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
             }
         }
 
