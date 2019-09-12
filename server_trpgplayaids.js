@@ -3,6 +3,9 @@ var app = express();
 var path = require('path');
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+// trying to keep connection alive by sending ping message to server
+io.set('heartbeat timeout', 5000);
+io.set('heartbeat interval', 2000);
 
 var clientpages = {
     'archipelago': 'archipelago.html',
