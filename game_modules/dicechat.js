@@ -46,6 +46,7 @@ module.exports = function(app, socketio, helper) {
 
         // disconnect
         socket.on('disconnect', function(data) {
+            console.log('Player Disconnected Due To Reason :'+data);
             var room = socket.room;
             if (!room) {
                 room = defaultroom; // default room
@@ -111,6 +112,12 @@ module.exports = function(app, socketio, helper) {
         function sendUsers(room) {
             io.to(room).emit('user list', users[room]);
         }
+
+        socket.on('update image', function(data) {
+            var room = socket.room;
+            // send to everyone else but sender
+            socket.broadcast.to(room).emit('update image', data);
+        });
 
     });
 };
