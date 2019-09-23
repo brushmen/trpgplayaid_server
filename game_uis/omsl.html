@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>tRPG Playaid : Our Mundane Supernatural Life</title>
+    <title>Our Mundane Supernatural Life</title>
     <meta name="description" content="playaids for Our Mundane Supernatural Life built with Javascript">
     <meta name="author" content="brushmen">
 
@@ -63,7 +63,6 @@
     }
 
     #c1, #c2, #c3, #c4 {
-        height: 100vh;
         overflow-y: visible;
     }
 
@@ -88,6 +87,9 @@
     input[name=time] {
         min-width: 70px !important;
         max-width: 80px !important;
+    }
+    textarea[name=notes] {
+        min-height: 200px !important;
     }
 
     #sharedArea {
@@ -116,6 +118,7 @@
     #timerArea {
         height: 80px;
         line-height: 50px;
+        margin-bottom: 10px;
     }
     #scenetimer {
         font-size: 2em;
@@ -123,7 +126,7 @@
     }
 
     #infoArea {
-        height: 250px;
+        height: 300px;
         overflow: auto;
         font-size: 1em;
         line-height: 1.3em;
@@ -132,7 +135,7 @@
     }
 
     #chatSection {
-        height: 150px;
+        height: 200px;
         overflow-y: scroll;
     }
 
@@ -185,9 +188,9 @@
 
         <div id="playArea">
             <div class="row full-height">
-                <div class="col my-col justify-content-center align-self-center">
-                    <div class="row my-row">
-                        <div id="c1" class="col-3 my-col character">
+                <div class="col justify-content-center align-self-center">
+                    <div class="row">
+                        <div id="c1" class="col-3 full-height p-0">
                             <div id="mundaneArea" class="row-fluid">
                                 <select id="mundaneProblem" name="problem" class="form-control form-control-sm bg-mundane-light">
                                     <option value="" disabled="disabled" selected="selected">a mundane problem</option>
@@ -247,7 +250,7 @@
 
                         </div>
 
-                        <div id="c2" class="col-3 my-col character">
+                        <div id="c2" class="col-3 full-height p-0">
                             <div id="sharedArea" class="row-fluid">
                                 <select id="relationship" name="relationship" class="form-control form-control-sm bg-shared-light">
                                     <option value="" disabled="disabled" selected="selected">we are...</option>
@@ -312,7 +315,7 @@
                             </div>
                         </div>
 
-                        <div id="c3" class="col-3 my-col character">
+                        <div id="c3" class="col-3 full-height p-0">
                             <div id="supernaturalArea" class="row-fluid">
                                 <select id="supernaturalProblem" name="problem" class="form-control form-control-sm bg-supernatural-light">
                                     <option value="" disabled="disabled" selected="selected">a supernatural problem</option>
@@ -378,9 +381,7 @@
                                 </div>
                             </div>
 
-                            <br>
-
-                            <div class="row-fluid">
+                            <div class="row-fluid" style="margin-top: 5px;">
                                 <button id="mergeSchedules" type="submit" class="btn btn-outline-info btn-sm btn-block">merge our schedules</button>
                             </div>
 
@@ -390,7 +391,7 @@
 
                         </div>
 
-                        <div id="c4" class="col-3 my-col character">
+                        <div id="c4" class="col-3 full-height">
                             <div id="commonArea">
                                 <div class="row" class="text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">

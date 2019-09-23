@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>tRPG Playaid : Hearts of Wulin</title>
+    <title>Hearts of Wulin</title>
     <meta name="description" content="playaids for Hearts of Wulin built with Javascript">
     <meta name="author" content="brushmen">
 
@@ -31,28 +31,14 @@
 
     #c1, #c2, #c3, #c4 {
         position: relative;
-        height: 100vh;
     }
-
-    #playArea {
-        display: block;
-    }
-
-    #c1 {
-        border: 1px solid red;
-    }
-
-    #c2 {
-        border: 1px solid green;
-    }
-
-    #c3 {
-        border: 1px solid blue;
-    }
+    #c1 { border: 1px solid red; }
+    #c2 { border: 1px solid green; }
+    #c3 { border: 1px solid blue; }
 
     #infoArea {
         border: 0px solid black;
-        height: 270px;
+        height: 300px;
         overflow: auto;
         font-size: 1em;
         line-height: 1.3em;
@@ -67,12 +53,8 @@
     }
 
     #chatSection {
-        height: 150px;
+        height: 220px;
         overflow-y: scroll;
-    }
-
-    #message {
-        height: 1.8em;
     }
 
     .profile .row, .profile .row-fluid {
@@ -85,13 +67,17 @@
         width: 100%;
     }
 
+    input[name=player] {
+        text-align: center;
+        color: #cccccc;
+    }
     input[name=character] {
         font-weight: bolder;
     }
     input[name=faction] {
         font-style: italic;
     }
-    input[name=player], textarea[name=notes] {
+    input[name=player], input[name=faction], textarea[name=notes] {
         font-size: 0.7em;
     }
     textarea[name=notes] {
@@ -179,7 +165,7 @@
     textarea[name=ge], textarea[name=re] {
         line-height: 1em;
         font-size: 1em;
-        min-height: 4.7em;
+        min-height: 5em;
     }
     textarea[name=ge] {
         border: 1px solid navy;
@@ -224,9 +210,7 @@
         width: 700px;
         overflow: auto;
     }
-    #entanglementListHeader {
-        cursor: move;
-    }
+
     #fullEntanglementList {
         height: 500px;
         overflow: auto;
@@ -241,9 +225,7 @@
         font-size: 1em;
         width: 600px;
     }
-    #playbookMovesListHeader {
-        cursor: move;
-    }
+
     #fullPlaybookMovesList_text {
         height: 400px;
         overflow: auto;
@@ -254,12 +236,12 @@
 <body>
     <!-- hovering panels -->
     <div id="entanglementList" style="display: none" class="card">
-        <h5 id="entanglementListHeader" class="card-header">Full Entanglement List</h5>
+        <h5 id="entanglementListHeader" class="card-header move">Full Entanglement List</h5>
         <div class="topRightClick" onclick="$('#entanglementList').hide();">hide</div>
         <div class="card-body" id="fullEntanglementList"></div>
     </div>
     <div id="playbookMovesList" style="display: none" class="card">
-        <h5 id="playbookMovesListHeader" class="card-header">Playbook Moves List</h5>
+        <h5 id="playbookMovesListHeader" class="card-header move">Playbook Moves List</h5>
         <div class="topRightClick" onclick="$('#playbookMovesList').hide();">hide</div>
         <div class="card-body" id="fullPlaybookMovesList">
             <select id="fullPlaybookMovesList_select" class="form-control form-control-sm">
@@ -288,7 +270,7 @@
             <div class="row full-height">
                 <div class="col justify-content-center align-self-center">
                     <div class="row">
-                        <div id="c1" class="col-3">
+                        <div id="c1" class="col-3 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                             <div id="p1Area" class="row">
@@ -416,7 +398,7 @@
                             </div>
                         </div>
 
-                        <div id="c2" class="col-3">
+                        <div id="c2" class="col-3 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                             <div id="p2Area" class="row">
@@ -542,7 +524,7 @@
                             </div>
                         </div>
 
-                        <div id="c3" class="col-3">
+                        <div id="c3" class="col-3 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
                             <div id="p3Area" class="row">
@@ -737,12 +719,12 @@
                                                     but the chat obj has a dynamically
                                                     changing height, otherwise scroll-to-bottom
                                                     won't work -->
-                                                <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                                                <div class="chat" id="chat"></div>
                                             </div>
                                             <div class="input-group">
-                                                <input type="text" class="form-control width100" id="message" placeholder="chat" />
+                                                <input type="text" class="form-control form-control-sm width100" id="message" placeholder="chat" />
                                                 <span class="input-group-btn">
-                                                    <input type="submit" class="btn btn-info btn-sm" value="send" />
+                                                    <input type="submit" class="form-control-sm btn btn-info btn-sm" value="send" />
                                                 </span>
                                             </div>
                                         </form>
@@ -1102,12 +1084,12 @@
         });
 
         socket.on('roll result', function(data) {
-            var user = data.user;
+            var character = data.character;
             var e = data.element;
             var result = data.result;
             updateResult(result);
             // add roll info to chat
-            var html = '<div class="well"><strong>' + user + '</strong> rolled with ' + e + ', ' + result + '</div>';
+            var html = '<div class="well">' + character + ' acts ' + e + '-like: ' + result + '</div>';
             updateChat(html);
         });
 
@@ -1130,13 +1112,9 @@
                 html += '<div class="well">(' + message + ')</div>';
             }
             else if (type == "updateusername") {
-                var currentname = $message.prop('placeholder');
                 var names = message.split('|');
                 var oldname = names[0];
                 var newname = names[1];
-                if ((oldname == currentname) && (oldname != newname)) {
-                    updateUserName(newname); // change the correct user's name
-                }
                 if (oldname != newname) {
                     html += '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
                 }
@@ -1401,7 +1379,7 @@
             var v = $('#' + e + n).val();
             v = v ? v : 0;
             var command = 'how' + parseInt(v);
-            socket.emit('roll dice', {'command': command, 'element': e});
+            socket.emit('roll dice', {'index': (n-1), 'command': command, 'element': e});
         }
 
         function updateXP(n=1, v=0) {

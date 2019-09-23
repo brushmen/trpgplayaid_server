@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>tRPG Playaid : Dice Chat</title>
+    <title>Dice Chat</title>
     <meta name="description" content="general-purpose dice roller chat built with Javascript">
     <meta name="author" content="brushmen">
 
@@ -34,6 +34,7 @@
             background-color: rgb(220, 217, 205);
             margin: 2px;
             padding-left: 5px;
+            font-size: 0.8em;
         }
 
         .highlight {
@@ -63,18 +64,6 @@
         #totalusers {
             color: #3f7c93;
             font-size: 0.5em;
-        }
-
-        .topRightClick {
-            position: absolute;
-            cursor: pointer;
-            opacity: 0.5;
-            z-index: 1;
-            font-size: 14pt;
-        }
-        .topRightClick {
-            top: 0;
-            right: 5px;
         }
 
         #imageClick {
@@ -118,30 +107,6 @@
 
         .icon-md {
             background-color: rgb(220, 217, 205);
-        }
-
-        #strokeOptions {
-            padding-top: -20px;
-            margin-top: -20px;
-        }
-        #strokeOptions button {
-            background-color: rgb(220, 217, 205);
-        }
-
-        #black-btn {
-            background-color: rgb(0,0,0) !important;
-        }
-        #red-btn {
-            background-color: rgb(204, 0, 0) !important;
-        }
-        #green-btn {
-            background-color: rgb(0, 153, 51) !important;
-        }
-        #blue-btn {
-            background-color: rgb(0, 102, 255) !important;
-        }
-        #brown-btn {
-            background-color: rgb(134, 89, 45) !important;
         }
     </style>
 </head>
@@ -228,6 +193,7 @@
     <!-- Javascript code -->
     <script>
         var room = 'test';
+        var id = '';
         var socket = io('/dicechat');
 
         // prep element effects
@@ -250,6 +216,10 @@
             updateUserName(data);
         });
 
+        socket.on('userid', function(data) {
+            id = data;
+        });
+
         socket.on('user list', function(data) {
             updateUserList(data);
         });
@@ -262,13 +232,9 @@
             var html = '';
 
             if (type == 'updateusername') {
-                var currentname = $message.prop('placeholder');
                 var names = message.split('|');
                 var oldname = names[0];
                 var newname = names[1];
-                if ((oldname == currentname) && (oldname != newname)) {
-                    updateUserName(newname); // change the correct user's name
-                }
                 if (oldname != newname) {
                     html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
                 }
@@ -424,7 +390,7 @@
         function updateUserList(list) {
             var html = '';
             for (i = 0; i < list.length; i++) {
-                html += '<div class="userlist">';
+                html += '<div class="userlist">';console.log('list i name: ' + list[i] + ' vs. ' + $('#message').prop('placeholder'));
                 if (list[i] == $('#message').prop('placeholder')) {
                      html += '<em>' + list[i] + '</em>';
                 }

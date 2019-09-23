@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>tRPG Playaid : Archipelago</title>
+    <title>Archipelago</title>
     <meta name="description" content="playaids for Archipelago built with Javascript">
     <meta name="author" content="brushmen">
 
@@ -32,40 +32,23 @@
     button[name=resolutionbutton], .resolution {
         background-color: #fbeeb3;
     }
+    button[name=resolutionbutton] {
+        font-size: 0.9em !important;
+    }
     button[name=fatebutton], button[name=resolutionbutton] {
         display: inline;
         font-size: 1em;
         padding: 5px;
     }
 
-    .top-left-corner {
-        position: relative;
-    }
-
     #c1, #c2, #c3, #c4, #c5, #c6 {
         position: relative;
-        height: 100vh;
     }
 
-    #c1 {
-        border: 1px solid red;
-    }
-
-    #c2 {
-        border: 1px solid green;
-    }
-
-    #c3 {
-        border: 1px solid blue;
-    }
-
-    #c4 {
-        border: 1px solid aliceblue;
-    }
-
-    .portrait img {
-        width: 100%;
-    }
+    #c1 { border: 1px solid red; }
+    #c2 { border: 1px solid green; }
+    #c3 { border: 1px solid blue; }
+    #c4 { border: 1px solid aliceblue; }
 
     input[name=player], input[name=character],
     input[name=ownedelement], textarea[name=notes],
@@ -91,14 +74,14 @@
     }
 
     textarea[name=destiny] {
-        min-height: 300px;
+        min-height: 400px;
         line-height: 1em;
         font-size: 1em;
     }
 
     #infoArea {
         border: 0px solid black;
-        height: 210px;
+        height: 250px;
         overflow: auto;
         font-size: 1em;
         line-height: 1.3em;
@@ -109,7 +92,7 @@
 
     #cardArea {
         text-align: center;
-        height: 150px;
+        height: 190px;
         width: 100%;
         overflow: auto;
     }
@@ -121,12 +104,8 @@
     }
 
     #chatSection {
-        height: 120px;
+        height: 150px;
         overflow-y: scroll;
-    }
-
-    #message {
-        height: 1.8em;
     }
 
     #mapClick, #npcClick {
@@ -144,10 +123,9 @@
     }
     #worldviewboxHeader, #npcviewboxHeader {
         padding: 0 10px;
-        cursor: move;
     }
     #worldviewImage, #npcviewImage {
-        max-height: 470px;
+        max-height: 550px;
     }
 
     .selected {
@@ -166,7 +144,7 @@
         <button type="submit" class="btn btn-sm btn-warning">send</button>
     </div>
     <div id="worldviewbox" style="display: none" class="card">
-        <h5 id="worldviewboxHeader" class="card-header">world/landscape/map</h5>
+        <h5 id="worldviewboxHeader" class="card-header move">world/landscape/map</h5>
         <div class="topRightClick" onclick="$('#worldviewbox').hide();">hide</div>
         <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.rX5fOHl4DGPgssIBadPcdgHaGH%26pid%3DApi&f=1" id="worldviewImage" alt="world view image" title="" />
         <div class="container-fluid input-group p-0">
@@ -175,7 +153,7 @@
         </div>
     </div>
     <div id="npcviewbox" style="display: none" class="card">
-        <h5 id="npcviewboxHeader" class="card-header">character/object image</h5>
+        <h5 id="npcviewboxHeader" class="card-header move">character/object image</h5>
         <div class="topRightClick" onclick="$('#npcviewbox').hide();">hide</div>
         <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.JcKapE5KkPjeZBPQu7HIRgHaGk%26pid%3DApi&f=1" id="npcviewImage" alt="character or object image" title="" />
         <div class="container-fluid input-group p-0">
@@ -186,7 +164,7 @@
     <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
          hiding it can only make it invisible, not by removing it from DOM -->
     <div id="scratchpadArea" style="visibility: hidden" class="card">
-        <h5 id="scratchpadAreaHeader" class="card-header">scratchpad (nothing here is saved!)</h5>
+        <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
         <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
         <div class="card-body">
             <div class="row">
@@ -213,7 +191,7 @@
                 <div class="col justify-content-center align-self-center">
                     <div class="row">
 
-                        <div id="c1" class="col-2">
+                        <div id="c1" class="col-2 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                             <div id="p1Area" class="row">
@@ -226,7 +204,7 @@
                                         <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
 
                                         <div class="col-5 portrait p-0">
-                                            <img src="" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
+                                            <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
                                         </div>
                                         <div class="col-7 p-0">
                                             <textarea id="ownedelement1" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
@@ -244,7 +222,7 @@
                             </div>
                         </div>
 
-                        <div id="c2" class="col-2">
+                        <div id="c2" class="col-2 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                             <div id="p2Area" class="row">
@@ -257,7 +235,7 @@
                                         <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
 
                                         <div class="col-5 portrait p-0">
-                                            <img src="" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
+                                            <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
                                         </div>
                                         <div class="col-7 p-0">
                                             <textarea id="ownedelement2" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
@@ -275,7 +253,7 @@
                             </div>
                         </div>
 
-                        <div id="c3" class="col-2">
+                        <div id="c3" class="col-2 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
                             <div id="p3Area" class="row">
@@ -288,7 +266,7 @@
                                         <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
 
                                         <div class="col-5 portrait p-0">
-                                            <img src="" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                            <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
                                         </div>
                                         <div class="col-7 p-0">
                                             <textarea id="ownedelement3" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
@@ -306,7 +284,7 @@
                             </div>
                         </div>
 
-                        <div id="c4" class="col-2">
+                        <div id="c4" class="col-2 full-height">
                             <div class="lockClick" onclick="toggleInputLocks('p4Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p4Area').toggle();">👁</div>
                             <div id="p4Area" class="row">
@@ -319,7 +297,7 @@
                                         <input type="text" id="character4" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
 
                                         <div class="col-5 portrait p-0">
-                                            <img src="" id="portrait4" data-toggle="tooltip" alt="image for character 4" onclick="portraitURL(4);" title="" />
+                                            <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait4" data-toggle="tooltip" alt="image for character 4" onclick="portraitURL(4);" title="" />
                                         </div>
                                         <div class="col-7 p-0">
                                             <textarea id="ownedelement4" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
@@ -337,7 +315,7 @@
                             </div>
                         </div>
 
-                        <div id="c5" class="col-1 container-fluid">
+                        <div id="c5" class="col-1 full-height container-fluid">
 
                             <div id="worldview" class="row" style="margin: 5px 0">
                                 <div class="col col-6 p-0 text-center">
@@ -356,7 +334,7 @@
                             </div>
                         </div>
 
-                        <div id="c6" class="col-3">
+                        <div id="c6" class="col-3 full-height">
                             <div class="scratchpadClick" onclick="toggleScratchpad();">🖍</div>
                             <div id="commonArea">
                                 <div class="row text-center">
@@ -385,12 +363,12 @@
                                                     but the chat obj has a dynamically
                                                     changing height, otherwise scroll-to-bottom
                                                     won't work -->
-                                                <div class="chat" id="chat"><span class="text-muted">/n change-your-alias</span></div>
+                                                <div class="chat" id="chat"></div>
                                             </div>
                                             <div class="input-group">
-                                                <input type="text" class="form-control width100" id="message" placeholder="chat" />
+                                                <input type="text" class="form-control form-control-sm width100" id="message" placeholder="chat" />
                                                 <span class="input-group-btn">
-                                                    <input type="submit" class="btn btn-info btn-sm" value="send" />
+                                                    <input type="submit" class="form-control-sm btn btn-info btn-sm" value="send" />
                                                 </span>
                                             </div>
                                         </form>
@@ -467,19 +445,17 @@
             var html = '';
 
             if (type == 'updateusername') {
-                var currentname = $message.prop('placeholder');
                 var names = message.split('|');
                 var oldname = names[0];
                 var newname = names[1];
-                if ((oldname == currentname) && (oldname != newname)) {
-                    updateUserName(newname); // change the correct user's name
-                }
                 if (oldname != newname) {
                     html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
                 }
             }
             else if(type == 'newgame') {
                 html = '<div class="well text-muted">' + user + ' started a new game</div>';
+                updateCard('');
+                save();
             }
             else if (type == 'savegame') {
                 var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';

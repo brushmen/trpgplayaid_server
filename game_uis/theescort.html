@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>The Escort</title>
+    <meta name="description" content="playaids for The Escort built with Javascript">
+    <meta name="author" content="brushmen">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
+
+    <!-- custom CSS -->
+    <style>
+    body {
+        background-color: rgb(220, 217, 205);
+    }
+
+    select {
+        background-color: Gainsboro !important;
+    }
+
+    #c1, #c2, #c3, #c4, #c5, #c6 {
+        position: relative;
+    }
+
+    #c1 { border: 1px solid red; }
+    #c2 { border: 1px solid green; }
+    #c3 { border: 1px solid blue; }
+    #c4 { border: 1px solid aliceblue; }
+
+    input[name=character] {
+        font-weight: bolder;
+    }
+    input[name=player], textarea[name=notes] {
+        font-size: 0.7em;
+    }
+    input[name=player] {
+        color: #cccccc;
+        text-align: center;
+    }
+    textarea[name=notes] {
+        line-height: 1.1em;
+        min-height: 190px;
+    }
+
+    div[name=dicepool], div[name=xp] {
+        font-weight: bolder;
+    }
+
+    input[type=checkbox] {
+      /* Double-sized Checkboxes */
+      -ms-transform: scale(2); /* IE */
+      -moz-transform: scale(2); /* FF */
+      -webkit-transform: scale(2); /* Safari and Chrome */
+      -o-transform: scale(2); /* Opera */
+      padding: 10px;
+      margin: 0 10px;
+    }
+
+    [name=conditions] {
+        margin: 10px 0;
+    }
+
+    div[name=traits], div[name=keys], div[name=secrets] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+        visibility: hidden;
+        max-width: 500px;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    #diceArea {
+        margin-top: 2em;
+    }
+    #rollDice {
+        margin-top: 5px;
+    }
+
+    .traits, .keys, .secrets {
+        font-size: 0.8em;
+    }
+    .traits div, .keys div, .secrets div {
+        margin-bottom: 1em;
+    }
+
+    .tags {
+        font-style: italic;
+    }
+    .traits div .btn-link {
+        display: inline !important;
+        padding: 0;
+        margin: 0;
+    }
+
+    .keys div .btn-link {
+        display: inline !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: red !important;
+    }
+
+    #infoArea {
+        border: 0px solid black;
+        height: 300px;
+        overflow: auto;
+        font-size: 1em;
+        line-height: 1.3em;
+        padding: 10px;
+        overflow-wrap: break-word;
+        background-color: Gainsboro;
+    }
+
+    #resultArea {
+        padding: 2px 10px;
+        font-size: 2em;
+    }
+
+    #chatSection {
+        height: 220px;
+        overflow-y: scroll;
+    }
+
+    #mapClick, #npcClick {
+        cursor: pointer;
+        font-size: 1.5em;
+    }
+
+    #worldviewbox, #npcviewbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        overflow: auto;
+        z-index: 3;
+    }
+    #worldviewboxHeader, #npcviewboxHeader {
+        padding: 0 10px;
+    }
+    #worldviewImage, #npcviewImage {
+        min-height: 300px;
+        max-height: 470px;
+    }
+
+    .selected {
+        pointer-events: none;
+        border: 2px solid orange;
+        color: orange;
+    }
+    </style>
+</head>
+<body>
+    <!-- hovering panels -->
+    <div id="loadbox" style="display: none" class="card">
+        <h5 class="card-header">load JSON content</h5>
+        <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
+        <textarea id="loadboxjson" placeholder="JSON only"></textarea>
+        <button type="submit" class="btn btn-sm btn-warning">send</button>
+    </div>
+    <div id="worldviewbox" style="display: none" class="card">
+        <h5 id="worldviewboxHeader" class="card-header move">world/landscape/map</h5>
+        <div class="topRightClick" onclick="$('#worldviewbox').hide();">hide</div>
+        <img src="" id="worldviewImage" alt="world view image" title="" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="worldviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('worldviewImage', 'worldviewImageURL');">load image</button>
+        </div>
+    </div>
+    <div id="npcviewbox" style="display: none" class="card">
+        <h5 id="npcviewboxHeader" class="card-header move">character/object image</h5>
+        <div class="topRightClick" onclick="$('#npcviewbox').hide();">hide</div>
+        <img src="" id="npcviewImage" alt="character or object image" title="" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="npcviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('npcviewImage', 'npcviewImageURL');">load image</button>
+        </div>
+    </div>
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
+         hiding it can only make it invisible, not by removing it from DOM -->
+    <div id="scratchpadArea" style="visibility: hidden" class="card">
+        <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
+        <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1 p-0">
+                    <div id="strokeOptions" class="btn-group-vertical">
+                        <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
+                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🧼</button>
+                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">✎</button>
+                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">✎</button>
+                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">✎</button>
+                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">✎</button>
+                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">✎</button>
+                    </div>
+                </div>
+                <div id="whiteboard" class="col-11 p-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- main content -->
+    <div id="playArea" class="container-fluid">
+        <div class="row full-height">
+            <div class="col">
+                <div class="row">
+
+                    <div id="c1" class="col-2 full-height">
+                        <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
+                        <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
+                        <div id="p1Area" class="row">
+                            <select id="role1" name="role" class="form-control form-control-sm">
+                                <option value="" disabled="disabled" selected="selected">I am...</option>
+                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
+                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
+                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
+                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                            </select>
+
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="profile1" name="profile">
+                                        <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-6 portrait p-0">
+                                                    <img src="" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
+                                                </div>
+                                                <div class="col-6 p-0">
+                                                    <div id="attributes1" name="attributes" class="input-group btn-group-vertical">
+                                                        <button id="traitsButton1" name="traitsButton" class="btn btn-sm btn-outline-dark">traits 🎭</button>
+                                                        <button id="keysButton1" name="keysButton" class="btn btn-sm btn-outline-dark">keys 🗝</button>
+                                                        <button id="secretsButton1" name="secretsButton" class="btn btn-sm btn-outline-dark">secrets ⍰</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- hidden traits, keys, secrets detail storage -->
+
+                                                <div id="traits1" name="traits"></div>
+                                                <div id="keys1" name="keys"></div>
+                                                <div id="secrets1" name="secrets"></div>
+
+                                            </div>
+                                        </div>
+                                        <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                    </div>
+
+                                    <div id="dicepoolGroup1" name="dicepoolGroup" class="input-group input-group-sm">
+                                        <label id="dicepoolLabel1" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
+                                        <div id="dicepool1" name="dicepool" class="form-control-sm text-primary">7</div>
+                                        <div class="">
+                                            <button type="button" id="plusPoolDice1" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusPoolDice1" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="xpGroup1" name="xpGroup" class="input-group input-group-sm">
+                                        <label id="xpLabel1" class="form-control input-group-text">XP 🏅</label>
+                                        <div id="xp1" name="xp" class="form-control-sm text-success">0</div>
+                                        <div class="">
+                                            <button type="button" id="plusXP1" name="plusXP" class="btn btn-sm btn-success"> + </button>
+                                            <button type="button" id="minusXP1" name="minusXP" class="btn btn-sm btn-success"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="conditions1" name="conditions" class="row-fluid w-100 text-center">
+                                        <span title="tired">😴 <input type="checkbox" id="tired1" name="tired" /></span>
+                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry1" name="angry" /></span>
+                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad1" name="sad" /></span>
+                                        <br>
+                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out1" name="out" /></span>
+                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt1" name="hurt"/></span>
+                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead1" name="dead" /></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c2" class="col-2 full-height">
+                        <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
+                        <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
+                        <div id="p2Area" class="row">
+                            <select id="role2" name="role" class="form-control form-control-sm">
+                                <option value="" disabled="disabled" selected="selected">I am...</option>
+                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
+                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
+                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
+                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                            </select>
+
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="profile2" name="profile">
+                                        <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-6 portrait p-0">
+                                                    <img src="" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
+                                                </div>
+                                                <div class="col-6 p-0">
+                                                    <div id="attributes2" name="attributes" class="input-group btn-group-vertical">
+                                                        <button id="traitsButton2" name="traitsButton" class="btn btn-sm btn-outline-dark">traits 🎭</button>
+                                                        <button id="keysButton2" name="keysButton" class="btn btn-sm btn-outline-dark">keys 🗝</button>
+                                                        <button id="secretsButton2" name="secretsButton" class="btn btn-sm btn-outline-dark">secrets ⍰</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- hidden traits, keys, secrets detail storage -->
+
+                                                <div id="traits2" name="traits"></div>
+                                                <div id="keys2" name="keys"></div>
+                                                <div id="secrets2" name="secrets"></div>
+
+                                            </div>
+                                        </div>
+                                        <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                    </div>
+
+                                    <div id="dicepoolGroup2" name="dicepoolGroup" class="input-group input-group-sm">
+                                        <label id="dicepoolLabel2" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
+                                        <div id="dicepool2" name="dicepool" class="form-control-sm text-primary">7</div>
+                                        <div class="">
+                                            <button type="button" id="plusPoolDice2" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusPoolDice2" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="xpGroup2" name="xpGroup" class="input-group input-group-sm">
+                                        <label id="xpLabel2" class="form-control input-group-text">XP 🏅</label>
+                                        <div id="xp2" name="xp" class="form-control-sm text-success">0</div>
+                                        <div class="">
+                                            <button type="button" id="plusXP2" name="plusXP" class="btn btn-sm btn-success"> + </button>
+                                            <button type="button" id="minusXP2" name="minusXP" class="btn btn-sm btn-success"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="conditions2" name="conditions" class="row-fluid w-100 text-center">
+                                        <span title="tired">😴 <input type="checkbox" id="tired2" name="tired" /></span>
+                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry2" name="angry" /></span>
+                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad2" name="sad" /></span>
+                                        <br>
+                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out2" name="out" /></span>
+                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt2" name="hurt"/></span>
+                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead2" name="dead" /></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c3" class="col-2 full-height">
+                        <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
+                        <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
+                        <div id="p3Area" class="row">
+                            <select id="role3" name="role" class="form-control form-control-sm">
+                                <option value="" disabled="disabled" selected="selected">I am...</option>
+                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
+                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
+                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
+                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                            </select>
+
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="profile3" name="profile">
+                                        <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-6 portrait p-0">
+                                                    <img src="" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                                </div>
+                                                <div class="col-6 p-0">
+                                                    <div id="attributes3" name="attributes" class="input-group btn-group-vertical">
+                                                        <button id="traitsButton3" name="traitsButton" class="btn btn-sm btn-outline-dark">traits 🎭</button>
+                                                        <button id="keysButton3" name="keysButton" class="btn btn-sm btn-outline-dark">keys 🗝</button>
+                                                        <button id="secretsButton3" name="secretsButton" class="btn btn-sm btn-outline-dark">secrets ⍰</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- hidden traits, keys, secrets detail storage -->
+
+                                                <div id="traits3" name="traits"></div>
+                                                <div id="keys3" name="keys"></div>
+                                                <div id="secrets3" name="secrets"></div>
+
+                                            </div>
+                                        </div>
+                                        <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                    </div>
+
+                                    <div id="dicepoolGroup3" name="dicepoolGroup" class="input-group input-group-sm">
+                                        <label id="dicepoolLabel3" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
+                                        <div id="dicepool3" name="dicepool" class="form-control-sm text-primary">7</div>
+                                        <div class="">
+                                            <button type="button" id="plusPoolDice3" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusPoolDice3" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="xpGroup3" name="xpGroup" class="input-group input-group-sm">
+                                        <label id="xpLabel3" class="form-control input-group-text">XP 🏅</label>
+                                        <div id="xp3" name="xp" class="form-control-sm text-success">0</div>
+                                        <div class="">
+                                            <button type="button" id="plusXP3" name="plusXP" class="btn btn-sm btn-success"> + </button>
+                                            <button type="button" id="minusXP3" name="minusXP" class="btn btn-sm btn-success"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="conditions3" name="conditions" class="row-fluid w-100 text-center">
+                                        <span title="tired">😴 <input type="checkbox" id="tired3" name="tired" /></span>
+                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry3" name="angry" /></span>
+                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad3" name="sad" /></span>
+                                        <br>
+                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out3" name="out" /></span>
+                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt3" name="hurt"/></span>
+                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead3" name="dead" /></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c4" class="col-2 full-height">
+                        <div class="lockClick" onclick="toggleInputLocks('p4Area');">🔒</div>
+                        <div class="hideClick" onclick="$('#p4Area').toggle();">👁</div>
+                        <div id="p4Area" class="row">
+                            <select id="role4" name="role" class="form-control form-control-sm">
+                                <option value="" disabled="disabled" selected="selected">I am...</option>
+                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
+                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
+                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
+                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                            </select>
+
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="profile4" name="profile">
+                                        <input type="text" id="player4" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character4" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-6 portrait p-0">
+                                                    <img src="" id="portrait4" data-toggle="tooltip" alt="image for character 4" onclick="portraitURL(4);" title="" />
+                                                </div>
+                                                <div class="col-6 p-0">
+                                                    <div id="attributes4" name="attributes" class="input-group btn-group-vertical">
+                                                        <button id="traitsButton4" name="traitsButton" class="btn btn-sm btn-outline-dark">traits 🎭</button>
+                                                        <button id="keysButton4" name="keysButton" class="btn btn-sm btn-outline-dark">keys 🗝</button>
+                                                        <button id="secretsButton4" name="secretsButton" class="btn btn-sm btn-outline-dark">secrets ⍰</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- hidden traits, keys, secrets detail storage -->
+
+                                                <div id="traits4" name="traits"></div>
+                                                <div id="keys4" name="keys"></div>
+                                                <div id="secrets4" name="secrets"></div>
+
+                                            </div>
+                                        </div>
+                                        <textarea id="notes4" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                    </div>
+
+                                    <div id="dicepoolGroup4" name="dicepoolGroup" class="input-group input-group-sm">
+                                        <label id="dicepoolLabel4" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
+                                        <div id="dicepool4" name="dicepool" class="form-control-sm text-primary">7</div>
+                                        <div class="">
+                                            <button type="button" id="plusPoolDice4" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusPoolDice4" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="xpGroup4" name="xpGroup" class="input-group input-group-sm">
+                                        <label id="xpLabel4" class="form-control input-group-text">XP 🏅</label>
+                                        <div id="xp4" name="xp" class="form-control-sm text-success">0</div>
+                                        <div class="">
+                                            <button type="button" id="plusXP4" name="plusXP" class="btn btn-sm btn-success"> + </button>
+                                            <button type="button" id="minusXP4" name="minusXP" class="btn btn-sm btn-success"> - </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="conditions4" name="conditions" class="row-fluid w-100 text-center">
+                                        <span title="tired">😴 <input type="checkbox" id="tired4" name="tired" /></span>
+                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry4" name="angry" /></span>
+                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad4" name="sad" /></span>
+                                        <br>
+                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out4" name="out" /></span>
+                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt4" name="hurt"/></span>
+                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead4" name="dead" /></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c5" class="col-1">
+                        <div id="worldview" class="row" style="margin: 5px 0">
+                            <div class="col col-6 p-0 text-center">
+                                <div id="mapClick" onclick="$('#worldviewbox').toggle();" title="share a picture of scene or location with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/203-earth.png" class="icon-sm" alt="globe icon"></div>
+                            </div>
+                            <div class="col col-6 p-0 text-center">
+                                <div id="npcClick" onclick="$('#npcviewbox').toggle();" title="share a picture of NPC or object with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/014-image.png" class="icon-sm" alt="picture icon"></div>
+                            </div>
+                        </div>
+                        <div id="x-card" class="row" onclick="safetyTool('x');" title="x-card"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/272-cross.png" class="icon-md" alt="x icon"></div>
+                        <div id="thumbup" class="row" onclick="safetyTool('thumbup');" title="thumbup"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/thumbup.png" class="icon-md" alt="thumbup icon"></div>
+                        <div id="raisedhand" class="row" onclick="safetyTool('raisedhand');" title="I want to say something"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/260-point-up.png" class="icon-md" alt="hand up icon"></div>
+
+                        <div id="diceArea" class="container-fluid p-0">
+                            <div class="row p-0">
+                                <div class="input-group">
+                                    <select id="dicetoroll" class="form-control form-control-sm">
+                                        <option value="1" selected="selected">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                    &nbsp;🎲&nbsp;
+                                </div>
+                            </div>
+                            <div class="row p-0">
+                                <button type="submit" id="rollDice" class="btn btn-sm btn-block btn-info">ROLL</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c6" class="col-3">
+                        <div class="scratchpadClick" onclick="toggleScratchpad();">🖍</div>
+                        <div id="commonArea">
+                            <div class="row text-center">
+                                <select id="infolist" name="infolist" class="form-control form-control-sm">
+                                    <option value="" disabled="disabled" selected="selected">The Escort</option>
+                                    <option value="about">about</option>
+                                    <option value="diceroll">dice rolling</option>
+                                    <option value="helping">helping</option>
+                                    <option value="keysandxp">keys and xp</option>
+                                    <option value="newstuff">new stuff</option>
+                                    <option value="refreshment">refreshment</option>
+                                    <option value="" disabled="disabled">Setting</option>
+                                    <option value="overview">overview</option>
+                                    <option value="jianghu">"Jianghu"</option>
+                                    <option value="causesfordeathpenalty">causes for death penalty</option>
+                                    <option value="namelists">name lists</option>
+                                    <option value="" disabled="disabled">Appendices</option>
+                                    <option value="historicaltidbits">historical tidbits</option>
+                                    <option value="wuxiatropes">wuxia tropes</option>
+                                    <option value="wuxiafactions">wuxia factions</option>
+                                    <option value="morenames">more names</option>
+                                </select>
+                            </div>
+                            <div id="infoArea" class="row card-body">
+                                <em>
+                                    <p>A violent robbery left behind a broken caravan, a scattering of valuables, and unmoving bodies, blocking the road ahead.</p>
+                                    <p>The four stop to scan the area, bracing for a possible trap.</p>
+                                    <p>What awaits them behind boulders and bushes, and in broad day light no less?</p>
+                                    <p>Will Xin (pronounced like "shin") survive an attack while shackled inside a caged wagon?</p>
+                                    <p>Will Dao the Constable upkeep the law?</p>
+                                    <p>Will Yu lead the escort through any attempt to end the mission before it reaches the execution ground?</p>
+                                    <p>And will Gong the mercenary help or hinder them?</p>
+                                </em>
+                            </div>
+
+                            <div class="row justify-content-center" style="border: 1px solid black">
+                                <div id="resultArea">roll results</div>
+                            </div>
+
+                            <div id="chatArea">
+                                <div class="row">
+                                    <form id="messageForm" class="container">
+                                        <div id="chatSection">
+                                            <!-- the chatSection has a set height
+                                                but the chat obj has a dynamically
+                                                changing height, otherwise scroll-to-bottom
+                                                won't work -->
+                                            <div class="chat" id="chat"></div>
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control form-control-sm width100" id="message" placeholder="chat" />
+                                            <span class="input-group-btn">
+                                                <input type="submit" class="form-control-sm btn btn-info btn-sm" value="send" />
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap template script includes -->
+    <!-- <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/js/common.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <!-- Javascript code -->
+    <script>
+        var infotext = {
+            'about':
+                '<p><a href="https://brushmen.itch.io/the-escort" target="_new">The Escort</a> is a <em><a href="https://en.wikipedia.org/wiki/Wuxia" target="_new">wuxia</a></em>-themed story-game by Yi Weng that is a hack of John Harper\'s "<a href="http://www.onesevendesign.com/ladyblackbird" target="_new">Lady Blackbird</a>."</p>',
+            'diceroll': "<p>Roll dice to overcome an obstacle. Start with one die. Add a die if you have a Trait that can help. If that Trait has tags that apply, add another die for each such tag. Finally, add any number of dice from your personal dice pool (your pool starts with 7 dice).</p><p>Roll result of 4, 5, and 6 are hits. You need hits to match or surpass the difficulty level (difficult: 3, challenging: 4, extreme: 5, etc.) to overcome the obstacle.</p><p>If you pass, discard all dice you rolled (including any pool dice you or helper used). If not, you don't yet achieve your goal. But, you keep the pool dice rolled (helper keep theirs) and add another die to your pool (max is 10). The GM will escalate the situation, such as give you a condition (hurt, even death, etc.) and you might be able to try again.</p><h5>A variant dice rule</h5><p>(needs everyone to agree to it)</p><p>When hits after a roll...<ul><li>surpass the difficulty: \"Yes, And (player decides another beneficial outcome/detail)\"</li><li>match the difficulty：\"Yes...\" (as usual)</li><li>miss by 1：\"Yes, But (GM decides)\"</li><li>is less but not 0：\"No, But (GM decides)\"</li><li>is 0：\"No, And (GM decides)\"</li></ul></p>",
+
+            'helping': '<p>Describe how you can help another character to give them (at most) one die from your pool.</p>',
+
+            'keysandxp': '<p>When you hit a Key, you can take an experience point (XP) or add a dice to your pool (up to a max of 10). You can trade in 5 XP for an Advance- pick one (if justified in the narrative):<ul><li>Add a new Trait</li><li>Add a new tag to an existing Trait</li><li>Learn a Secret (see its requirement)</li></ul></p><p>You can hold on to advances and spend them at any time, even during a fight! If a buyoff condition occurs, you have the option of removing the Key and earning two advances.</p>',
+
+            'refreshment': '<p>You can refresh your pool back to 7 dice by having a refreshment scene with another character. You may also remove a condition or regain the use of a secret if narratively supported. Ask questions of other characters, and either stay in the present, or use a Flashback to answer those questions. Examples, "Why did you commit that crime?" "Do you think they are innocent?" "Why have I never heard of an amazing archer like you before?" ...</p>',
+
+            'newstuff': '<p>Spend 5 XP to buy one new trait (without tags), one new tag under an existing trait, one new key, or one new secret (if meeting its condition).</p><h5>New Traits & Tags</h5><p><div class="traits"><strong>Bodyguard</strong><div class="indented tags">First-Aid, Threats, Unarmed, Heavy-Load, Delay, Endure, Fearless, Cautious, Pressure Points</div><strong>Sailor</strong><div class="indented tags">Dive, Swim, Helms, Sails, Raft, Float, Navigation, Hardy, Shallows, Drinks</div><strong>Wanderer</strong><div class="indented tags">Camping, Secretive, Generous, Tough, Guide, Weapon Master, Forthright, Reputation, Connections, Sentimental, Drink</div><strong>Buddhism</strong><div class="indented tags">Kind, Devout, Tolerant, Reform, Insight, Enlightenment, Persistent, Scripture</div><strong>Herdsman</strong><div class="indented tags">Plains, Scout, Horse-taming, Horsemanship, Wrestle, Sturdy, Husbandry, Sandstorm, Vocal Tricks</div><strong>Detective</strong><div class="indented tags">Perceptive, Keen, Learned, Handy, Eloquent, Imitation, Fearless, Patient, Determined</div><strong>Merchant</strong><div class="indented tags">Generous, Wise, Wealth, Connections, Reputation, Influential Clans, Favors, Deal, Patient, Audacious, Meticulous, Cunning</div><strong>Prodigy</strong><div class="indented tags">Photographic Memory, Focused, Calculator, Strategy, Unorthodox, Unscrupulous, Learned, Speechcraft, Miracle Worker, Geomancy</div><strong>Military</strong><div class="indented tags">Command, Horsemanship, Methods of War, Strategy, Authority, Loyalty, Formations, Negotiation, Ceremony, Military Law, Merciless</div><strong>Assassin</strong><div class="indented tags">Cruel, Endure, Persistent, Hidden Weapons, Weapon Master, Improvise, Lightfoot, Song and Dance, Seduction, Poison, Hidden, Deception</div></div><h5>New Keys</h5><div class="keys"><strong>Key of the Traveler</strong><div class="indented">Hit your key when you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.</div><strong>Key of the Negotiator</strong><div class="indented">Hit your key when you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.</div><strong>Key of the Vow</strong><div class="indented">Hit your key when your vow significantly impacts your decisions. BUYOFF: Break your vow.</div><h5>New Secrets</h5><div class="secrets"><strong>Secret of Experience</strong><div class="indented">Once per session, you can use tags from more than one trait when you make a roll. REQUIRES: Experience in a wide variety of challenges.</div></div>',
+
+            'causesfordeathpenalty': '<p><ul><li>opposing the Emperor</li><li>treason</li><li>insubordination (military)</li><li>humiliating the Imperial relatives</li><li>homicide</li><li>large-scale robbery</li></ul></p>',
+
+            'namelists': '<p><b>Given Names</b>: Hai, Shan, Dang, Jing, Tao, Tian, Ming, Lang, Zhong, Mei, Lian, Yue, Huan, Ling, Yun, Hui, Jian, Pan</p><p><b>Clans</b>: Zhao, Sun, Li, Bai, Liu, Tang, Huangfu, Murong</p><p><b>Nicknames</b>: Butcher, Handy, Fragrant, Gutsy, Turtle, Roaring</p>',
+
+            'jianghu': '<p>"Jianghu" is any environment where martial artists follow an unspoken code of conduct that is distinct from imperial laws. Its sectarianism can be even more extreme than traditional clan politics.</p>',
+
+            'overview': "<p>Consider this an alternate history inspired by China's Sui dynasty. If the geography is too complex, limit the scope to be a westward journey from Chang'An (1) to Tianshui (2), Longxi (3), Jincheng (4), Xiping (5), Wuwei (6), and Zhangye (7).</p><p>Chang'An (1) the capital is home to the relatives of the Emperor and other influential clans. Where power consolidates, corruption is sure to follow.</p><p>Cities along the shore (2-6) can be skipped for one-shot or short campaigns. Either go straight to Zhangye, or move the execution ground closer.</p><p>The Northern Nomadic tribes such as the Turkic resent their southern neighbor for pushing into their land, and the recent humiliating defeat by the Emperor had made them all too eager to wage guerrilla warfare for some payback.</p><p>Zhangye (7), the oasis beneath Qilian (pronounced as \"chi-leeann\") Mountain is the gateway city that opens the trade routes to the western territories. Despite its liveliness, however, the desert on its outskirts also forms a natural execution ground.</p>",
+
+            'historicaltidbits': '<p>(only for inspiration, disregard if uninterested)</p><p>The Turkic north of Sui is a slave-driven society. At the time, an internal power struggle in the royal Ashina clan led to four Khagans (Ishbara, Anluo, Apa, and Tardu) each holding a military force. The Emperor of Sui then used the strategy of "divide and conquer" to defeat them.</p><p>Possible Turkic Names: Barqin ("charismatic"), Bilgea ("learned"), Tughrul ("dexterous"), Turkan, Iqsin ("soft breeze"), Amol ("sedate"), Earik ("brave"), Bearik ("steady"), Bugu ("farsighted"), Ayukh ("protector")</p><p>Along with the military domination over the Tuyuhun region along the western border (in year 609), the Zhangye Commandery on the Silk Road was also a political tool for Emperor Yang to show off the might of the "Central Plain" to the western kingdoms. The influx of artists, scholars, troopers, and merchants created a brilliant melting pot of cultures in the region. The Emperor, as insatiable as his ambition was, made great strides in expanding the borders of the Kingdom and in revamping the Imperial Civil Examination System. However, his thirst for conquest eventually drove the masses to rebel, and he lost it all to a mutiny only 38 years after the start of the Sui dynasty.</p>',
+
+            'wuxiatropes': "<p><ul><li>Joust for a Spouse (often hosted by a wealthy family for the martially talented daughter)</li><li>Royalty-Bestowed Marriage (often against the will of one or both people involved)</li><li>Crossdressing (often for survival reason)</li><li>One or more \"chi\" practitioners use external transfer method to push poison out of the patient's body</li><li>Fight poison with poison</li><li>The Emperor or an Imperial relative disguises themself in order to quietly blend into an environment among the commoners (for the purpose of observation)</li><li>Childhood sweethearts</li><li>If our destinies diverge, let's try again in our next lifetime</li><li>Martial Arts Tournament (often about power-play than good sportsmanship)</li><li>No discord, no concord</li></ul></p>",
+
+            'wuxiafactions': "<p>Schools or Organizations in Jianghu can be distinguished by their different focus:<ul><li>Clan-based, such as Tang, Hong</li><li>Region-based, such as Mount Hua Sect</li><li>Religion-based (Daoism, Buddhism, Zoroastrianism, etc.), such as Wudang Sect, E-mei (\"uh-may\") Sect (Buddhist nuns)</li><li>Goal-based (charity, mutual support, anti-government, anti-foreigner, etc.), such as The Beggars' Sect, The Society of Heaven and Earth</li></ul><p><p>Whether a faction is considered Orthodox or Unorthodox depends on who obeys the dominant authority on morality of the time. Winner writes the rules. In general, the Unorthodox does not respect the moral standards of the majority, but it doesn't mean they are always inhumane. In fact, it's often the Orthodox factions that would carry out blind justice.</p>",
+
+            'taglines': '<p>The Charge: Vindicate at all cost, or die with dignity?</p><p>The Constable: Justice has no humanity. But we do.</p><p>The Entrusted: Life is full of compromises.</p><p>The Mercenary: Who is pulling on my string?</p>',
+
+            'morenames': '<table border="1"><tr><th><center>given name*</center></th><th><center>possible interpretations</center></th></tr><tr><td>Ban</td><td>(masculine) <b>class, board, handle</b>; (feminine) <i>petal</i>; (neutral) spot, partner</td></tr><tr><td>Chao</td><td><b>tide</b>; super</td></tr><tr><td>Hai</td><td>sea</td></tr><tr><td>Hao</td><td><b>vast, heroic, weasel bristle</b>; <i>good</i>; bright</td></tr><tr><td>Huan</td><td><b>joyous, fantasy, lustrous, pillar</b>; <i>ring, call, dissolve</i></td></tr><tr><td>Hui</td><td><b>splendor, converge, emblem</b>; <i>favor, intelligent, plants</i>; regret</td></tr><tr><td>Jian</td><td><b>sword, arrow, firm, simple</b>; build</td></tr><tr><td>Jing</td><td><b>chaste tree, scenary, respect</b>; <i>clean, quiet</i></td></tr><tr><td>Lian</td><td><b>connection, refine</b>; <i>lotus, sympathy, longing</i></td></tr><tr><td>Ling</td><td><b>hill, ridge, rise high, command, lead</b>; <i>quick, spirit, bell, feather</i></td></tr><tr><td>Mei</td><td><b>eyebrow, mongoose</b>; <i>sister, beautiful, rose, charm</i>; plum</td></tr><tr><td>Pan</td><td><b>coil, judge</b>; <i>hope</i></td></tr><tr><td>Shan</td><td><b>mountain, flash</b>; <i>coral, kind</i></td></tr><tr><td>Shu</td><td><b>book, vertical, method, number, uncle, tree</b>; <i>relax, virtuous</i>; distant</td></tr><tr><td>Su</td><td><b>lodging, common, solemn, speed</b>; <i>dawn</i> unadorned, narrate, sincere, crisp, millet</td></tr><tr><td>Tao</td><td><b>wave, hide, pottery, cleanse</b>; <i>wave, peach, pottery</i></td></tr><tr><td>Tian</td><td><b>sky, farm</b>; <i>peaceful, sweet</i></td></tr><tr><td>Ting</td><td><b>main hall, thunderclap，sandbank, raised path, listen</b>; <i>graceful, dragonfly, listen</i></td></tr><tr><td>Yu</td><td><b>fish</b>; feather, jade, rain, spoken word, residual</td></tr><tr><td>Yue</td><td><b>surpass, treaty, music, bright</b>; <i>pleased, music</i>; moon</td></tr><tr><td>Yun</td><td><b>cloud, transport, permit, evenly</b>; <i>rhyme, common rue, profoundity</i></td></tr><tr><td>Wei</td><td><b>might, defend, great</b>; <i>royal fern, precious, miniature</i></td></tr></table><small>*you can also combine syllables (at most 2 per given name), or even offer other suggestions if you know some Chinese</small><p><b>Surnames</b>: Bai, Chen, Dai, Fan, Gao, Han, Hu, Huangfu, Jin, Kang, Lai, Li, Liu, Lu, Murong, Nangong, Ren, Shao, Song, Su, Sun, Tan, Tang, Tao, Wang, Wei, Wu, Yang, Yuan, Zhao</p>',
+        };
+
+        var room = 'test';
+        var gamehandle = 'theescort';
+        var socket = io('/' + gamehandle);
+
+        // prep element effects
+        dragElement(document.getElementById("worldviewbox"));
+        dragElement(document.getElementById("npcviewbox"));
+        dragElement(document.getElementById("scratchpadArea"));
+
+        socket.on('connect', function() {
+            // get room name from URL ending, make sure it's not malicious text
+            var pathparts = window.location.href.split('?');
+            pathparts[1] = sanitize(pathparts[1], 'alphanumeric');
+            if (pathparts[1]) {
+                room = pathparts[1];
+            }
+            // console.log('trying to join room ' + room);
+            socket.emit("join room", room);
+        });
+
+        socket.on('username', function(data) {
+            updateUserName(data);
+        });
+        function updateUserName(user) {
+            $('#message').prop('placeholder', user);
+        }
+
+        socket.on('user list', function(data) {
+            updateUserList(data);
+        });
+        function updateUserList(list) {
+            $('#message').prop('title', list.length + ' user(s): ' + list.join(', '));
+        }
+
+        function save(type='current') {
+            socket.emit('save ' + type);
+        }
+
+        // image related
+
+        socket.on('update image', function(data) {
+            updateImage(data.field, data.url);
+            save();
+        });
+        function updateImage(field='currentmap', url) {
+            if (field == 'currentmap') {
+                $('#worldviewImage').prop('src', url);
+            }
+            else if (field == 'currentimage') {
+                $('#npcviewImage').prop('src', url);
+            }
+        }
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+
+            if (imgID == 'worldviewImage') {
+                socket.emit('update image', {'field': 'currentmap', 'url': imgURL});
+            }
+            else if (imgID == 'npcviewImage') {
+                socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
+            }
+        }
+
+        socket.on('update portrait', function(data) {
+            updatePortrait(data.number, data.url);
+            save();
+        });
+        function updatePortrait(n=0, url) {
+            var $e = $('#portrait' + n);
+            // hovering tooltip should show the image without distorted porportions
+            $e.prop('src', url);
+            // force browser to use new image instead of cached image
+            $e.tooltip('dispose');
+            $e.tooltip({
+                html: true,
+                placement: 'right',
+                title: '<img src="' + url + '" height="500" />'
+            });
+        }
+        function portraitURL(number) {
+            var url = prompt("paste in the URL of the image");
+            if (url) {
+                // try to check if image can be loaded
+                var img = new Image();
+                img.src = url;
+                img.onload = function(){
+                    // send info to server
+                    socket.emit('update portrait', {'index': (number-1), 'url': url});
+                };
+                img.onerror = function(){
+                    alert("image cannot be loaded");
+                }
+            }
+        }
+
+        $('#messageForm').submit(function(e) {
+            var $message = $('#message');
+            e.preventDefault();
+            socket.emit('message', $message.val());
+            $message.val('');
+        });
+        $('#loadbox button[type=submit]').click(function(e) {
+            e.preventDefault();
+            // load JSON textfield
+            socket.emit('load json', $('#loadboxjson').val());
+            // hide the loadbox
+            $('#loadbox').hide();
+        });
+        socket.on('message', function(data) {
+            var $message = $('#message');
+            var message = data.message;
+            var user = data.user;
+            var type = data.type;
+            var html = '';
+
+            if (type == 'updateusername') {
+                var names = message.split('|');
+                var oldname = names[0];
+                var newname = names[1];
+                if (oldname != newname) {
+                    html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
+                }
+            }
+            else if(type == 'newgame') {
+                html = '<div class="well text-muted">' + user + ' started a new game</div>';
+                // clear hidden data
+                clearHiddenFields();
+                $('#infoArea').html(infotext['overview']);
+            }
+            else if (type == 'savegame') {
+                var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+                // generate the file to download locally
+                download(filename, message);
+                html = '<div class="well text-muted">' + user + ' is saving game data</div>';
+            }
+            else if (type == 'loadgame') {
+                $('#loadbox').show();
+            }
+            else if (type == 'rollresult') {
+                updateResult(message);
+                html = '<div class="well"><strong>' + user + '</strong> ( ' + message + ' )</div>';
+            }
+            else { // should be regular chat message
+                html = '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
+            }
+            updateChat(html);
+        });
+        function updateResult(html) {
+            if (html) {
+                $('#resultArea').html(html);
+            }
+        }
+        function updateChat(html) {
+            if (html) {
+                var $chat = $('#chat');
+                $chat.append(html);
+                $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+        $('#rollDice').click(function(e) {
+            e.preventDefault();
+            var n = $('#dicetoroll').val();
+            var command = 'lb' + n;
+            socket.emit('roll dice', {'command': command, 'dice': n});
+        });
+        socket.on('roll result', function(data) {
+            var user = data.user;
+            var dice = data.dice;
+            var result = data.result;
+            updateResult(result);
+            // add roll info to chat
+            var html = '<div class="well"><strong>' + user + '</strong> rolled for ' + result + '</div>';
+            updateChat(html);
+        });
+
+        $('[name=dicepoolGroup] button, [name=xpGroup] button').each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var i = $(this).prop('id');
+                i = i.slice(-1); // last letter of index is the count number
+                var pooldice = parseInt($('#dicepool' + i).html());
+                var xp = parseInt($('#xp' + i).html());
+                var v;
+                if (field == 'plusPoolDice') {
+                    field = 'dicepool';
+                    v = parseInt(pooldice) + 1;
+                }
+                else if (field == 'minusPoolDice') {
+                    field = 'dicepool';
+                    v = parseInt(pooldice) - 1;
+                }
+                else if (field == 'plusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) + 1;
+                }
+                else if (field == 'minusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) - 1;
+                }
+                i = parseInt(i) - 1;
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+        function updateDicePool(n=1, value=0) {
+            value = parseInt(value);
+            value = value < 0 ? 0 : value;
+            $('#dicepool' + n).html(value);
+            if (value < 1) {
+                // lock the "minus" button
+                $('#minusPoolDice' + n).addClass('locked');
+            }
+            else {
+                // unlock the "minus" button
+                $('#minusPoolDice' + n).removeClass('locked');
+            }
+            if (value > 9) {
+                // lock the "plus" button
+                $('#plusPoolDice' + n).addClass('locked');
+            }
+            else {
+                // unlock the "plus" button
+                $('#plusPoolDice' + n).removeClass('locked');
+            }
+        }
+        function updateXP(n=1, value=0) {
+            value = parseInt(value);
+            value = value < 0 ? 0 : value;
+            $('#xp' + n).html(value);
+            if (value < 1) {
+                // lock the "advance" button
+                $('#minusXP' + n).addClass('locked');
+            }
+            else {
+                // unlock the "advance" button
+                $('#minusXP' + n).removeClass('locked');
+            }
+        }
+        $('[name=attributes] button').each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var i = $(this).prop('id');
+                i = i.slice(-1); // last letter of index is the count number
+                var $infoArea = $('#infoArea');
+                var html = '';
+
+                // display the hidden values in the info panel
+                if (field == 'traitsButton') {
+                    $infoArea.html($('#traits' + i).html());
+                }
+                else if (field == 'keysButton') {
+                    $infoArea.html($('#keys' + i).html());
+                }
+                else if (field == 'secretsButton') {
+                    $infoArea.html($('#secrets' + i).html());
+                }
+            });
+        });
+
+        $('input[type=checkbox]').each(function() {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var v = $(this).prop('checked');
+                var i = $(this).prop('id');
+                i = i.slice(-1); // last letter of id is the count number
+                i = parseInt(i) - 1;
+
+                socket.emit('update condition', {'index': i, 'condition': field, 'state': v});
+            });
+        });
+
+        $('select[name=role], input[name=player], input[name=character], textarea[name=notes]').each(function() {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var i = $(this).prop('id');
+                var v = $(this).val();
+                i = i.slice(-1); // last letter of index is the count number
+                i = parseInt(i) - 1;
+
+                if (field == 'role') {
+                    // clear the infoarea
+                    $('#infoArea').html(infotext['taglines']);
+                }
+
+                //console.log('field ' + field + ' index ' + i + ' value ' + v);
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+        socket.on('update field', function(data) {
+            var field = data.field;
+            var number = data.number;
+            var value = data.value;
+            if (field == 'tired' || field == 'angry' || field == 'sad' ||
+                field == 'out' || field == 'hurt' || field == 'dead') {
+                $('#' + field + number).prop('checked', value);
+            }
+            else {
+                $('#' + field + number).val(value);
+
+                if (field == 'dicepool') {
+                    updateDicePool(number, value);
+                }
+                else if (field == 'xp') {
+                    updateXP(number, value);
+                }
+            }
+            save();
+        });
+        socket.on('update client', function(data) {
+            var users = data.users;
+            var info = data.info;
+            var p = info['profiles'];
+
+            updateUserList(users);
+            if (info['currentmap']) {
+                updateImage('currentmap', info['currentmap']);
+            }
+            if (info['currentimage']) {
+                updateImage('currentimage', info['currentimage']);
+            }
+
+            for (var i = 0; i < p.length; i++) {
+
+                $('#role' + (i+1)).val(p[i]['role']);
+
+                updatePortrait((i+1), p[i]['portrait']);
+
+                $('#player' + (i+1)).val(p[i]['player']);
+                $('#character' + (i+1)).val(p[i]['character']);
+                $('#notes' + (i+1)).val(p[i]['notes']);
+                updateDicePool((i+1), p[i]['dicepool']);
+                updateXP((i+1), p[i]['xp']);
+
+                updateTraits((i+1), p[i]['traits']);
+
+                updateKeys((i+1), p[i]['keys']);
+
+                updateSecrets((i+1), p[i]['secrets']);
+
+                // conditions
+                conditions = $('#conditions' + (i+1) + ' input[type=checkbox]');
+                for (var j = 0; j < conditions.length; j++) {
+                    var c = $(conditions[j]).prop('name');
+                    if (p[i]['conditions'].indexOf(c) != -1) {
+                        $(conditions[j]).prop('checked', true);
+                    }
+                    else {
+                        $(conditions[j]).prop('checked', false);
+                    }
+                }
+                save();
+            }
+        });
+
+        function buyTag(tag, trait, number) {
+            if (parseInt($('#xp' + number).html()) > 4) {
+                socket.emit('buy tag', {'tag': tag, 'trait': trait, 'index': (number-1)});
+            }
+            else {
+                alert("you don't have enough xp to buy this tag");
+            }
+        }
+        function buyTrait(number) {
+            if (parseInt($('#xp' + number).html()) > 4) {
+                var trait = prompt("type in the exact name of the new trait based on the \"new stuff\" listing");
+                trait = sanitize(trait, 'name').trim();
+                if (trait) {
+                    socket.emit('buy trait', {'trait': trait, 'index': (number-1)});
+                }
+            }
+            else {
+                alert("you don't have enough xp");
+            }
+        }
+        function buyKey(number) {
+            if (parseInt($('#xp' + number).html()) > 4) {
+                var key = prompt("type in the exact name of the new key based on the \"new stuff\" listing");
+                key = sanitize(key, 'name').trim();
+                if (key) {
+                    socket.emit('buy key', {'key': key, 'index': (number-1)});
+                }
+            }
+            else {
+                alert("you don't have enough xp");
+            }
+        }
+        function buySecret(number) {
+            if (parseInt($('#xp' + number).html()) > 4) {
+                var secret = prompt("type in the exact name of the new secret based on the \"new stuff\" listing");
+                secret = sanitize(secret, 'name').trim();
+                if (secret) {
+                    socket.emit('buy secret', {'secret': secret, 'index': (number-1)});
+                }
+            }
+            else {
+                alert("you don't have enough xp");
+            }
+        }
+        function buyoffKey(key, number) {
+            if (confirm("Buyoff this key to gain 2 advances, but you won't earn more XP from it. Is that okay?")) {
+                socket.emit('buyoff key', {'key': key, 'index': (number-1)});
+            }
+        }
+
+        socket.on('update traits', function(data) {
+            var number = data.number;
+            var traits = data.traits;
+            updateTraits(number, traits);
+            // refresh info area
+            $('#infoArea').html($('#traits' + number).html());
+        });
+        function updateTraits(n=1, traits) {
+            // traits put into a hidden area
+            var html = '<div class="traits">';
+            for (var t in traits) {
+                html += '<strong>' + t + '</strong>';
+                html += '<div class="indented tags">';
+                var item, tag = '';
+                var list = [];
+                for (var j = 0; j < traits[t].length; j++) {
+                    tag = traits[t][j];
+                    // make bracketed tags a "link" to buy such tag
+                    if (tag.substring(0, 1) == '[') {
+                        item = '<div class="btn btn-sm btn-link" title="click to buy with 5 XP" onclick="buyTag(\'' + tag + '\', \'' + t + '\', ' + n + ')">' + tag + '</div>';
+                    }
+                    else {
+                        item = tag;
+                    }
+                    list.push(item);
+                }
+                html += list.join(', ');
+                html += '</div>';
+            }
+            html += '<div class="text-muted"><small>A bracketed tag will cost 5 XP.</small></div>';
+            html += '<div class="btn btn-sm btn-link" onclick="buyTrait(' + n + ')">buy a new Trait?</div>';
+            html += '</div>';
+            $('#traits' + n).html(html);
+        }
+
+        socket.on('update keys', function(data) {
+            var number = data.number;
+            var keys = data.keys;
+            updateKeys(number, keys);
+            // refresh info area
+            $('#infoArea').html($('#keys' + number).html());
+        });
+        function updateKeys(n=1, keys) {
+            var html = '<div class="keys">';
+            // keys put into a hidden area
+            for (var k in keys) {
+                html += '<strong>' + k + '</strong>';
+                var str = keys[k];
+                var i = str.indexOf('BUYOFF:');
+                if (i != -1) {
+                    var parts = str.split("BUYOFF:");
+                    str = parts[0] + '<div class="btn btn-sm btn-link" title="when condition is met, click to buyoff this key to gain 2 advances (10 XP)" onclick="buyoffKey(' + '\'' + k + '\', ' + n + ')">BUYOFF</div>:' + parts[1];
+                }
+                html += '<div class="indented">' + str + '</div>';
+            }
+            html += '<div class="btn btn-sm btn-link" onclick="buyKey(' + n + ')">buy a new Key?</div>';
+            html += '</div>';
+            $('#keys' + n).html(html);
+        }
+
+        socket.on('update secrets', function(data) {
+            var number = data.number;
+            var secrets = data.secrets;
+            updateSecrets(number, secrets);
+            // refresh info area
+            $('#infoArea').html($('#secrets' + number).html());
+        });
+        function updateSecrets(n=1, secrets) {
+            var html = '<div class="secrets">';
+            // secrets put into a hidden area
+            for (var s in secrets) {
+                html += '<strong>' + s + '</strong>';
+                html += '<div class="indented">' + secrets[s] + '</div>';
+            }
+            html += '<div class="btn btn-sm btn-link" onclick="buySecret(' + n + ')">buy a new Secret?</div>';
+            html += '</div>';
+            $('#secrets' + n).html(html);
+        }
+
+        function clearHiddenFields() {
+            $('[name=traits], [name=keys], [name=secrets]').each(function() {
+                $(this).html('');
+            });
+        }
+
+        // input lock related
+
+        socket.on('togglelock profile', function(data) {
+            var id = data.profileid;
+            var lockit = data.lockit;
+
+            if (lockit) {
+                lockInputs(id);
+            }
+            else {
+                unlockInputs(id);
+            }
+        });
+        function toggleInputLocks(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                if ($(subElements[i]).prop('disabled')) {
+                    $(subElements[i]).prop('disabled', false);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': false});
+                }
+                else {
+                    $(subElements[i]).prop('disabled', true);
+                    socket.emit('togglelock profile', {'profileid': id, 'lockit': true});
+                }
+            }
+        }
+        socket.on('locked profiles', function(data) {
+            var locked = data;
+            var list = ['p1Area', 'p2Area', 'p3Area', 'p4Area'];
+
+            for (var i = 0; i < list.length; i++) {
+                if (locked.indexOf(list[i]) !== -1) {
+                    lockInputs(list[i]);
+                }
+                else {
+                    unlockInputs(list[i]);
+                }
+            }
+        });
+        function lockableInputs(id) {
+            var subElements = $('#' + id).find('select[name=role], input[name=player], input[name=character]');
+
+            return subElements;
+        }
+        function lockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                $(subElements[i]).prop('disabled', true);
+            }
+        }
+        function unlockInputs(id) {
+            var subElements = lockableInputs(id);
+            for (var i = 0; i < subElements.length; i++) {
+                $(subElements[i]).prop('disabled', false);
+            }
+        }
+
+        socket.on('x-card', function(data) {
+            var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
+            if (data) {
+                html += 'please remove "' + data + '"';
+            }
+            else {
+                html += 'ask for clarification if needed';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+        socket.on('handgesture', function(data) {
+            var user = data.user;
+            var type = data.type;
+            var html = '';
+            if (type == 'raisedhand') {
+                html = '<div class="text-success"><strong>' + user + '</strong> wants to speak</div>';
+            }
+            else if (type =='thumbup') {
+                html = '<div class="text-success"><strong>' + user + '</strong>: <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/thumbup.png" class="icon-md" alt="thumbups up"></div>';
+            }
+            updateChat(html);
+        });
+        function safetyTool(type='x') {
+            if (type == 'x') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+            else if (type == 'raisedhand') {
+                socket.emit('handgesture', type);
+            }
+            else if (type == 'thumbup') {
+                socket.emit('handgesture', type);
+            }
+        }
+
+        // infoarea related
+
+        $('#infolist').on('change', function() {
+            // only update locally
+            var $infolist = $('#infolist');
+            var $infoArea = $('#infoArea');
+            $infoArea.html(infotext[$infolist.val()]);
+        });
+
+        // whiteboard area, new p5 instance
+
+        const sketchpad = ( sketch ) => {
+
+            let color = '#000';
+            let stroke = 2;
+            let buttonlist = ['erase-btn', 'black-btn','red-btn','green-btn','blue-btn','brown-btn'];
+            let pg; // graphics buffer
+
+            sketch.setup = function() {
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.offsetWidth;
+                var height = canvasDiv.offsetHeight;
+                sketch.createCanvas(width, height);
+                pg = sketch.createGraphics(width, height); // graphics buffer
+                sketch.background(220, 217, 205);
+                pg.background(220, 217, 205); // graphics buffer
+            };
+
+            $('#clear-btn, #erase-btn, #black-btn, #red-btn, #green-btn, #blue-btn, #brown-btn').each(function() {
+                $(this).click(function(e) {
+                    e.preventDefault();
+
+                    if ($(this).prop('id') == 'clear-btn') {
+                        if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
+                            sketch.background("rgb(220, 217, 205)");
+                            stroke = 2;
+                            var data = {
+                                'background': 'rgb(220, 217, 205)'
+                            };
+                            socket.emit('sketchpad', {'action': 'clear', 'params': data});
+                        }
+                    }
+                    else if ($(this).prop('id') == 'erase-btn') {
+                        color = "rgb(220, 217, 205)";
+                        stroke = 10;
+                    }
+                    else if ($(this).prop('id') == 'black-btn') {
+                        color = "rgb(0, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'red-btn') {
+                        color = "rgb(204, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'green-btn') {
+                        color = "rgb(0, 153, 51)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'blue-btn') {
+                        color = "rgb(0, 102, 255)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'brown-btn') {
+                        color = "rgb(134, 89, 45)";
+                        stroke = 2;
+                    }
+                    highlightColor($(this).prop('id'), buttonlist);
+
+                    function highlightColor(selected, list) {
+                        for (var c in list) {
+                            if (list[c] == selected) {
+                                $('#' + list[c]).addClass('selected');
+                            }
+                            else {
+                                $('#' + list[c]).removeClass('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            sketch.mouseDragged = function() {
+                sketch.noStroke();
+                sketch.stroke(color);
+                pg.stroke(color); // graphics buffer
+                sketch.strokeWeight(stroke);
+                pg.strokeWeight(stroke); // graphics buffer
+                sketch.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY);
+                pg.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY); // graphics buffer
+
+                var data = {
+                    'mouseX': sketch.mouseX,
+                    'mouseY': sketch.mouseY,
+                    'pmouseX': sketch.pmouseX,
+                    'pmouseY': sketch.pmouseY,
+                    'color': color,
+                    'stroke': stroke
+                };
+                socket.emit('sketchpad', {'action': 'draw line', 'params': data});
+            };
+
+            socket.on('sketchpad', function(data) {
+                var action = data.action;
+                var params = data.params;
+
+                if (action == 'draw line') {
+                    sketch.noStroke();
+                    sketch.stroke(params.color);
+                    pg.stroke(params.color); // graphics buffer
+                    sketch.strokeWeight(params.stroke);
+                    pg.strokeWeight(params.stroke); // graphics buffer
+                    sketch.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY);
+                    pg.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY); // graphics buffer
+                }
+                else if (action == 'clear') {
+                    sketch.background(params.background);
+                    pg.background(params.background); // graphics buffer
+                }
+            });
+
+            sketch.windowResized = function () {
+                //sketch.centerCanvas();
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.clientWidth;
+                var height = canvasDiv.clientHeight;
+                sketch.resizeCanvas(width, height);
+                sketch.image(pg, 0, 0); // redraw onto canvas from the buffer
+            };
+        };
+        let myp5 = new p5(sketchpad, 'whiteboard');
+
+        function toggleScratchpad() {
+            if ( $('#scratchpadArea').css('visibility') == 'hidden' ) {
+                $('#scratchpadArea').css('visibility','visible');
+            }
+            else {
+                $('#scratchpadArea').css('visibility','hidden');
+            }
+        }
+    </script>
+</body>
+</html>

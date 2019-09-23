@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Bell Songs</title>
+    <meta name="description" content="a tabletop roleplaying game playaid for Bell Songs, built with Javascript">
+    <meta name="author" content="brushmen">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">
+
+    <!-- custom CSS -->
+    <style>
+    body {
+        background-color: rgb(220, 217, 205);
+    }
+
+    select {
+        background-color: Gainsboro !important;
+    }
+
+    #c1, #c2, #c3, #c4 {
+        position: relative;
+    }
+    #c1 { border: 1px solid red; }
+    #c2 { border: 1px solid green; }
+    #c3 { border: 1px solid blue; }
+    #c4 { border: 1px solid aliceblue; }
+
+    #chatArea {
+        height: 100px;
+    }
+
+    #chatSection {
+        height: 150px;
+        overflow-y: scroll;
+    }
+
+    #commonArea {
+        width: 11.1em;
+    }
+
+    #infoArea {
+        font-size: 14pt;
+        margin: 5px -13px;
+        padding-left: 3px;
+        height: 350px;
+        overflow: auto;
+    }
+
+    #resultArea {
+        padding: 2px 10px;
+        font-size: 2em;
+    }
+
+    input[name=character] {
+        font-weight: bolder;
+    }
+    input[name=player], textarea[name=notes], label[name=skillname] {
+        font-size: 0.7em;
+    }
+    input[name=player] {
+        color: #cccccc;
+        text-align: center;
+    }
+    textarea[name=notes] {
+        line-height: 1.1em;
+        min-height: 140px;
+    }
+    input[type=checkbox] {
+      /* Double-sized Checkboxes */
+      -ms-transform: scale(2); /* IE */
+      -moz-transform: scale(2); /* FF */
+      -webkit-transform: scale(2); /* Safari and Chrome */
+      -o-transform: scale(2); /* Opera */
+      padding: 10px;
+      margin: 0 10px;
+    }
+
+    div[name=skillList] {
+        height: 150px;
+        overflow: auto;
+    }
+    div[name=skillGroup] {
+        margin: 2px 0;
+    }
+    button[name=plusPractice] {
+        margin-right: 10px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- hovering panels -->
+    <div id="loadbox" style="display: none" class="card shadow">
+        <h5 class="card-header">load JSON content</h5>
+        <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
+        <textarea id="loadboxjson" placeholder="JSON only"></textarea>
+        <button type="submit" class="btn btn-sm btn-warning">load</button>
+    </div>
+    <div id="imageviewbox" style="display: none" class="card shadow">
+        <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
+        <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
+        <img src="" id="imageviewImage" alt="an image" title="an image to show the group" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
+        </div>
+    </div>
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
+         hiding it can only make it invisible, not by removing it from DOM -->
+    <div id="scratchpadArea" style="visibility: hidden" class="card">
+        <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
+        <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1 p-0">
+                    <div id="strokeOptions" class="btn-group-vertical">
+                        <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
+                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🧼</button>
+                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">✎</button>
+                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">✎</button>
+                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">✎</button>
+                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">✎</button>
+                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">✎</button>
+                    </div>
+                </div>
+                <div id="whiteboard" class="col-11 p-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- right side menu buttons, leave space in between for TogetherJS bar. add/remove buttons as applicable -->
+    <div id="menubuttons" class="btn-group-vertical shadow">
+        <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+        <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
+        <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
+        <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image of character or object">🖼</button>
+        <button id="drawbutton" class="btn btn-sm btn-outline-dark" onclick="toggleScratchpad(); return false;" title="draw something">🎨</button>
+        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
+    </div>
+    <button id="clearfieldsbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
+
+    <!-- main content -->
+    <div class="container-fluid">
+
+        <div id="gameArea">
+            <div class="row full-height">
+                <div class="col justify-content-center align-self-center">
+                    <div class="row">
+
+                        <div id="c1" class="col-3 full-height">
+                            <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
+                            <div id="p1Area" class="container p-0">
+                                <div class="row">
+                                    <input type="text" id="player1" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+                                    <input type="text" id="character1" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 portrait p-0">
+                                        <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
+                                    </div>
+                                    <div class="col-7 p-0">
+                                        <select id="background1" name="background" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">background</option>
+                                            <option value="cook">Cook</option>
+                                            <option value="farmer">Farmer</option>
+                                            <option value="riverwalker">River-walker</option>
+                                            <option value="guardian">Guardian</option>
+                                            <option value="hunter">Hunter</option>
+                                            <option value="scout">Scout</option>
+                                            <option value="gourmand">Gourmand</option>
+                                            <option value="artist">Artist</option>
+                                            <option value="forester">Forester</option>
+                                            <option value="bellmaker">Bellmaker</option>
+                                            <option value="elder">Elder</option>
+                                            <option value="beekeeper">Beekeeper</option>
+                                            <option value="scholar">Scholar</option>
+                                            <option value="kitesailor">Kitesailor</option>
+                                            <option value="treerunner">Tree-runner</option>
+                                            <option value="courier">Courier</option>
+                                            <option value="carpenter">Carpenter</option>
+                                            <option value="maiden">Maiden</option>
+                                            <option value="blacksmith">Blacksmith</option>
+                                            <option value="thief">Thief</option>
+                                            <option value="spearbearer">Spearbearer</option>
+                                            <option value="pirate">Pirate</option>
+                                            <option value="poet">Poet</option>
+                                            <option value="brewer">Brewer</option>
+                                            <option value="miner">Miner</option>
+                                            <option value="cartographer">Cartographer</option>
+                                        </select>
+                                        <select id="gift1" name="gift" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">gift</option>
+                                            <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
+                                            <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
+                                            <option value="insight" title="Insight: when you ask someone a question, they cannot lie to you.">insight</option>
+                                            <option value="cruelty" title="Cruelty: when you act to resolve a threat with violence, restore 3 Rascality.">cruelty</option>
+                                            <option value="kindness" title="Kindness: when you act to resolve a threat with compassion, restore 3 Rascality.">kindness</option>
+                                            <option value="brutality" title="Brutality: when you act to solve a threat with violence, you roll an additional die when you next roll.">brutality</option>
+                                            <option value="unmoving" title="Unmoving: when you roll a 3-, you are no longer Wounded and you restore your Rascality.">unmoving</option>
+                                            <option value="wisdom" title="Wisdom: when you act to solve a threat with knowledge, history, or cunning, restore 3 Rascality.">wisdom</option>
+                                            <option value="teaching" title="Teaching: you can Train once without taking your action during Downtime.">teaching</option>
+                                            <option value="quick" title="Quick: when there is a question of who acts first, you do.">quick</option>
+                                            <option value="healing" title="Healing: you may Act to make someone else no longer Wounded.">healing</option>
+                                            <option value="shelter" title="Shelter: when you sacrifice yourself to protect someone, restore 3 Rascality.">shelter</option>
+                                            <option value="intuition" title="Intuition: add “calm down the beasts and the wild things” to your list of Hopes.">intuition</option>
+                                            <option value="thrillseeking" title="Thrill Seeking: when someone says what you do to resolve a threat or obstacle is dangerous, uncertain, or both and you choose not to roll, mark 1 Practice with any skill.">thrill seeking</option>
+                                            <option value="aid" title="Aid: you can Help Someone without paying any Rascality.">aid</option>
+                                            <option value="vision" title="Vision: even when you are apart, you know exactly what befalls the other animals in their journeys.">vision</option>
+                                            <option value="trusty" title="Trusty: when you act to resolve a threat with deception, trickery, or furtiveness, restore 3 Rascality.">trusty</option>
+                                            <option value="countermand" title="Countermand: when you ignore orders, break rules, or rebel against authority, restore 3 Rascality.">countermand</option>
+                                            <option value="juggernaut" title="Juggernaut: when you barrel through, rush past, or break something down, restore 3 Rascality.">juggernaut</option>
+                                            <option value="open" title="Open: whoever or whatever you speak to will understand you, and you them.">open</option>
+                                            <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
+                                            <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
+                                        </select>
+                                        <select id="raiment1" name="raiment" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">raiment</option>
+                                            <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
+                                            <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
+                                            <option value="handmade" title="Handmade Cloak: Clothes, Pockets, Fraying">handmade cloak</option>
+                                            <option value="ceremonial armor" title="Ceremonial Armor: Armor, Ornate, Ancient">ceremonial armor</option>
+                                            <option value="scholarsregalia" title="Scholar's Regalia: Clothes, Academic, Tidy">scholar's regalia</option>
+                                            <option value="maidensdress" title="Maiden's Dress: Clothes, Tidy, Gentle">maiden's dress</option>
+                                            <option value="piratesgarb" title="Pirate's Garb: Clothes, Colorful, Fraying">pirate's garb</option>
+                                            <option value="ironmanacles" title="Iron Manacles: Armor, Rusty, Bound">iron manacles</option>
+                                            <option value="steeleyes" title="Steel Eyes: Sharp, Subtle, Stony">steel eyes</option>
+                                            <option value="softeyes" title="Soft Eyes: Uncertain, Kind, Gentle">soft eyes</option>
+                                            <option value="coldeyes" title="Cold Eyes: Closed-off, Calculating, Distant">cold eyes</option>
+                                            <option value="laughingeyes" title="Laughing Eyes: Warm, Jolly, Inviting">laughing eyes</option>
+                                            <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
+                                            <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
+                                            <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                        </select>
+                                        <select id="goal1" name="goal" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">goal</option>
+                                            <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
+                                            <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
+                                            <option value="seekknowledge" title="seek out knowledge long-lost">recover knowledge</option>
+                                            <option value="protect" title="protect someone">protect someone</option>
+                                            <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
+                                            <option value="lostbees" title="find your lost bees">recover bees</option>
+                                            <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
+                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
+
+                                    <div id="rascalityGroup1" name="rascalityGroup" class="input-group input-group-sm align-items-center">
+                                        <button id="restoreRascality1" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <div id="rascality1" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
+                                        <div>
+                                            <button type="button" id="plusRascality1" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusRascality1" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <input id="wounded1" name="wounded" type="checkbox" title="wounded?" />
+                                    </div>
+                                </div>
+
+                                <div id="skillList1" name="skillList" class="row" style="margin-top: 10px">
+                                    <div name="skillGroup" class="input-group input-group-sm small"></div>
+                                </div>
+
+                                <div name="skillAddGroup" class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm" id="newSkill1" name="newSkill" placeholder="new skill" />
+                                    <button id="addSkill1" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="c2" class="col-3 full-height">
+                            <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
+                            <div id="p2Area" class="container p-0">
+                                <div class="row">
+                                    <input type="text" id="player2" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+                                    <input type="text" id="character2" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 portrait p-0">
+                                        <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
+                                    </div>
+                                    <div class="col-7 p-0">
+                                        <select id="background2" name="background" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">background</option>
+                                            <option value="cook">Cook</option>
+                                            <option value="farmer">Farmer</option>
+                                            <option value="riverwalker">River-walker</option>
+                                            <option value="guardian">Guardian</option>
+                                            <option value="hunter">Hunter</option>
+                                            <option value="scout">Scout</option>
+                                            <option value="gourmand">Gourmand</option>
+                                            <option value="artist">Artist</option>
+                                            <option value="forester">Forester</option>
+                                            <option value="bellmaker">Bellmaker</option>
+                                            <option value="elder">Elder</option>
+                                            <option value="beekeeper">Beekeeper</option>
+                                            <option value="scholar">Scholar</option>
+                                            <option value="kitesailor">Kitesailor</option>
+                                            <option value="treerunner">Tree-runner</option>
+                                            <option value="courier">Courier</option>
+                                            <option value="carpenter">Carpenter</option>
+                                            <option value="maiden">Maiden</option>
+                                            <option value="blacksmith">Blacksmith</option>
+                                            <option value="thief">Thief</option>
+                                            <option value="spearbearer">Spearbearer</option>
+                                            <option value="pirate">Pirate</option>
+                                            <option value="poet">Poet</option>
+                                            <option value="brewer">Brewer</option>
+                                            <option value="miner">Miner</option>
+                                            <option value="cartographer">Cartographer</option>
+                                        </select>
+                                        <select id="gift2" name="gift" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">gift</option>
+                                            <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
+                                            <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
+                                            <option value="insight" title="Insight: when you ask someone a question, they cannot lie to you.">insight</option>
+                                            <option value="cruelty" title="Cruelty: when you act to resolve a threat with violence, restore 3 Rascality.">cruelty</option>
+                                            <option value="kindness" title="Kindness: when you act to resolve a threat with compassion, restore 3 Rascality.">kindness</option>
+                                            <option value="brutality" title="Brutality: when you act to solve a threat with violence, you roll an additional die when you next roll.">brutality</option>
+                                            <option value="unmoving" title="Unmoving: when you roll a 3-, you are no longer Wounded and you restore your Rascality.">unmoving</option>
+                                            <option value="wisdom" title="Wisdom: when you act to solve a threat with knowledge, history, or cunning, restore 3 Rascality.">wisdom</option>
+                                            <option value="teaching" title="Teaching: you can Train once without taking your action during Downtime.">teaching</option>
+                                            <option value="quick" title="Quick: when there is a question of who acts first, you do.">quick</option>
+                                            <option value="healing" title="Healing: you may Act to make someone else no longer Wounded.">healing</option>
+                                            <option value="shelter" title="Shelter: when you sacrifice yourself to protect someone, restore 3 Rascality.">shelter</option>
+                                            <option value="intuition" title="Intuition: add “calm down the beasts and the wild things” to your list of Hopes.">intuition</option>
+                                            <option value="thrillseeking" title="Thrill Seeking: when someone says what you do to resolve a threat or obstacle is dangerous, uncertain, or both and you choose not to roll, mark 1 Practice with any skill.">thrill seeking</option>
+                                            <option value="aid" title="Aid: you can Help Someone without paying any Rascality.">aid</option>
+                                            <option value="vision" title="Vision: even when you are apart, you know exactly what befalls the other animals in their journeys.">vision</option>
+                                            <option value="trusty" title="Trusty: when you act to resolve a threat with deception, trickery, or furtiveness, restore 3 Rascality.">trusty</option>
+                                            <option value="countermand" title="Countermand: when you ignore orders, break rules, or rebel against authority, restore 3 Rascality.">countermand</option>
+                                            <option value="juggernaut" title="Juggernaut: when you barrel through, rush past, or break something down, restore 3 Rascality.">juggernaut</option>
+                                            <option value="open" title="Open: whoever or whatever you speak to will understand you, and you them.">open</option>
+                                            <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
+                                            <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
+                                        </select>
+                                        <select id="raiment2" name="raiment" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">raiment</option>
+                                            <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
+                                            <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
+                                            <option value="handmade" title="Handmade Cloak: Clothes, Pockets, Fraying">handmade cloak</option>
+                                            <option value="ceremonial armor" title="Ceremonial Armor: Armor, Ornate, Ancient">ceremonial armor</option>
+                                            <option value="scholarsregalia" title="Scholar's Regalia: Clothes, Academic, Tidy">scholar's regalia</option>
+                                            <option value="maidensdress" title="Maiden's Dress: Clothes, Tidy, Gentle">maiden's dress</option>
+                                            <option value="piratesgarb" title="Pirate's Garb: Clothes, Colorful, Fraying">pirate's garb</option>
+                                            <option value="ironmanacles" title="Iron Manacles: Armor, Rusty, Bound">iron manacles</option>
+                                            <option value="steeleyes" title="Steel Eyes: Sharp, Subtle, Stony">steel eyes</option>
+                                            <option value="softeyes" title="Soft Eyes: Uncertain, Kind, Gentle">soft eyes</option>
+                                            <option value="coldeyes" title="Cold Eyes: Closed-off, Calculating, Distant">cold eyes</option>
+                                            <option value="laughingeyes" title="Laughing Eyes: Warm, Jolly, Inviting">laughing eyes</option>
+                                            <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
+                                            <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
+                                            <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                        </select>
+                                        <select id="goal2" name="goal" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">goal</option>
+                                            <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
+                                            <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
+                                            <option value="seekknowledge" title="seek out knowledge long-lost">recover knowledge</option>
+                                            <option value="protect" title="protect someone">protect someone</option>
+                                            <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
+                                            <option value="lostbees" title="find your lost bees">recover bees</option>
+                                            <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
+                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
+
+                                    <div id="rascalityGroup2" name="rascalityGroup" class="input-group input-group-sm align-items-center">
+                                        <button id="restoreRascality2" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <div id="rascality2" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
+                                        <div>
+                                            <button type="button" id="plusRascality2" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusRascality2" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <input id="wounded2" name="wounded" type="checkbox" title="wounded?" />
+                                    </div>
+                                </div>
+
+                                <div id="skillList2" name="skillList" class="row" style="margin-top: 10px">
+                                    <div name="skillGroup" class="input-group input-group-sm small"></div>
+                                </div>
+
+                                <div name="skillAddGroup" class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm" id="newSkill2" name="newSkill" placeholder="new skill" />
+                                    <button id="addSkill2" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="c3" class="col-3 full-height">
+                            <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
+                            <div id="p3Area" class="container p-0">
+                                <div class="row">
+                                    <input type="text" id="player3" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+                                    <input type="text" id="character3" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 portrait p-0">
+                                        <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
+                                    </div>
+                                    <div class="col-7 p-0">
+                                        <select id="background3" name="background" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">background</option>
+                                            <option value="cook">Cook</option>
+                                            <option value="farmer">Farmer</option>
+                                            <option value="riverwalker">River-walker</option>
+                                            <option value="guardian">Guardian</option>
+                                            <option value="hunter">Hunter</option>
+                                            <option value="scout">Scout</option>
+                                            <option value="gourmand">Gourmand</option>
+                                            <option value="artist">Artist</option>
+                                            <option value="forester">Forester</option>
+                                            <option value="bellmaker">Bellmaker</option>
+                                            <option value="elder">Elder</option>
+                                            <option value="beekeeper">Beekeeper</option>
+                                            <option value="scholar">Scholar</option>
+                                            <option value="kitesailor">Kitesailor</option>
+                                            <option value="treerunner">Tree-runner</option>
+                                            <option value="courier">Courier</option>
+                                            <option value="carpenter">Carpenter</option>
+                                            <option value="maiden">Maiden</option>
+                                            <option value="blacksmith">Blacksmith</option>
+                                            <option value="thief">Thief</option>
+                                            <option value="spearbearer">Spearbearer</option>
+                                            <option value="pirate">Pirate</option>
+                                            <option value="poet">Poet</option>
+                                            <option value="brewer">Brewer</option>
+                                            <option value="miner">Miner</option>
+                                            <option value="cartographer">Cartographer</option>
+                                        </select>
+                                        <select id="gift3" name="gift" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">gift</option>
+                                            <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
+                                            <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
+                                            <option value="insight" title="Insight: when you ask someone a question, they cannot lie to you.">insight</option>
+                                            <option value="cruelty" title="Cruelty: when you act to resolve a threat with violence, restore 3 Rascality.">cruelty</option>
+                                            <option value="kindness" title="Kindness: when you act to resolve a threat with compassion, restore 3 Rascality.">kindness</option>
+                                            <option value="brutality" title="Brutality: when you act to solve a threat with violence, you roll an additional die when you next roll.">brutality</option>
+                                            <option value="unmoving" title="Unmoving: when you roll a 3-, you are no longer Wounded and you restore your Rascality.">unmoving</option>
+                                            <option value="wisdom" title="Wisdom: when you act to solve a threat with knowledge, history, or cunning, restore 3 Rascality.">wisdom</option>
+                                            <option value="teaching" title="Teaching: you can Train once without taking your action during Downtime.">teaching</option>
+                                            <option value="quick" title="Quick: when there is a question of who acts first, you do.">quick</option>
+                                            <option value="healing" title="Healing: you may Act to make someone else no longer Wounded.">healing</option>
+                                            <option value="shelter" title="Shelter: when you sacrifice yourself to protect someone, restore 3 Rascality.">shelter</option>
+                                            <option value="intuition" title="Intuition: add “calm down the beasts and the wild things” to your list of Hopes.">intuition</option>
+                                            <option value="thrillseeking" title="Thrill Seeking: when someone says what you do to resolve a threat or obstacle is dangerous, uncertain, or both and you choose not to roll, mark 1 Practice with any skill.">thrill seeking</option>
+                                            <option value="aid" title="Aid: you can Help Someone without paying any Rascality.">aid</option>
+                                            <option value="vision" title="Vision: even when you are apart, you know exactly what befalls the other animals in their journeys.">vision</option>
+                                            <option value="trusty" title="Trusty: when you act to resolve a threat with deception, trickery, or furtiveness, restore 3 Rascality.">trusty</option>
+                                            <option value="countermand" title="Countermand: when you ignore orders, break rules, or rebel against authority, restore 3 Rascality.">countermand</option>
+                                            <option value="juggernaut" title="Juggernaut: when you barrel through, rush past, or break something down, restore 3 Rascality.">juggernaut</option>
+                                            <option value="open" title="Open: whoever or whatever you speak to will understand you, and you them.">open</option>
+                                            <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
+                                            <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
+                                        </select>
+                                        <select id="raiment3" name="raiment" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">raiment</option>
+                                            <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
+                                            <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
+                                            <option value="handmade" title="Handmade Cloak: Clothes, Pockets, Fraying">handmade cloak</option>
+                                            <option value="ceremonial armor" title="Ceremonial Armor: Armor, Ornate, Ancient">ceremonial armor</option>
+                                            <option value="scholarsregalia" title="Scholar's Regalia: Clothes, Academic, Tidy">scholar's regalia</option>
+                                            <option value="maidensdress" title="Maiden's Dress: Clothes, Tidy, Gentle">maiden's dress</option>
+                                            <option value="piratesgarb" title="Pirate's Garb: Clothes, Colorful, Fraying">pirate's garb</option>
+                                            <option value="ironmanacles" title="Iron Manacles: Armor, Rusty, Bound">iron manacles</option>
+                                            <option value="steeleyes" title="Steel Eyes: Sharp, Subtle, Stony">steel eyes</option>
+                                            <option value="softeyes" title="Soft Eyes: Uncertain, Kind, Gentle">soft eyes</option>
+                                            <option value="coldeyes" title="Cold Eyes: Closed-off, Calculating, Distant">cold eyes</option>
+                                            <option value="laughingeyes" title="Laughing Eyes: Warm, Jolly, Inviting">laughing eyes</option>
+                                            <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
+                                            <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
+                                            <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                        </select>
+                                        <select id="goal3" name="goal" class="form-control form-control-sm">
+                                            <option value="" disabled="disabled" selected="selected">goal</option>
+                                            <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
+                                            <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
+                                            <option value="seekknowledge" title="seek out knowledge long-lost">recover knowledge</option>
+                                            <option value="protect" title="protect someone">protect someone</option>
+                                            <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
+                                            <option value="lostbees" title="find your lost bees">recover bees</option>
+                                            <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
+                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
+
+                                    <div id="rascalityGroup3" name="rascalityGroup" class="input-group input-group-sm align-items-center">
+                                        <button id="restoreRascality3" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <div id="rascality3" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
+                                        <div>
+                                            <button type="button" id="plusRascality3" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
+                                            <button type="button" id="minusRascality3" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
+                                        </div>
+                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <input id="wounded3" name="wounded" type="checkbox" title="wounded?" />
+                                    </div>
+                                </div>
+
+                                <div id="skillList3" name="skillList" class="row" style="margin-top: 10px">
+                                    <div name="skillGroup" class="input-group input-group-sm small"></div>
+                                </div>
+
+                                <div name="skillAddGroup" class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm" id="newSkill3" name="newSkill" placeholder="new skill" />
+                                    <button id="addSkill3" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="c4" class="col-3 full-height">
+                            <div id="commonArea">
+                                <div class="row" class="text-center">
+                                    <select id="infolist" name="infolist" class="form-control form-control-sm">
+                                        <option value="" disabled="disabled" selected="selected">Bell Songs</option>
+                                        <option value="about">about</option>
+                                        <option value="wildprinciples">wild principles</option>
+                                        <option value="" disabled="disabled">Character Creation</option>
+                                        <option value="backgrounds">backgrounds</option>
+                                        <option value="gifts">gifts</option>
+                                        <option value="goals">goals</option>
+                                        <option value="raiments">raiments</option>
+                                        <option value="skills">skills</option>
+                                        <option value="" disabled="disabled">Playing the Game</option>
+                                        <option value="startingplay">starting play</option>
+                                        <option value="phasesofplay">phases of play</option>
+                                        <option value="endingplay">ending play</option>
+                                        <option value="adventure">adventure</option>
+                                        <option value="downtime">downtime</option>
+                                        <option value="" disabled="disabled">Adventure</option>
+                                        <option value="challenges">threats/obstacles/opportunities</option>
+                                        <option value="rolling">rolling</option>
+                                        <option value="rascality">rascality</option>
+                                    </select>
+                                </div>
+
+                                <div id="infoArea">
+                                    <em>
+                                        <p>We work. We sing. We tread hot ground under a hotter sun. We hold each other. We cry together. We celebrate.</p>
+                                        <p>And we must protect each other.</p>
+                                        <p>When you are as small as we are, there is nothing to do but band together. When the threats that bear down upon your world are so large you cannot imagine them, there is nothing to do but to cling to each other and refuse to let go.</p>
+                                        <p>When you have nothing, you must build together.</p>
+                                        <p>And build we shall.</p>
+                                    </em>
+                                </div>
+
+                                <div class="row justify-content-center" style="border: 1px solid black">
+                                    <div id="resultArea">roll results</div>
+                                </div>
+
+                                <div id="chatArea" class="row">
+                                    <div class="row">
+                                        <form id="messageForm" class="container">
+                                            <div id="chatSection">
+                                                <!-- the chatSection has a set height
+                                                    but the chat obj has a dynamically
+                                                    changing height, otherwise scroll-to-bottom
+                                                    won't work -->
+                                                <div class="chat" id="chat"></div>
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-control-sm width100" id="message" placeholder="chat" />
+                                                <span class="input-group-btn">
+                                                    <input type="submit" class="form-control-sm btn btn-info btn-sm" value="send" />
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap template script includes -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <!-- TogetherJS config and library -->
+    <script>
+    TogetherJSConfig_autoStart  = false;
+    TogetherJSConfig_siteName = "Bell Songs";
+    TogetherJSConfig_dontShowClicks = true;
+    TogetherJSConfig_suppressJoinConfirmation = true;
+    TogetherJSConfig_suppressInvite = true;
+    //use this in single-page apps where being at the same base URL
+    //doesn’t mean the two people are looking at the same thing.
+    TogetherJSConfig_includeHashInUrl = true;
+    TogetherJSConfig_disableWebRTC = true;
+    </script>
+    <script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+    <!-- other Javascript code -->
+    <script>
+        var gamehandle = 'bellsongs';
+        var room = 'test';
+        var socket = io('/' + gamehandle);
+
+        var infotext = {
+            'about':
+                '<p>Bell Songs is a game of animal adventure in the vein of Redwall, Mouse Guard, or Watership Down. To play, you will need: 1-3 friends, a number of six sided dice, and something to write with.</p><p>You will play as whatever animals strike your fancy, diving into adventure and intrigue. It’s a big wide world that you live in, filled with dangers undeniable and obstacles impassable. How will you overcome them?</p><p>This game has no master. You are all equally in charge here. Read the text of the game together. Start at the Principles and keep going. It might sound like a chore, but I promise you it is the best way to understand how to play this game.</p><p><a href="https://rpgnatalie.itch.io/bell-songs" target="_new">Bell Songs</a> is by Natalie the Knife</p>',
+            'adventure':
+                    '<p>Adventure is where you go about achieving your Goal. During Adventure, everyone takes turns being the Focus of the story. Whoever has touched an animal most recently goes first.</p><strong>Ending the Turn</strong><p>When anyone feels like the current action would make a good cliffhanger, they may end the turn. Move on to the next person’s turn, and give them the Focus. When it comes back to your turn, pick up from where you left off.</p>',
+            'wildprinciples':
+                '<ul><li>Fill the woods with life</li><li>Live dangerously, live passionately</li><li>Build together</li></ul><p><strong>Fill the woods with life</strong>: when you describe the world, the people that inhabit it, or the structures that embody it, fill them with history. Show the wear, and care, that line them. Don’t assume you know all of the stories of this place - there is more here than anyone could learn in a lifetime.</p><p>Think about your character similarly - fill them with life as well. Treat them as someone you have just met, whose histories and stories are only just before you. Don’t assume you know everything about them: allow yourself to be surprised at the places they take you.</p><p><strong>Live dangerously, live passionately</strong>: go out into the world and find adventure in it. Don’t worry about living or dying in this world - focus on the things in front of you, the dreams you carry with you, and the comrades who fight alongside you.</p><p>Similarly, don’t worry about if your friends will think what you say is cool. It doesn’t matter - just say what you find exciting and fun. Don’t hold yourself back.</p><p><strong>Build together</strong>: the world can be hard, and harsh, and unforgiving - you must do everything in your power to fight back against it. There will be injustice, violence, famine, and homelessness. You must eradicate these where you see them. You must build a world worth living in.</p><p>You must also take care of your friends. If the game pushes into content that is difficult, or content that you can’t contend with, you need to help each other. That might look like processing the things you are feeling together, taking time away from the game to resettle yourselves, or eliding certain content that is too much for someone to handle.</p>',
+            'backgrounds':
+                '<p>Your background is your starting place in this story. It is what you bring to the table, your history and your knowledge. Your background tells you what Skills you start with, but you can always learn new ones later.</p><ul><li><strong>Cook</strong>: A paramount chef, happy to feed any who hunger. (starting skill: Cooking <em>or</em> Brewing)</li><li><strong>Farmer</strong>: A hardworking farmhand, ready to tend to their crops. (starting skill: Farming <em>or</em> Weatherwatching)</li><li><strong>River-walker</strong>: A riverboat’s finest guard. (starting skill: Swimming <em>or</em> Slinging)</li><li><strong>Guardian</strong>: A protector and friend to those who are lost. (starting skill: Swinging <em>or</em> Protecting)</li><li><strong>Hunter</strong>: They can track down even the shyest prey. (starting skill: Shooting <em>or</em> Tracking</li><li><strong>Scout</strong>: Swift and silent - when you need to know what is going on, ask them. (starting skill: Sneaking <em>or</em> Mapping)</li><li><strong>Gourmand</strong>: A powerful eater, endowed with a sharp tongue and even sharper nose. (starting skill: Eating <em>or</em> Smelling)</li><li><strong>Artist</strong>: A maker of beauty, who entrance all those who see them. (starting skill: Singing <em>or</em> Painting</li><li><strong>Forester</strong>: A hermit or wanderer - depends on who you ask. (starting skill: Foraging <em>or</em> Running)</li><li><strong>Bellmaker</strong>: A voice of shining joy, they are a clarion to all. (starting skill: Bellmaking <em>or</em> Befriending)</li><li><strong>Elder</strong>: A wise-person, steeped in history and knowledge. (starting skill: Riddling <em>or</em> Storytelling)</li><li><strong>Beekeeper</strong>: A caretaker, a friend to anything they meet. (starting skill: Befriending <em>or</em> Beekeeping)</li><li><strong>Scholar</strong>: A thing-knower, someone who records and rereads. (starting skill: Reading <em>or</em> Writing)</li><li><strong>Kitesailor</strong>: High-flying freedom: who could imagine anything more wondrous. (starting skill: Flying <em>or</em> Weatherwatching)</li><li><strong>Tree-runner</strong>: When you need to get somewhere fast, they’re the one you need to talk to. (starting skill: Climbing <em>or</em> Running)</li><li><strong>Courier</strong>: A friendly face and arms full of packages. (starting skill: Befriending <em>or</em> Carrying)</li><li><strong>Carpenter</strong>: They will build you a home, they will fill it with joy, and they will lay you into the ground when it’s your time. (starting skill: Building <em>or</em> Foraging)</li><li><strong>Maiden</strong>: An innocent heart, full of gentle kindness. (starting skill: Befriending <em>or</em> Singing</li><li><strong>Blacksmith</strong>: A swift hammer stroke and a strong arm. (starting skill: Building <em>or</em> Swinging)</li><li><strong>Thief</strong>: They take from those who do not need, and give to those who do. (starting skill: Sneaking <em>or</em> Stabbing)</li><li><strong>Spearbearer</strong>: A candle in the night; a hand holding yours; a whispered promise. (starting skill: Stabbing <em>or</em> Singing</li><li><strong>Pirate</strong>: A rapscallion, ready to free the imprisoned and overthrow the unjust. (starting skill: Sailing <em>or</em> Swinging)</li><li><strong>Poet</strong>: Words like silk, sewed with tongue-made-knife. (starting skill: Singing <em>or</em> Riddling)</li><li><strong>Brewer</strong>: A barrel of sweetness, bottling heaven. (starting skill: Brewing <em>or</em> Smelling)</li><li><strong>Miner</strong>: The sweat of their labor builds mountains and palaces. The ring of their arms is a fortress. (starting skill: Digging <em>or</em> Carrying)</li><li><strong>Cartographer</strong>: A mapmaker with eyes like needles. (starting skill: Mapping <em>or</em> Weatherwatching)</li></ul>',
+            'gifts':
+                '<p>Gifts are special to you - treasure them. As you grow close to your fellows, you might learn of their Gifts and be able to put them into practice, but you’ll never lose the Gift you start with.</p><ul><li><strong>Hope</strong>: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.</li><li><strong>Caution</strong>: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.</li><li><strong>Insight</strong>: when you ask someone a question, they cannot lie to you.</li><li><strong>Cruelty</strong>: when you act to resolve a threat with violence, restore 3 Rascality.</li><li><strong>Kindness</strong>: when you act to resolve a threat with compassion, restore 3 Rascality.</li><li><strong>Brutality</strong>: when you act to solve a threat with violence, you roll an additional die when you next roll.</li><li><strong>Unmoving</strong>: when you roll a 3-, you are no longer Wounded and you restore your Rascality.</li><li><strong>Wisdom</strong>: when you act to solve a threat with knowledge, history, or cunning, restore 3 Rascality.</li><li><strong>Teaching</strong>: you can Train once without taking your action during Downtime.</li><li><strong>Quick</strong>: when there is a question of who acts first, you do.</li><li><strong>Healing</strong>: you may Act to make someone else no longer Wounded.</li><li><strong>Shelter</strong>: when you sacrifice yourself to protect someone, restore 3 Rascality.</li><li><strong>Intuition</strong>: add “calm down the beasts and the wild things” to your list of Hopes.</li><li><strong>Thrill Seeking</strong>: when someone says what you do to resolve a threat or obstacle is dangerous , uncertain , or both and you choose not to roll, mark 1 Practice with any skill.</li><li><strong>Aid</strong>: you can Help Someone without paying any Rascality.</li><li><strong>Vision</strong>: even when you are apart, you know exactly what befalls the other animals in their journeys.</li><li><strong>Trusty</strong>: when you act to resolve a threat with deception, trickery, or furtiveness, restore 3 Rascality.</li><li><strong>Countermand</strong>: when you ignore orders, break rules, or rebel against authority, restore 3 Rascality.</li><li><strong>Juggernaut</strong>: when you barrel through, rush past, or break something down, restore 3 Rascality.</li><li><strong>Open</strong>: whoever or whatever you speak to will understand you, and you them.</li><li><strong>Disciplined</strong>: your whole body is a weapon. You can never be deprived.</li><li><strong>Plucky</strong>: no effect. Good luck out there.</li></ul>',
+            'goals':
+                '<p>Your goal is the thing that keeps driving you forward, the reason why you are a central figure of our story. It doesn’t have to be grand, and it doesn’t have to be life changing, but it must be important to you.</p><ul><li>Recover your family’s lost heirloom</li><li>Rescue someone who is lost or taken</li><li>Seek out knowledge long-lost</li><li>Protect someone</li><li>Get revenge on someone who hurt you</li><li>Find your lost bees</li><li>Achieve or avoid your fated destiny</li><li>Achieve or avoid your impending doom</li><li>Find something good to eat</li></ul>',
+            'raiments':
+                '<p>Your raiment is your look - it’s not limited just to clothes. Think about it as your aesthetic; the thing that catches the eye when someone looks at you.</p><ul><li><strong>Monk’s Robes</strong>: Clothes, Ceremonial, Clean</li><li><strong>Rags</strong>: Clothes, Ragged, Dirty</li><li><strong>Handmade Cloak</strong>: Clothes, Pockets, Fraying</li><li><strong>Ceremonial Armor</strong>: Armor, Ornate, Ancient</li><li><strong>Scholar’s Regalia</strong>: Clothes, Academic, Tidy</li><li><strong>Maiden’s Dress</strong>: Clothes, Tidy, Gentle</li><li><strong>Pirate’s Garb</strong>: Clothes, Colorful, Fraying</li><li><strong>Iron Manacles</strong>: Armor, Rusty, Bound</li><li><strong>Steel Eyes</strong>: Sharp, Subtle, Stony</li><li><strong>Soft Eyes</strong>: Uncertain, Kind, Gentle</li><li><strong>Cold Eyes</strong>: Closed-off, Calculating, Distant</li><li><strong>Laughing Eyes</strong>: Warm, Jolly, Inviting</li><li><strong>Stormy Eyes</strong>: Heated, Quick, Suspicious</li><li><strong>Scarred Arms</strong>: Armor, Powerful, Damaged</li><li><strong>Open Arms</strong>: Tender, Calm, Hopeful</li></ul>',
+            'skills':
+                '<p>Skills are the basic building blocks of your character. Skills are how you avoid danger and achieve your goals. You don’t have to have a skill to do something like it - your skill just lets you guarantee that what you do works.</p><p>All skills start at 1 Dot and 0 Practice when you acquire them. You gain Practice and eventually Dots as you use the skill, make mistakes, and learn from them.</p><p>When you roll a 3-, increase the Practice of the skill you used by 1. When a skill reaches 3 Practice, reset the Practice to 0 and increase the Dots by 1.</p><ul><li>Beekeeping</li><li>Cooking</li><li>Brewing</li><li>Eating</li><li>Smelling</li><li>Sailing</li><li>Swinging</li><li>Slinging</li><li>Stabbing</li><li>Shooting</li><li>Protecting</li><li>Mapping</li><li>Tracking</li><li>Foraging</li><li>Farming</li><li>Sneaking</li><li>Riddling</li><li>Bellmaking</li><li>Storytelling</li><li>Building</li><li>Running</li><li>Swimming</li><li>Climbing</li><li>Flying</li><li>Singing</li><li>Painting</li><li>Digging</li><li>Carrying</li><li>Weatherwatching</li><li>Befriending</li><li>Reading</li><li>Writing</li><li>Tapestry-making</li><li>Fishing</li></ul>',
+            'startingplay':
+                '<p>To begin, everyone introduces their characters. Then pick a Home. Do you all live in:</p><ul><li>a town</li><li>a city</li><li>a monastery</li><li>a shrine</li><li>a fortress</li><li>a prison</li><li>a ship</li><li>a nomad camp</li><li>a hamlet</li><li>something else</li></ul><p>Don’t worry about defining it too deeply just yet.</p><p>Go to the Adventure section and read it together.</p>',
+            'phasesofplay':
+                '<p>This game is split into two phases: Adventure and Downtime. Adventure is the part of the story where everyone goes about trying to achieve their goals. Downtime is the bits in between, when everyone rests, recovers, rebuilds, and learns new skills.</p><p>When someone achieves their goal, when everyone returns Home, or when everyone agrees that they stop and focus on taking care of themselves, enter Downtime. When you’ve completed Downtime, go back into Adventure.</p>',
+            'endingplay':
+                '<p>Stop playing when you run out of time together. Don’t worry about finding a specific point to stop - you can pick the story back up where you left off, or restart from Home.</p>',
+            'challenges':
+                '<p>At any point during your turn, especially when it feels like something interesting should happen, a friend can introduce a threat, an obstacle, or an opportunity.</p><p>When you do something to resolve a threat or obstacle, anyone can say what you do is <strong>dangerous, uncertain, or both</strong>.</p><div class="indented">If it’s <strong>dangerous</strong>, a friend will tell you how you’ve made yourself vulnerable.</div><div class="indented">If it’s <strong>uncertain</strong>, a friend will tell you whether or not you make it, based on their gut instincts.</div><div class="indented">If it’s <strong>both</strong>, a friend will tell you how the situation escalates and becomes worse.</div><br><p>However, you can veto whatever decision they would make by declaring you are going to roll.</p>',
+            'rolling':
+                '<p>When you roll, pick one of your skills that feels like it could help you in this situation, and roll a number of six sided dice equal to that skill’s Dot Rating and take the highest.</p><div class="indented"><strong>On a 6</strong>: you describe how you turn the situation to your favor, despite the odds.</div><div class="indented"><strong>On a 4-5</strong>: you describe how you turn the situation to your favor and the threat is resolved, but a friend gets to say what factor <strong>Complicates</strong> your situation.</div><div class="indented"><strong>On a 3-</strong>: you describe how the situation goes completely wrong and you are put in perilous danger, but a friend gets to say what sliver of <strong>Hope</strong> still remains for you.</div><ul><strong>Complications</strong>:<li>It takes extra time</li><li>The danger hasn’t completely left you</li><li>You are Wounded</li><li>You become completely lost</li><li>Some new danger is stalking you</li><li>You leave behind something precious to you</li></ul><ul><strong>Hopes</strong>:<li>Someone appears to help</li><li>You are no longer Wounded</li><li>You find out some important information on your Goal</li><li>A threat or obstacle reveals a weakness to you</li><li>You find a reserve of inner strength you didn’t know you had - restore your Rascality</li></ul>',
+            'rascality':
+                '<p>Rascality is your sheer determination. You have a maximum Rascality of 10.</p><p>You can spend Rascality for various effects.</p><strong>Resist and Act</strong><div class="indented">You can Resist a Complication by spending 3 Rascality. Whatever would happen, it doesn’t instead. You manage to avoid, stop, or counteract it.</div><div class="indented">You can Act on a sliver of Hope by spending 3 Rascality. Pick one of the options on the Hope list - it happens, and you get to say how. You can do this at any time, whether or not you are rolling. Note: you cannot choose to restore your Rascality by Acting.</div><strong>Push Yourself</strong><div class="indented">You can Push Yourself by spending 2 Rascality. When you do so, you roll an additional die on your roll. You can Push Yourself before or after you see the results of your roll.</div><strong>Help Someone</strong><div class="indented">You can Help Someone by spending 1 Rascality. When you do so, they roll an additional die on their roll. You can Help Someone before or after they see the results of the roll. Describe how you aid or assist them.</div><br><h6>Wounded</h6><p>Some effects might cause you to become Wounded. When you are Wounded, if you would spend Rascality, you must instead spend that much Rascality plus one.</p>',
+            'downtime':
+                '<p>Downtime is when you rest, recover, rebuild, and learn. You can change your current Gift to another that is available to you at any time during Downtime.</p><p>There are a number of actions you can take during Downtime. Everyone picks 1:</p><strong>Train</strong><div class="indented">Pick another character; you both gain a skill at 1 Dot. You can pick the skill from the example skill list, or you can make up a new one.</div><div class="indented">If you pick a skill either of you already have, that skill’s Dot Rating goes up by 1.</div><strong>Connect</strong><div class="indented">Pick another character and talk to them about something that’s been bothering you, something that you want to celebrate, or something you need to get off your chest.</div><div class="indented">Mark 1 Bond with each other. Spend 3 Bond with someone to make their Gift available to you.</div><strong>Feast</strong><div class="indented">Everyone restores all of their Rascality. Describe the raucous and wonderful feast you share together. What do you eat? What do you drink? What merry songs do you sing?</div><strong>Lick</strong><div class="indented">Everyone is no longer Wounded. Describe how you take care of them and yourself. Where did you hurt? How do you heal?</div><strong>Build</strong><div class="indented">Build something that will last in your Home. Alternatively, repair something that has been damaged in your Home.</div><strong>Chronicle</strong><div class="indented">Record your adventures. What has happened to you and your friends since the last time you were together? What new stories have you brought to share? Write them down and store them for later.</div>'
+        };
+
+        // prep element effects
+        dragElement(document.getElementById("scratchpadArea"));
+        dragElement(document.getElementById("imageviewbox"));
+
+        socket.on('connect', function() {
+            // get room name from URL ending, make sure it's not malicious text
+            var pathparts = window.location.href.split('?');
+            pathparts[1] = sanitize(pathparts[1], 'alphanumeric');
+            if (pathparts[1]) {
+                room = pathparts[1];
+            }
+            // console.log('trying to join room ' + room);
+            socket.emit("join room", room);
+        });
+
+        socket.on('username', function(data) {
+            updateUserName(data);
+        });
+        function updateUserName(user) {
+            $('#message').prop('placeholder', user);
+        }
+
+        socket.on('user list', function(data) {
+            updateUserList(data);
+        });
+        function updateUserList(list) {
+            $('#message').prop('title', list.length + ' user(s): ' + list.join(', '));
+        }
+
+        $('#infolist').on('change', function() {
+            // only update locally
+            var $infolist = $('#infolist');
+            var $infoArea = $('#infoArea');
+
+            $infoArea.html(infotext[$infolist.val()]);
+        });
+
+        $('#messageForm').submit(function(e) {
+            var $message = $('#message');
+            e.preventDefault();
+            socket.emit('chat message', $message.val());
+            $message.val('');
+        });
+        socket.on('chat message', function(data) {
+            var message = data.message;
+            var user = data.user;
+            var type = data.type;
+
+            if (type == 'updateusername') {
+                var names = message.split('|');
+                var oldname = names[0];
+                var newname = names[1];
+                if (oldname != newname) {
+                    html = '<div class="well text-muted">(user ' + oldname + ' is now ' + newname + ')</div>';
+                }
+            }
+            else if(type == 'newgame') {
+                html = '<div class="well text-muted">' + user + ' started a new game</div>';
+            }
+            else if (type == 'savegame') {
+                var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+                // generate the file to download locally
+                download(filename, message);
+                html = '<div class="well text-muted">' + user + ' is saving game data</div>';
+            }
+            else if (type == 'loadgame') {
+                loadGame();
+            }
+            else if (type == 'rollresult') {
+                html = '<div class="well"><strong>' + user + '</strong> ( ' + message + ' )</div>';
+            }
+            else { // should be regular chat message
+                html = '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
+            }
+            updateChat(html);
+        });
+        function updateChat(html) {
+            if (html) {
+                var $chat = $('#chat');
+                $chat.append(html);
+                $('#chatSection').scrollTop($chat.height());
+            }
+        }
+
+        function safetyTool(type='x-card') {
+            if (type == 'x-card') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+        }
+        socket.on('x-card', function(data) {
+            var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
+            if (data) {
+                html += 'please remove "' + data + '"';
+            }
+            else {
+                html += 'ask for clarification if needed';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+
+        $('input[name=player], input[name=character], select[name=background], select[name=gift], select[name=goal], select[name=raiment], textarea[name=notes]').each(function() {
+            $(this).on('change', function(e) {
+                e.preventDefault();
+                var field = $(this).prop('name');
+                var i = $(this).prop('id');
+                var v = $(this).val();
+                i = i.slice(-1); // last letter of index is the count number
+                i = parseInt(i) - 1;
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+
+        $('input[type=checkbox]').on('change', function(e) {
+            e.preventDefault();
+            var field = $(this).prop('name');
+            var v = $(this).prop('checked');
+            var i = $(this).prop('id');
+            i = i.slice(-1); // last letter of id is the count number
+            i = parseInt(i) - 1;
+            socket.emit('update field', {'field': field, 'index': i, 'value': v});
+        });
+
+        $('button[name=restoreRascality], button[name=plusRascality], button[name=minusRascality]').click(function(e) {
+            e.preventDefault();
+            var field = $(this).prop('name');
+            var amount = 10;
+            var i = $(this).prop('id');
+            i = i.slice(-1); // last letter of index is the count number
+            var rascality = parseInt($('#rascality' + i).html());
+
+            if (field == 'minusRascality') {
+                amount = rascality - 1;
+            }
+            else if (field == 'plusRascality') {
+                amount = rascality + 1;
+            }
+
+            i = parseInt(i) - 1;
+            socket.emit('update field', {'field': 'rascality', 'index': i, 'value': amount});
+        });
+
+        $('button[name=addSkill]').click(function(e) {
+            e.preventDefault();
+            var i = $(this).prop('id');
+            i = i.slice(-1); // last letter of index is the count number
+            var skill = $('#newSkill' + i).val();
+            if (skill) {
+                i = parseInt(i) - 1;
+                socket.emit('add skill', {'index': i, 'skill': skill});
+            }
+        });
+
+        function skillTest(n=1, skill, level) {
+            socket.emit('roll dice', {'index': (n-1), 'skill': skill, 'level': level});
+        }
+        socket.on('roll result', function(data) {
+            var character = data.character;
+            var result = data.result;
+            var skill = data.skill;
+            var html = data.html;
+            updateResult(html);
+            // add roll info to chat
+            html = '<div class="well">' + character + ' uses skill "' + skill + '"';
+            if (result < 4) {
+                html += ' unsuccessfully, but <em>gains practice</em>!';
+            }
+            else if (result < 6) {
+                html += ' successfully, but there is a <strong>complication</strong>!';
+            }
+            else {
+                html += ' successfully!';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+        function updateResult(html) {
+            if (html) {
+                $('#resultArea').html(html);
+            }
+        }
+
+        function plusPractice(n=1, skill) {
+            socket.emit('practice', {'index': (n-1), 'skill': skill});
+        }
+
+        socket.on('update field', function(data) {
+            var field = data.field;
+            var number = data.number;
+            var value = data.value;
+
+            if (field == 'rascality') {
+                updateRascality(number, value)
+            }
+            else {
+                $('#' + field + number).val(value);
+            }
+            save();
+        });
+
+        socket.on('update client', function(data) {
+            var users = data.users;
+            var info = data.info;
+            var p = info['profiles'];
+
+            updateUserList(users);
+            if (info['currentimage']) {
+                updateImage('imageviewImage', info['currentimage']);
+            }
+
+            for (var i = 0; i < p.length; i++) {
+
+                updatePortrait(i, p[i]['portrait']);
+
+                $('#player' + (i+1)).val(p[i]['player']);
+                $('#character' + (i+1)).val(p[i]['character']);
+                $('#background' + (i+1)).val(p[i]['background']);
+                $('#gift' + (i+1)).val(p[i]['gift']);
+                $('#goal' + (i+1)).val(p[i]['goal']);
+                $('#raiment' + (i+1)).val(p[i]['raiment']);
+                $('#notes' + (i+1)).val(p[i]['notes']);
+
+                if (p[i]['wounded']) {
+                    $('#wounded' + (i+1)).prop('checked', true);
+                }
+                else {
+                    $('#wounded' + (i+1)).prop('checked', false);
+                }
+
+                updateRascality((i+1), p[i]['rascality']);
+
+                updateSkillList((i+1), p[i]['skills']);
+
+                save();
+            }
+        });
+
+        function updateRascality(n=1, rascality) {
+            var $plusB = $('#plusRascality' + n);
+            var $minusB = $('#minusRascality' + n);
+
+            $('#rascality' + n).html(rascality);
+            if (rascality > 9) {
+                $plusB.addClass('locked');
+            }
+            else {
+                $plusB.removeClass('locked');
+            }
+            if (rascality < 1) {
+                $minusB.addClass('locked');
+            }
+            else {
+                $minusB.removeClass('locked');
+            }
+        }
+
+        function updateSkillList(n=1, skills) {
+            var $skillList = $('#skillList' + n);
+            var html = '';
+            for (var i = 0; i < skills.length; i++) {
+                html += '<div name="skillGroup" class="input-group input-group-sm small">';
+                html += '<button name="skillname" class="form-control btn btn-sm btn-success" onclick="skillTest('+ n + ', \'' + skills[i]['name'] + '\', ' + skills[i]['level'] + ');">' + skills[i]['name'] + '</button>';
+                html += '<div name="skilllevel" class="form-control-sm text-success" title="skill level">' + skills[i]['level'] + '</div>';
+                html += '<div class="text-success">⬤</div>';
+                html += '<div name="practice" class="form-control-sm text-success" title="3 practice = 1 dot">' + skills[i]['practice'] + '</div>';
+                html += '<div><button type="button" name="plusPractice" class="btn btn-sm btn-success" style="max-width: 2em !important" onclick="plusPractice('+ n + ', \'' + skills[i]['name'] + '\');"> + </button></div>';
+                html += '</div>';
+            }
+            $skillList.html(html);
+        }
+
+        function portraitURL(number) {
+            var url = prompt("paste in the URL of the image");
+            if (url) {
+                // try to check if image can be loaded
+                var img = new Image();
+                img.src = url;
+                img.onload = function(){
+                    // send info to server
+                    socket.emit('update portrait', {'index': (number-1), 'url': url});
+                };
+                img.onerror = function(){
+                    alert("image cannot be loaded");
+                }
+            }
+        }
+        function updatePortrait(i=0, url) {
+            var $e = $('#portrait' + (i+1));
+            // hovering tooltip should show the image without distorted porportions
+            $e.prop('src', url);
+            // force browser to use new image instead of cached image
+            $e.tooltip('dispose');
+            $e.tooltip({
+                html: true,
+                placement: 'right',
+                title: '<img src="' + url + '" height="500" />'
+            });
+        }
+        socket.on('update portrait', function(data) {
+            updatePortrait(data.index, data.url);
+            save();
+        });
+
+        socket.on('update image', function(data) {
+            updateImage('imageviewImage', data);
+            save();
+        });
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+            socket.emit('update image', imgURL);
+        }
+        function updateImage(field='imageviewImage', url) {
+            $('#' + field).prop('src', url);
+        }
+
+        function loadGame() {
+            $('#loadbox').toggle();
+        }
+        $('#loadbox button[type=submit]').click(function(e) {
+            e.preventDefault();
+            // load JSON textfield
+            socket.emit('load json', $('#loadboxjson').val());
+            // hide the loadbox
+            $('#loadbox').hide();
+        });
+
+        function save() {
+            // save the game on the server
+            socket.emit('save');
+        }
+
+        function saveGame() {
+            // download a JSON copy
+            socket.emit('save game');
+        }
+        socket.on('save game', function(data) {
+            var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+            // generate the file to download locally
+            download(filename, data);
+        });
+
+        function newGame() {
+            if(confirm('Clear all fields?')) {
+                socket.emit('new game');
+            }
+        }
+
+        // whiteboard area, new p5 instance
+
+        const sketchpad = ( sketch ) => {
+
+            let color = '#000';
+            let stroke = 2;
+            let buttonlist = ['erase-btn', 'black-btn','red-btn','green-btn','blue-btn','brown-btn'];
+            let pg; // graphics buffer
+
+            sketch.setup = function() {
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.offsetWidth;
+                var height = canvasDiv.offsetHeight;
+                sketch.createCanvas(width, height);
+                pg = sketch.createGraphics(width, height); // graphics buffer
+                sketch.background(220, 217, 205);
+                pg.background(220, 217, 205); // graphics buffer
+            };
+
+            $('#clear-btn, #erase-btn, #black-btn, #red-btn, #green-btn, #blue-btn, #brown-btn').each(function() {
+                $(this).click(function(e) {
+                    e.preventDefault();
+
+                    if ($(this).prop('id') == 'clear-btn') {
+                        if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
+                            sketch.background("rgb(220, 217, 205)");
+                            stroke = 2;
+                            var data = {
+                                'background': 'rgb(220, 217, 205)'
+                            };
+                            socket.emit('sketchpad', {'action': 'clear', 'params': data});
+                        }
+                    }
+                    else if ($(this).prop('id') == 'erase-btn') {
+                        color = "rgb(220, 217, 205)";
+                        stroke = 10;
+                    }
+                    else if ($(this).prop('id') == 'black-btn') {
+                        color = "rgb(0, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'red-btn') {
+                        color = "rgb(204, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'green-btn') {
+                        color = "rgb(0, 153, 51)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'blue-btn') {
+                        color = "rgb(0, 102, 255)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'brown-btn') {
+                        color = "rgb(134, 89, 45)";
+                        stroke = 2;
+                    }
+                    highlightColor($(this).prop('id'), buttonlist);
+
+                    function highlightColor(selected, list) {
+                        for (var c in list) {
+                            if (list[c] == selected) {
+                                $('#' + list[c]).addClass('selected');
+                            }
+                            else {
+                                $('#' + list[c]).removeClass('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            sketch.mouseDragged = function() {
+                sketch.noStroke();
+                sketch.stroke(color);
+                pg.stroke(color); // graphics buffer
+                sketch.strokeWeight(stroke);
+                pg.strokeWeight(stroke); // graphics buffer
+                sketch.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY);
+                pg.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY); // graphics buffer
+
+                var data = {
+                    'mouseX': sketch.mouseX,
+                    'mouseY': sketch.mouseY,
+                    'pmouseX': sketch.pmouseX,
+                    'pmouseY': sketch.pmouseY,
+                    'color': color,
+                    'stroke': stroke
+                };
+                socket.emit('sketchpad', {'action': 'draw line', 'params': data});
+            };
+
+            socket.on('sketchpad', function(data) {
+                var action = data.action;
+                var params = data.params;
+
+                if (action == 'draw line') {
+                    sketch.noStroke();
+                    sketch.stroke(params.color);
+                    pg.stroke(params.color); // graphics buffer
+                    sketch.strokeWeight(params.stroke);
+                    pg.strokeWeight(params.stroke); // graphics buffer
+                    sketch.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY);
+                    pg.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY); // graphics buffer
+                }
+                else if (action == 'clear') {
+                    sketch.background(params.background);
+                    pg.background(params.background); // graphics buffer
+                }
+            });
+
+            sketch.windowResized = function () {
+                //sketch.centerCanvas();
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.clientWidth;
+                var height = canvasDiv.clientHeight;
+                sketch.resizeCanvas(width, height);
+                sketch.image(pg, 0, 0); // redraw onto canvas from the buffer
+            };
+        };
+        let myp5 = new p5(sketchpad, 'whiteboard');
+
+        function toggleScratchpad() {
+            if ( $('#scratchpadArea').css('visibility') == 'hidden' ) {
+                $('#scratchpadArea').css('visibility','visible');
+            }
+            else {
+                $('#scratchpadArea').css('visibility','hidden');
+            }
+        }
+    </script>
+</body>
+</html>
