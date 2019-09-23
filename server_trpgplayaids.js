@@ -9,9 +9,11 @@ io.set('heartbeat interval', 2000);
 
 var clientpages = {
     'archipelago': 'archipelago.html',
+    'bellsongs': 'bellsongs.html',
+    'dicechat': 'dicechat.html',
     'heartsofwulin': 'heartsofwulin.html',
     'omsl': 'omsl.html',
-    'dicechat': 'dicechat.html'
+    'theescort': 'theescort.html'
 };
 var game_ui_path = 'game_uis';
 
@@ -29,14 +31,20 @@ app.get('/', function(req, res) {
 app.get('/archipelago', function(req, res) {
     res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['archipelago']);
 });
+app.get('/bellsongs', function(req, res) {
+    res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['bellsongs']);
+});
+app.get('/dicechat', function(req, res) {
+    res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['dicechat']);
+});
 app.get('/heartsofwulin', function(req, res) {
     res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['heartsofwulin']);
 });
 app.get('/omsl', function(req, res) {
     res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['omsl']);
 });
-app.get('/dicechat', function(req, res) {
-    res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['dicechat']);
+app.get('/theescort', function(req, res) {
+    res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['theescort']);
 });
 
 // shared JS functions
@@ -53,6 +61,8 @@ console.log('Server "tRPG Playaids" running...');
 // start game modules
 
 var archipelago = require('./game_modules/archipelago.js')(app, io, helper);
+var bellsongs = require('./game_modules/bellsongs.js')(app, io, helper);
 var dicechat = require('./game_modules/dicechat.js')(app, io, helper);
 var heartsofwulin = require('./game_modules/heartsofwulin.js')(app, io, helper);
 var omsl = require('./game_modules/omsl.js')(app, io, helper);
+var theescort = require('./game_modules/theescort.js')(app, io, helper);
