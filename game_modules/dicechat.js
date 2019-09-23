@@ -36,7 +36,7 @@ module.exports = function(app, socketio, helper) {
             socket.room = room;
             socket.join(room);
             users[room].push(name);
-            console.log('user ' + name + ' joined room ' + room);
+            console.log('user ' + socket.id + ' (' + name  + ') joined room ' + room);
             socket.emit('username', socket.username); // send back the valid username
             sendUsers(room);
         });
@@ -46,7 +46,7 @@ module.exports = function(app, socketio, helper) {
 
         // disconnect
         socket.on('disconnect', function(data) {
-            console.log('Player Disconnected Due To Reason :'+data);
+
             var room = socket.room;
             if (!room) {
                 room = defaultroom; // default room
@@ -56,7 +56,7 @@ module.exports = function(app, socketio, helper) {
                 users[room].splice(users[room].indexOf(socket.username), 1);
             }
             connections.splice(connections.indexOf(socket), 1);
-            console.log('disconnected: ' + socket.username);
+            console.log(socket.id + ' (' + socket.username + ') disconnected because... '+data);
             console.log('%s sockets connected', connections.length);
             sendUsers(room);
         });
@@ -90,6 +90,7 @@ module.exports = function(app, socketio, helper) {
                         output = oldname + '|' + oldname;
                     }
                     type = 'updateusername';
+                    updateUserName();
                     sendUsers(room);
                 }
                 else {
@@ -109,6 +110,9 @@ module.exports = function(app, socketio, helper) {
             socket.broadcast.to(room).emit('sketchpad', data);
         });
 
+        function updateUserName() {
+            socket.emit('username', socket.username);
+        }
         function sendUsers(room) {
             io.to(room).emit('user list', users[room]);
         }

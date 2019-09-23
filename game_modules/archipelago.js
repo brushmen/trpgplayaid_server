@@ -202,6 +202,7 @@ module.exports = function(app, socketio, helper) {
                         output = oldname + '|' + oldname;
                     }
                     type = 'updateusername';
+                    updateUserName();
                     sendUsers(room);
                 }
                 else if (message.match(/^\/save$/)) {
@@ -357,6 +358,9 @@ module.exports = function(app, socketio, helper) {
             sendLockedProfiles(room);
         }
 
+        function updateUserName() {
+            socket.emit('username', socket.username);
+        }
         function sendUsers(room) {
             io.to(room).emit('user list', users[room]);
         }

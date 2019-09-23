@@ -181,6 +181,7 @@ module.exports = function(app, socketio, helper) {
                         output = oldname + '|' + oldname;
                     }
                     type = 'updateusername';
+                    updateUserName();
                     sendUsers(room);
                 }
                 else if (message.match(/^\/save$/)) {
@@ -219,12 +220,16 @@ module.exports = function(app, socketio, helper) {
         });
 
         socket.on('roll dice', function(data) {
-            var user = socket.username;
             var room = socket.room;
+            var index = data.index;
             var command = data.command;
             var element = data.element;
             var outcome = helper.diceRoller(command);
-            io.to(room).emit('roll result', {'user': user, 'element': element, 'result': outcome});
+            var character = gamedata[room]['profiles'][index]['character'];
+            if (!character) {
+                character = 'character' + (index+1);
+            }
+            io.to(room).emit('roll result', {'character': character, 'element': element, 'result': outcome});
         });
 
         socket.on('update wounded', function(data) {
@@ -393,6 +398,9 @@ module.exports = function(app, socketio, helper) {
             sendLockedProfiles(room);
         }
 
+        function updateUserName() {
+            socket.emit('username', socket.username);
+        }
         function sendUsers(room) {
             io.to(room).emit('user list', users[room]);
         }
