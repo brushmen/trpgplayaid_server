@@ -1,0 +1,111 @@
+{
+	"theescort": {
+		"profiles": [
+			{
+				"role": "thecharge",
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": "Liang, Xin",
+				"notes": null,
+				"traits": {
+					"Influence": ["Etiquette", "Wealth", "Connections", "Clan"],
+                    "Learned": ["Instrument", "Game", "Calligraphy", "Art", "Methods of War", "Geography", "History", "Medicine", "[Astronomy]", "[Craft]", "[Geomancy]"],
+                    "Charm": ["Charisma", "Presence", "Influence", "[Command]"],
+                    "Strategy": ["Deception", "Misdirection", "Disguise", "Code", "[Sneak]", "[Hide]", "[Rumors]"]
+				},
+				"keys": {
+					"Key of the Righteous": "Hit your key when you stand up against injustice, for the sake of someone else who is innocent or is less fortunate than you. BUYOFF: Ignore the plight of an innocent.",
+			        "Key of Dignity": "Hit your key when you refuse to admit weakness, defeat, or wrong doing. BUYOFF: show vulnerability or apologize for a mistake",
+			        "Key of the Loner": "Hit your key when rejecting someone's attempt to befriend you. BUYOFF: graciously accept someone's companionship"
+				},
+				"secrets": {
+					"Secret of the Miracle Worker": "Once per session, you can re-roll a failure when working with medicine.",
+			        "Secret of the Genius": "Once per session, you can describe a solution to a puzzle narratively without rolling dice."
+				},
+				"dicepool": 7,
+				"xp": 0,
+				"conditions": []
+			},
+
+			{
+				"role": "theconstable",
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": "Zheng, Dao",
+				"notes": null,
+				"traits": {
+					"The Law": ["Regulations", "Authority", "Command", "Defend", "Restrain", "Fairness"],
+                    "Warrior": ["Weapons Master", "Unarmed Techniques", "Seasoned", "Fast", "Lightfoot", "Pressure Points", "Internal Strength", "[Hard]", "[Strong]"],
+                    "Compassion": ["Empathy", "Disarming", "Peacekeeper", "[Trust]"],
+                    "Keen": ["Insightful", "Aware", "Danger", "[Sense Motives]"]
+				},
+				"keys": {
+					"Key of the Lawful": "Hit your key when you uphold the law to the letter. BUYOFF: Turn a blind-eye to an unlawful deed.",
+			        "Key of Mercy": "Hit your key when you show mercy to an opponent, a criminal, or give alms to the poor. BUYOFF: Use excessive force.",
+			        "Key of the Overthinker": "Hit your key when you over-analyze a situation for the sake of coming up with the perfect solution. BUYOFF: Act decisively."
+				},
+				"secrets": {
+					"Secret of Trust": "Once per session, you can re-roll a failure when trying to gain an NPC's trust.",
+			        "Secret of Capture": "Once per session, you can restrain an NPC without rolling dice."
+				},
+				"dicepool": 7,
+				"xp": 0,
+				"conditions": []
+			},
+
+			{
+				"role": "theentrusted",
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": "Sheng, Yu",
+				"notes": null,
+				"traits": {
+					"Escort Agency": ["Regulations", "Code", "Connections", "Reputation", "Loyalty"],
+                    "Warrior": ["Weapon Master", "Blades", "Glaives", "Staff", "Improvising", "Horsemanship", "[Lightfoot]", "[Pressure Points]", "[Hidden Weapon]"],
+                    "Jianghu": ["Rules", "Code", "Favors", "Reputation", "Righteousness"],
+                    "Passions": ["Singing", "Poetry", "Tutoring", "[Alchemist]", "[Geomancy]", "[Storytelling]"]
+				},
+				"keys": {
+					"Key of the Mission": "Hit your key when you take action to escort the Charge to the final execution ground. BUYOFF: give up the mission.",
+			        "Key of Curiosity": "Hit your key when you learn something new from your companions. BUYOFF: show no interest in getting to know your companions.",
+			        "Key of the Romantic": "Hit your key when you speak highly of love, in poetry, lyrics, or a short story. BUYOFF: express disdain or mistrust of love."
+				},
+				"secrets": {
+					"Secret of Shock and Awe": "Once per session, you can impress or intimidate someone or a group of mooks without rolling dice.",
+			        "Secret of Leadership": "Once per session, you can give someone else a chance to re-roll a failed roll by giving them orders, advice, or setting a good example."
+				},
+				"dicepool": 7,
+				"xp": 0,
+				"conditions": []
+			},
+
+			{
+				"role": "themercenary",
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": "Cheng, Gong",
+				"notes": null,
+				"traits": {
+					"Job": ["Hard", "Endure", "Practical", "Negotiate", "First-Aid"],
+                    "Warrior": ["Weapon Master", "Archery", "Marksmanship", "Horsemanship", "Hidden Weapon", "[Triple-shot]", "[Trick-shot]"],
+                    "Jianghu": ["Rules", "Code", "Connections", "[Vigilantism]"],
+                    "Methods": ["Deception", "Poison", "Intimidate", "Rumors", "[Seduction]", "[Silver Tongue]"]
+				},
+				"keys": {
+					"Key of the Warrior": "Hit your key when you do battle with worthy or superior foes. BUYOFF: Pass up an opportunity for a good fight.",
+			        "Key of Hidden Longing": "Hit your key when you make a decision based on your secret affection for someone in the group without showing it directly. BUYOFF: Give up on your secret desire or make it public.",
+					"Key of the Mission": "Hit your key when you take action to escort the Charge to the final execution ground. BUYOFF: give up the mission."
+				},
+				"secrets": {
+					"Secret of Deception": "Once per session, you can re-roll a failure when trying to deceive someone.",
+			        "Secret of Faking Death": "First \"resurrection\" is free. Second time requires a narrative explanation that is convincing to the group. On the third death, you can narrate a short epilogue of what happened to your character, but you can no longer contribute to an ongoing story with this identity (play as support characters or discuss with group)."
+				},
+				"dicepool": 7,
+				"xp": 0,
+				"conditions": []
+			}
+		],
+        "currentmap": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/theescort_map.jpg",
+        "currentimage": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOz7nSElWy00eNUrav2YsJC8Q8XpkidxYSLRaATWgHTRvnKk8NFA"
+	}
+}
