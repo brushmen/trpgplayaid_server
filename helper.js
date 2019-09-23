@@ -1,5 +1,5 @@
 module.exports = {
-    sanitize, checkUserName,
+    sanitize, checkUserName, getUserNames, removeUser,
     isJSON, getTodayString,
     shuffle, fillArrayWithNumbers,
     diceRoller, lbDice, awDice, daDice, dx, xdx, ddDice,
@@ -73,6 +73,11 @@ function sanitize(str, type='statvalue') {
             //console.log('result ' + result + ' n ' + n);
         }
 
+        // if 3 numbers, add leading 0
+        if (result.match(/^(\d{3})$/)) {
+            result = result.toString().padStart(4, '0');
+        }
+
         if (result.match(/^(\d{4})$/)) {
             matches = result.match(/^(\d{4})$/); // 4 digits
             h = parseInt(matches[1].slice(0,2));
@@ -94,8 +99,16 @@ function sanitize(str, type='statvalue') {
             result = '0000'; // default value
         }
     }
-  //console.log('sanitize ' + str + ' to ' + result);
-  return result;
+    //console.log('sanitize ' + str + ' to ' + result);
+    return result;
+}
+
+function getUserNames(arr) {
+    var list = [];
+    for(var i = 0; i < arr.length; i++) {
+        list.push(arr[i]['username']);
+    }
+    return list;
 }
 
 function checkUserName(name, namelist) {
@@ -112,6 +125,18 @@ function checkUserName(name, namelist) {
     }
     //console.log('unique username: ' + name);
     return name;
+}
+
+function removeUser(id, userlist) {
+    var found = false;
+    for (var i = 0; i < userlist.length; i++) {
+        if (id == userlist[i]['id']) {
+            found = true;
+            delete userlist[i];
+            break;
+        }
+    }
+    return found;
 }
 
 function isJSON(str) {
