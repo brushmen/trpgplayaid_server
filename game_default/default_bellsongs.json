@@ -1,0 +1,46 @@
+{
+	"bellsongs": {
+		"profiles": [
+			{
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"background": null,
+                "gift": null,
+                "raiment": null,
+                "goal": null,
+                "notes": null,
+                "rascality": 10,
+                "wounded": false,
+                "skills": []
+			},
+			{
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"background": null,
+                "gift": null,
+                "raiment": null,
+                "goal": null,
+                "notes": null,
+                "rascality": 10,
+                "wounded": false,
+                "skills": []
+			},
+			{
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"background": null,
+                "gift": null,
+                "raiment": null,
+                "goal": null,
+                "notes": null,
+                "rascality": 10,
+                "wounded": false,
+                "skills": []
+			}
+		],
+        "currentimage": null
+	}
+}
