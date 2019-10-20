@@ -128,7 +128,7 @@ module.exports = function(app, socketio, helper) {
         });
 
         // send message
-        socket.on('send message', function(data) {
+        socket.on('chat message', function(data) {
             var type = 'chat';
             var output = '';
             var room = socket.room;
@@ -153,7 +153,7 @@ module.exports = function(app, socketio, helper) {
                 }
                 else if (message.match(/^\/newgame$/)) {
                     type = "newgame";
-                    readJSONtoGame(defaultfile, room);
+                    newGame(room);
                 }
                 else {
                     // assume input is dice command, otherwise return original input
@@ -164,11 +164,23 @@ module.exports = function(app, socketio, helper) {
                     }
                 }
             }
-            s.emit('new message', {'message': output, 'role': socket.role, 'type': type});
+            s.emit('chat message', {'message': output, 'role': socket.role, 'type': type});
         });
 
-        socket.on('save current', function() {
-            writeJSON(datafiles[socket.room], GametoJSON(socket.room)); // save to a JSON file
+        socket.on('save', function() {
+            // save to a JSON file
+            helper.writeJSONFile(datafiles[socket.room], GametoJSON(socket.room));
+        });
+
+        socket.on('save game', function() {
+            socket.emit('save game', GametoJSON(socket.room));
+        });
+
+        socket.on('update image', function(data) {
+            var room = socket.room;
+            gamedata[room]['currentimage'] = data;
+            // send to everyone else but sender
+            socket.broadcast.to(room).emit('update image', data);
         });
 
         // update relationship
@@ -329,12 +341,17 @@ module.exports = function(app, socketio, helper) {
             }
             else {
                 if (oldstate == 'toggle' && state == 'unset') {
-                    s.to(room).emit('new message', {'message': 'SCENE DONE', 'role': socket.role, 'type': 'scenedone'});
+                    s.to(room).emit('chat message', {'message': 'SCENE DONE', 'role': socket.role, 'type': 'scenedone'});
                 }
             }
             gamedata[room] = d;
 
             s.to(room).emit('update timer', {'oldstate': oldstate, 'newstate': state, 'scenelength': scenelength});
+        });
+
+        socket.on('x-card', function(data) {
+            var room = socket.room;
+            io.to(room).emit('x-card', data);
         });
 
         socket.on('load json', function(data) {
@@ -397,6 +414,15 @@ module.exports = function(app, socketio, helper) {
             return result;
         }
 
+        socket.on('new game', function() {
+            var room = socket.room;
+            newGame(room);
+            io.to(room).emit('chat message', {'message': '', 'user': socket.username, 'type': 'newgame'});
+        });
+        function newGame(room) {
+            readJSONtoGame(defaultfile, room);
+        }
+
         function readJSONtoGame(filename, room) {
             fs.access(filename, fs.constants.F_OK, (err) => {
                 if (err) { // file doesn't exist
@@ -404,7 +430,7 @@ module.exports = function(app, socketio, helper) {
                 }
                 fs.readFile(filename, 'utf8', function (err, data) {
                     if (err) throw err;
-                    obj = JSON.parse(data);
+                    let obj = JSON.parse(data);
                     // must do it here or function will finish before read finishes
                     JSONtoGame(obj, room);
                     updateClients(room);

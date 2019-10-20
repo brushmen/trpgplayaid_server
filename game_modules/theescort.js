@@ -148,63 +148,8 @@ module.exports = function(app, socketio, helper) {
             if (!gamedata[room]) {
                 gamedata[room] = {};
             }
-            gamedata[room]['profiles'] = [
-                {
-                    'role': null,
-                    'portrait': null,
-                    'player': null,
-                    'character': null,
-                    'notes': null,
-                    'traits': {},
-                    'keys': {},
-                    'secrets': {},
-                    'dicepool': 7,
-                    'xp': 0,
-                    'conditions': []
-                },
 
-                {
-                    'role': null,
-                    'portrait': null,
-                    'player': null,
-                    'character': null,
-                    'notes': null,
-                    'traits': {},
-                    'keys': {},
-                    'secrets': {},
-                    'dicepool': 7,
-                    'xp': 0,
-                    'conditions': []
-                },
-
-                {
-                    'role': null,
-                    'portrait': null,
-                    'player': null,
-                    'character': null,
-                    'notes': null,
-                    'traits': {},
-                    'keys': {},
-                    'secrets': {},
-                    'dicepool': 7,
-                    'xp': 0,
-                    'conditions': []
-                },
-
-                {
-                    'role': null,
-                    'portrait': null,
-                    'player': null,
-                    'character': null,
-                    'notes': null,
-                    'traits': {},
-                    'keys': {},
-                    'secrets': {},
-                    'dicepool': 7,
-                    'xp': 0,
-                    'conditions': []
-                }
-            ];
+            initGameData(room);
 
             // misc local data not for saving
 
@@ -233,7 +178,7 @@ module.exports = function(app, socketio, helper) {
             sendUsers(room);
         });
 
-        socket.on('message', function(data) {
+        socket.on('chat message', function(data) {
             var type = 'chat';
             var output = '';
             var room = socket.room;
@@ -275,9 +220,7 @@ module.exports = function(app, socketio, helper) {
                 }
                 else if (message.match(/^\/newgame$/)) {
                     type = "newgame";
-                    readJSONtoGame(defaultfile, room);
-                    locked[room] = []; // clear locked inputs
-                    sendLockedProfiles(room);
+                    newGame(room);
                 }
                 else {
                     // assume input is dice command, otherwise return original input
@@ -288,33 +231,20 @@ module.exports = function(app, socketio, helper) {
                     }
                 }
             }
-            s.emit('message', {'message': output, 'user': socket.username, 'type': type});
+            s.emit('chat message', {'message': output, 'user': socket.username, 'type': type});
         });
 
         socket.on('roll dice', function(data) {
-            var user = socket.username;
-            var room = socket.room;
-            var command = data.command;
-            var dice = data.dice;
-            var result = helper.diceRoller(command);
-            io.to(room).emit('roll result', {'user': user, 'dice': dice, 'result': result});
-        });
-
-        socket.on('update image', function(data) {
-            var room = socket.room;
-            var field = data.field;
-            var url = data.url;
-            gamedata[room][field] = url;
-            // send to everyone else but sender
-            socket.broadcast.to(room).emit('update image', data);
-        });
-
-        socket.on('update portrait', function(data) {
-            var room = socket.room;
-            var index = data.index;
-            var url = data.url;
-            gamedata[room]['profiles'][index]['portrait'] = url;
-            io.to(room).emit('update portrait', {'number': (index+1), 'url': url});
+            let room = socket.room;
+            let index = data.index;
+            let command = data.command;
+            let dice = data.dice;
+            let result = helper.diceRoller(command);
+            let name = gamedata[room]['profiles'][index]['character'];
+            if (!name) {
+                name = gamedata[room]['profiles'][index]['role'];
+            }
+            io.to(room).emit('roll result', {'character': name, 'dice': dice, 'result': result});
         });
 
         socket.on('update condition', function(data) {
@@ -403,6 +333,29 @@ module.exports = function(app, socketio, helper) {
             }
         });
 
+        socket.on('update dicepool', function(data) {
+            let room = socket.room;
+            let field = data.field;
+            let index = data.index;
+            let value = data.value;
+            if (value == "max") {
+                gamedata[room]['profiles'][index][field] = gamedata[room]['profiles'][index]['dicepoolmax'];
+            }
+            else {
+                gamedata[room]['profiles'][index][field] = value;
+            }
+            updateClients(room);
+        });
+        socket.on('increase dicepoolmax', function(index) {
+            let room = socket.room;
+            // costs 5 XP
+            if (gamedata[room]['profiles'][index]['xp'] > 4) {
+                gamedata[room]['profiles'][index]['dicepoolmax'] += 1;
+                gamedata[room]['profiles'][index]['xp'] -= 5;
+                updateClients(room);
+            }
+        });
+
         socket.on('buy tag', function(data) {
             var room = socket.room;
             var tag = data.tag;
@@ -412,11 +365,11 @@ module.exports = function(app, socketio, helper) {
 
             var tags = p['traits'][trait];
             for (var i = 0; i < tags.length; i++) {
-                if (tags[i] == tag && p['xp'] > 4) {
+                if (tags[i] == tag && p['xp'] > 2) {
                     tag = tag.substring(1); // remove beginning bracket
                     tags[i] = tag.substring(0, tag.length - 1); // remove end bracket
-                    // take 5 XP
-                    p['xp'] -= 5;
+                    // take 3 XP
+                    p['xp'] -= 3;
                     socket.emit('update traits', {'number': (index+1), 'traits': p['traits']});
                 }
             }
@@ -468,8 +421,8 @@ module.exports = function(app, socketio, helper) {
             if (p['keys'][key]) {
                 // delete key
                 delete p['keys'][key];
-                // reward 10 XP
-                p['xp'] += 10;
+                // reward 5 XP
+                p['xp'] += 5;
                 socket.emit('update keys', {'number': (index+1), 'keys': p['keys']});
             }
 
@@ -494,8 +447,28 @@ module.exports = function(app, socketio, helper) {
             updateClients(room);
         });
 
-        socket.on('save current', function() {
-            helper.writeJSONFile(datafiles[socket.room], GametoJSON(socket.room)); // save to a JSON file
+        socket.on('save', function() {
+            // save to a JSON file
+            helper.writeJSONFile(datafiles[socket.room], GametoJSON(socket.room));
+        });
+
+        socket.on('save game', function() {
+            socket.emit('save game', GametoJSON(socket.room));
+        });
+
+        socket.on('update image', function(data) {
+            let room = socket.room;
+            let field = data.field;
+            let url = data.url;
+            gamedata[room][field] = url;
+            // send to everyone else but sender
+            socket.broadcast.to(room).emit('update image', {'field': field, 'url': url});
+        });
+
+        socket.on('update portrait', function(data) {
+            var room = socket.room;
+            gamedata[room]['profiles'][data.index]['portrait'] = data.url;
+            io.to(room).emit('update portrait', {'index': data.index, 'url': data.url});
         });
 
         socket.on('load json', function(data) {
@@ -563,6 +536,81 @@ module.exports = function(app, socketio, helper) {
 
         function sendLockedProfiles(room) {
             io.to(room).emit('locked profiles', locked[room]);
+        }
+
+        function initGameData(room) {
+            gamedata[room]['profiles'] = [
+                {
+                    'role': null,
+                    'portrait': null,
+                    'player': null,
+                    'character': null,
+                    'notes': null,
+                    'traits': {},
+                    'keys': {},
+                    'secrets': {},
+                    'dicepool': 7,
+                    'dicepoolmax': 7,
+                    'xp': 0,
+                    'conditions': []
+                },
+
+                {
+                    'role': null,
+                    'portrait': null,
+                    'player': null,
+                    'character': null,
+                    'notes': null,
+                    'traits': {},
+                    'keys': {},
+                    'secrets': {},
+                    'dicepool': 7,
+                    'dicepoolmax': 7,
+                    'xp': 0,
+                    'conditions': []
+                },
+
+                {
+                    'role': null,
+                    'portrait': null,
+                    'player': null,
+                    'character': null,
+                    'notes': null,
+                    'traits': {},
+                    'keys': {},
+                    'secrets': {},
+                    'dicepool': 7,
+                    'dicepoolmax': 7,
+                    'xp': 0,
+                    'conditions': []
+                },
+
+                {
+                    'role': null,
+                    'portrait': null,
+                    'player': null,
+                    'character': null,
+                    'notes': null,
+                    'traits': {},
+                    'keys': {},
+                    'secrets': {},
+                    'dicepool': 7,
+                    'dicepoolmax': 7,
+                    'xp': 0,
+                    'conditions': []
+                }
+            ];
+        }
+
+        socket.on('new game', function() {
+            var room = socket.room;
+            newGame(room);
+            io.to(room).emit('chat message', {'message': '', 'user': socket.username, 'type': 'newgame'});
+        });
+        function newGame(room) {
+            readJSONtoGame(defaultfile, room);
+            locked[room] = []; // clear locked inputs
+            sendLockedProfiles(room);
         }
 
         function readJSONtoGame(filename, room) {

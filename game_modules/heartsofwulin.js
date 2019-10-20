@@ -153,10 +153,11 @@ module.exports = function(app, socketio, helper) {
             sendUsers(room);
         });
 
-        socket.on('send message', function(data) {
+        socket.on('chat message', function(data) {
             var type = 'chat';
             var output = '';
             var room = socket.room;
+            var user = socket.username;
             var s = io.to(room);
             var message = data.trim();
 
@@ -199,9 +200,19 @@ module.exports = function(app, socketio, helper) {
                 }
                 else if (message.match(/^\/newgame$/)) {
                     type = "newgame";
-                    readJSONtoGame(defaultfile, room);
-                    locked[room] = []; // clear locked inputs
-                    sendLockedProfiles(room);
+                    newGame(room);
+                }
+                else if (message.match(/^x/i)) {
+                    var matches = message.match(/^x\s*([\w\s]*)$/i);
+                    output = 'x-card was used';
+                    if (matches && matches[1]) {
+                        output += ', please remove "' + matches[1] + '"';
+                    }
+                    else {
+                        output += ", ask for clarification if needed";
+                    }
+                    type = "x-card";
+                    user = "someone";
                 }
                 else {
                     // assume input is dice command, otherwise return original input
@@ -212,11 +223,16 @@ module.exports = function(app, socketio, helper) {
                     }
                 }
             }
-            s.emit('new message', {'message': output, 'user': socket.username, 'type': type});
+            s.emit('chat message', {'message': output, 'user': user, 'type': type});
         });
 
-        socket.on('save current', function() {
-            writeJSON(datafiles[socket.room], GametoJSON(socket.room)); // save to a JSON file
+        socket.on('save', function() {
+            // save to a JSON file
+            helper.writeJSONFile(datafiles[socket.room], GametoJSON(socket.room));
+        });
+
+        socket.on('save game', function() {
+            socket.emit('save game', GametoJSON(socket.room));
         });
 
         socket.on('roll dice', function(data) {
@@ -341,11 +357,11 @@ module.exports = function(app, socketio, helper) {
                         change = amount - p['bonds'][i]['amount'];
                         if (change < 0) {
                             // burning bonds
-                            io.to(room).emit('new message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' burns ' + Math.abs(change) + ' bonds with ' + name});
+                            io.to(room).emit('chat message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' burns ' + Math.abs(change) + ' bonds with ' + name});
                         }
                         else if (change > 0) {
                             // gaining bonds
-                            io.to(room).emit('new message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' gains ' + change + ' bonds with ' + name});
+                            io.to(room).emit('chat message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' gains ' + change + ' bonds with ' + name});
                         }
                         p['bonds'][i]['amount'] = amount;
                     }
@@ -354,12 +370,22 @@ module.exports = function(app, socketio, helper) {
             }
             if (!found && amount > 0) { // only add new if bond is greater than 0
                 p['bonds'].push({'name': name, 'amount': amount});
-                io.to(room).emit('new message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' gains ' + amount + ' bonds with ' + name});
+                io.to(room).emit('chat message', {'type': 'using bonds', 'user': socket.user, 'message': p['character'] + ' gains ' + amount + ' bonds with ' + name});
             }
 
             gamedata[room]['profiles'][index] = p;
             //io.to(room).emit('update bonds', {'number': (index+1), 'bonds': p['bonds']});
             updateClients(room); // forces client-side to refresh
+        });
+
+        socket.on('sketchpad', function(data) {
+            var room = socket.room;
+            socket.broadcast.to(room).emit('sketchpad', data);
+        });
+
+        socket.on('x-card', function(data) {
+            var room = socket.room;
+            io.to(room).emit('x-card', data);
         });
 
         socket.on('load json', function(data) {
@@ -407,6 +433,17 @@ module.exports = function(app, socketio, helper) {
 
         function sendLockedProfiles(room) {
             io.to(room).emit('locked profiles', locked[room]);
+        }
+
+        socket.on('new game', function() {
+            var room = socket.room;
+            newGame(room);
+            io.to(room).emit('chat message', {'message': '', 'user': socket.username, 'type': 'newgame'});
+        });
+        function newGame(room) {
+            readJSONtoGame(defaultfile, room);
+            locked[room] = []; // clear locked inputs
+            sendLockedProfiles(room);
         }
 
         function readJSONtoGame(filename, room=defaultroom) {

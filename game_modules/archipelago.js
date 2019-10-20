@@ -53,7 +53,6 @@ module.exports = function(app, socketio, helper) {
     var defaultfile = __dirname + defaultdatapath + 'default_' + gamehandle + '.json';
 
     var gamedata = {}; // includes data for each individual rooms
-    var locked = {}; // local locked profiles, not to be saved with save file
 
     // when client connects
     io.on('connection', function(socket) {
@@ -92,67 +91,7 @@ module.exports = function(app, socketio, helper) {
             }
 
             // initialize local game room data
-
-            if (!gamedata[room]) {
-                gamedata[room] = {};
-            }
-            gamedata[room]['currentmap'] = null;
-            gamedata[room]['currentimage'] = null;
-            gamedata[room]['profiles'] = [
-                {
-                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
-                    'player': null,
-                    'character': null,
-                    'ownedelement': null,
-                    'notes': null,
-                    'destiny': null
-                },
-                {
-                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
-                    'player': null,
-                    'character': null,
-                    'ownedelement': null,
-                    'notes': null,
-                    'destiny': null
-                },
-                {
-                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
-                    'player': null,
-                    'character': null,
-                    'ownedelement': null,
-                    'notes': null,
-                    'destiny': null
-                },
-                {
-                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
-                    'player': null,
-                    'character': null,
-                    'ownedelement': null,
-                    'notes': null,
-                    'destiny': null
-                }
-            ];
-            // prepare decks
-
-            if (!gamedata[room]['fate_deck_indices']) {
-                gamedata[room]['fate_deck_indices'] = helper.fillArrayWithNumbers(12);
-                gamedata[room]['fate_discard_indices'] = [];
-            }
-            gamedata[room]['fate_deck_indices'] = helper.shuffle(gamedata[room]['fate_deck_indices']);
-            if (!gamedata[room]['resolution_deck_indices']) {
-                gamedata[room]['resolution_deck_indices'] = helper.fillArrayWithNumbers(16);
-                gamedata[room]['resolution_discard_indices'] = [];
-            }
-            gamedata[room]['resolution_deck_indices'] = helper.shuffle(gamedata[room]['resolution_deck_indices']);
-            gamedata[room]['currentcard'] = null;
-            gamedata[room]['currentcardtype'] = null;
-
-            // misc local data not for saving
-
-            if (!locked[room]) {
-                locked[room] = [];
-            }
-
+            initGameData(room);
             readJSONtoGame(datafiles[room], room);
         });
 
@@ -174,7 +113,7 @@ module.exports = function(app, socketio, helper) {
             sendUsers(room);
         });
 
-        socket.on('send message', function(data) {
+        socket.on('chat message', function(data) {
             var type = 'chat';
             var output = '';
             var room = socket.room;
@@ -220,8 +159,6 @@ module.exports = function(app, socketio, helper) {
                 else if (message.match(/^\/newgame$/)) {
                     type = "newgame";
                     readJSONtoGame(defaultfile, room);
-                    locked[room] = []; // clear locked inputs
-                    sendLockedProfiles(room);
                 }
                 else if (message.match(/^\/clearcard$/)) {
                     type = "clearcard";
@@ -237,35 +174,21 @@ module.exports = function(app, socketio, helper) {
                     }
                 }
             }
-            s.emit('new message', {'message': output, 'user': socket.username, 'type': type});
+            s.emit('chat message', {'message': output, 'user': socket.username, 'type': type});
         });
 
-        socket.on('save current', function() {
-            writeJSON(datafiles[socket.room], GametoJSON(socket.room)); // save to a JSON file
+        socket.on('save', function() {
+            // save to a JSON file
+            helper.writeJSONFile(datafiles[socket.room], GametoJSON(socket.room));
         });
 
-        socket.on('togglelock profile', function(data) {
-            var room = socket.room;
-            var id = data.profileid;
-            var lockit = data.lockit;
-
-            var i = locked[room].indexOf(id);
-
-            if (lockit && i == -1) {
-                locked[room].push(id); // add to lock list if not there
-            }
-            else if (!lockit && i !== -1) {
-                locked[room].splice(i, 1); // remove from lock list if there
-            }
-            // send to everyone else but sender
-            socket.broadcast.to(room).emit('togglelock profile', {'profileid': id, 'lockit': lockit});
+        socket.on('save game', function() {
+            socket.emit('save game', GametoJSON(socket.room));
         });
 
         socket.on('update image', function(data) {
             var room = socket.room;
-            var field = data.field;
-            var url = data.url;
-            gamedata[room][field] = url;
+            gamedata[room]['currentimage'] = data;
             // send to everyone else but sender
             socket.broadcast.to(room).emit('update image', data);
         });
@@ -339,6 +262,11 @@ module.exports = function(app, socketio, helper) {
             socket.broadcast.to(room).emit('sketchpad', data);
         });
 
+        socket.on('x-card', function(data) {
+            var room = socket.room;
+            io.to(room).emit('x-card', data);
+        });
+
         // socket send
 
         function updateClients(room) {
@@ -349,13 +277,11 @@ module.exports = function(app, socketio, helper) {
                     'profiles': data['profiles'],
                     'currentcard': data['currentcard'],
                     'currentcardtype': data['currentcardtype'],
-                    'currentmap': data['currentmap'],
                     'currentimage': data['currentimage']
                 };
 
                 io.to(room).emit('update client', {'users': users[room], 'info': info});
             }
-            sendLockedProfiles(room);
         }
 
         function updateUserName() {
@@ -365,8 +291,68 @@ module.exports = function(app, socketio, helper) {
             io.to(room).emit('user list', users[room]);
         }
 
-        function sendLockedProfiles(room) {
-            io.to(room).emit('locked profiles', locked[room]);
+        function initGameData(room) {
+            if (!gamedata[room]) {
+                gamedata[room] = {};
+            }
+            gamedata[room]['currentimage'] = null;
+            gamedata[room]['profiles'] = [
+                {
+                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
+                    'player': null,
+                    'character': null,
+                    'ownedelement': null,
+                    'notes': null,
+                    'destiny': null
+                },
+                {
+                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
+                    'player': null,
+                    'character': null,
+                    'ownedelement': null,
+                    'notes': null,
+                    'destiny': null
+                },
+                {
+                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
+                    'player': null,
+                    'character': null,
+                    'ownedelement': null,
+                    'notes': null,
+                    'destiny': null
+                },
+                {
+                    'portrait': 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.fdE-CI_DijExNf3BoQmqzQAAAA%26pid%3DApi&f=1',
+                    'player': null,
+                    'character': null,
+                    'ownedelement': null,
+                    'notes': null,
+                    'destiny': null
+                }
+            ];
+            // prepare decks
+
+            if (!gamedata[room]['fate_deck_indices']) {
+                gamedata[room]['fate_deck_indices'] = helper.fillArrayWithNumbers(12);
+                gamedata[room]['fate_discard_indices'] = [];
+            }
+            gamedata[room]['fate_deck_indices'] = helper.shuffle(gamedata[room]['fate_deck_indices']);
+            if (!gamedata[room]['resolution_deck_indices']) {
+                gamedata[room]['resolution_deck_indices'] = helper.fillArrayWithNumbers(16);
+                gamedata[room]['resolution_discard_indices'] = [];
+            }
+            gamedata[room]['resolution_deck_indices'] = helper.shuffle(gamedata[room]['resolution_deck_indices']);
+            gamedata[room]['currentcard'] = null;
+            gamedata[room]['currentcardtype'] = null;
+        }
+
+        socket.on('new game', function() {
+            var room = socket.room;
+            newGame(room);
+            io.to(room).emit('chat message', {'message': '', 'user': socket.username, 'type': 'newgame'});
+        });
+        function newGame(room) {
+            readJSONtoGame(defaultfile, room);
         }
 
         function readJSONtoGame(filename, room) {

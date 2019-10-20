@@ -18,6 +18,334 @@ module.exports = function(app, socketio, helper) {
 
     var gamedata = {}; // includes data for each individual rooms
 
+    // init const values
+    const startingskills = {
+        'cook': [
+            {
+                "name": "cooking",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "brewing",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'farmer': [
+            {
+                "name": "farming",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "weatherwatching",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'riverwalker': [
+            {
+                "name": "swimming",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "slinging",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'guardian': [
+            {
+                "name": "swinging",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "protecting",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'hunter': [
+            {
+                "name": "shooting",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "tracking",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'scout': [
+            {
+                "name": "sneaking",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "mapping",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'gourmand': [
+            {
+                "name": "eating",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "smelling",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'artist': [
+            {
+                "name": "singing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "painting",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'forester': [
+            {
+                "name": "foraging",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "running",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'bellmaker': [
+            {
+                "name": "bellmaking",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "befriending",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'elder': [
+            {
+                "name": "riddling",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "storytelling",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'beekeeper': [
+            {
+                "name": "befriending",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "beekeeping",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'scholar': [
+            {
+                "name": "reading",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "writing",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'kitesailor': [
+            {
+                "name": "flying",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "weatherwatching",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'treerunner': [
+            {
+                "name": "climbing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "running",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'courier': [
+            {
+                "name": "befriending",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "carrying",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'carpenter': [
+            {
+                "name": "building",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "foraging",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'maiden': [
+            {
+                "name": "befriending",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "singing",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'blacksmith': [
+            {
+                "name": "building",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "swinging",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'thief': [
+            {
+                "name": "sneaking",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "stabbing",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'spearbearer': [
+            {
+                "name": "stabbing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "singing",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'pirate': [
+            {
+                "name": "sailing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "swinging",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'poet': [
+            {
+                "name": "singing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "riddling",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'brewer': [
+            {
+                "name": "brewing",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "smelling",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'mysterio': [
+            {
+                "name": "riddling",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "sneaking",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'miner': [
+            {
+                "name": "digging",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "carrying",
+                "level": 1,
+                "practice": 0
+            }
+        ],
+        'cartographer': [
+            {
+                "name": "mapping",
+                "level": 1,
+                "practice": 0
+            },
+            {
+                "name": "weatherwatching",
+                "level": 1,
+                "practice": 0
+            }
+        ]
+    };
+
     // socket related
 
     // when client connects
@@ -153,9 +481,9 @@ module.exports = function(app, socketio, helper) {
             var expanded = '( ' + results.join('+') + ' )';
             var output = '<span title="' + expanded + '">' + max + '</span>';
 
-            if (max < 4) {
-                practice(room, index, skill);
-            }
+            // if (max < 4) {
+            //     practice(room, index, skill);
+            // }
 
             var name = gamedata[room]['profiles'][index]['character'];
             if (!name) {
@@ -163,6 +491,18 @@ module.exports = function(app, socketio, helper) {
             }
 
             io.to(room).emit('roll result', {'character': name, 'skill': skill, 'result': max, 'html': output});
+        });
+
+        socket.on('roll 1d6', function(data) {
+            let room = socket.room;
+            let index = data.index;
+            let name = gamedata[room]['profiles'][index]['character'];
+            if (!name) {
+                name = "character" + (index+1);
+            }
+            let result = Math.floor((Math.random() * 6) + 1);
+
+            io.to(room).emit('1d6 result', {'character': name, 'result': result});
         });
 
         socket.on('save', function() {
@@ -188,26 +528,66 @@ module.exports = function(app, socketio, helper) {
         });
 
         socket.on('add skill', function(data) {
-            var room = socket.room;
-            var index = data.index;
-            var skill = data.skill.toLowerCase();
-            var found = false;
-            var p = gamedata[room]['profiles'][index];
+            let room = socket.room;
+            let index = data.index;
+            let skill = data.skill.toLowerCase();
+            let found = false;
+            let p = gamedata[room]['profiles'][index];
+            let remove = false;
+            let minusPractice = false;
+            let minusLevel = false;
 
-            for(var i = 0; i < p['skills'].length; i++) {
-                if (p['skills'][i]['name'] == skill) {
-                    found = true;
-                    break;
+            if (skill.substring(0,6) == "remove") {
+                remove = true;
+                // cut out the remove prefix
+                skill = skill.substring(6);
+            }
+            else if (skill.substring(0,2) == '--') {
+                minusLevel = true;
+                // cut out the prefix
+                skill = skill.substring(2);
+            }
+            else if (skill.substring(0,1) == '-') {
+                minusPractice = true;
+                // cut out the prefix
+                skill = skill.substring(1);
+            }
+
+            let i = findSkill(skill, p['skills']);
+            if (i != -1) {
+                if (remove) {
+                    // remove from skill list
+                    p['skills'].splice(i, 1);
+                }
+                else if (minusPractice && p['skills'][i]['practice'] > 0) {
+                    p['skills'][i]['practice'] -= 1;
+                }
+                else if (minusLevel && p['skills'][i]['level'] > 1) {
+                    p['skills'][i]['level'] -= 1;
                 }
             }
-            if (!found) {
+
+            if (i == -1 && !remove) { // if adding a skill that doesn't exist
                 // a new skill start with 1 dot/level and 0 practice
                 p['skills'].push({'name': skill, 'level': 1, 'practice': 0});
             }
+
             gamedata[room]['profiles'][index] = p;
 
             updateClients(room);
         });
+        function findSkill(skill, skilllist) {
+            var index = -1; // if not found
+
+            for(let i = 0; i < skilllist.length; i++) {
+                if (skilllist[i]['name'] == skill) {
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
+        }
 
         socket.on('practice', function(data) {
             var room = socket.room;
@@ -241,9 +621,27 @@ module.exports = function(app, socketio, helper) {
             var value = data.value;
 
             gamedata[room]['profiles'][index][field] = value;
+            if (field == 'background') {
+                addStartingSkills(room, index, value);
+                io.to(room).emit('update skills', {'index': index, 'skills': gamedata[room]['profiles'][index]['skills']});
+            }
 
             io.to(room).emit('update field', {'field': field, 'number': (index+1), 'value': value});
         });
+
+        function addStartingSkills(room, index, background) {
+            var p = gamedata[room]['profiles'][index];
+
+            if (startingskills[background]) {
+                for (let i = 0; i < startingskills[background].length; i++) {
+                    if (findSkill(startingskills[background][i]['name'], p['skills']) == -1) {
+                        p['skills'].push(startingskills[background][i]);
+                    }
+                }
+            }
+
+            gamedata[room]['profiles'][index] = p;
+        }
 
         socket.on('sketchpad', function(data) {
             var room = socket.room;
