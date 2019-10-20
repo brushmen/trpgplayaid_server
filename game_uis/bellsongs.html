@@ -30,12 +30,8 @@
     #c3 { border: 1px solid blue; }
     #c4 { border: 1px solid aliceblue; }
 
-    #chatArea {
-        height: 100px;
-    }
-
     #chatSection {
-        height: 150px;
+        height: 180px;
         overflow-y: scroll;
     }
 
@@ -47,13 +43,13 @@
         font-size: 14pt;
         margin: 5px -13px;
         padding-left: 3px;
-        height: 350px;
+        height: 340px;
         overflow: auto;
     }
 
     #resultArea {
         padding: 2px 10px;
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
     input[name=character] {
@@ -104,14 +100,13 @@
     <div id="imageviewbox" style="display: none" class="card shadow">
         <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
         <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
-        <img src="" id="imageviewImage" alt="an image" title="an image to show the group" />
+        <img src="https://cloudinary-a.akamaihd.net/protagonistlabs/image/upload/a_exif//w_650,h_200,c_fill/e_sharpen:50/h7duwotpsbfmyqntytrn.jpg" id="imageviewImage" alt="an image" title="an image to show the group" />
         <div class="container-fluid input-group p-0">
             <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
             <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
         </div>
     </div>
-    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
-         hiding it can only make it invisible, not by removing it from DOM -->
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width, hiding it can only make it invisible, not by removing it from DOM -->
     <div id="scratchpadArea" style="visibility: hidden" class="card">
         <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
         <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
@@ -164,7 +159,7 @@
                                         <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait1" data-toggle="tooltip" alt="image for character 1" onclick="portraitURL(1);" title="" />
                                     </div>
                                     <div class="col-7 p-0">
-                                        <select id="background1" name="background" class="form-control form-control-sm">
+                                        <select id="background1" name="background" class="form-control form-control-sm" title="background">
                                             <option value="" disabled="disabled" selected="selected">background</option>
                                             <option value="cook">Cook</option>
                                             <option value="farmer">Farmer</option>
@@ -176,6 +171,7 @@
                                             <option value="artist">Artist</option>
                                             <option value="forester">Forester</option>
                                             <option value="bellmaker">Bellmaker</option>
+                                            <option value="youngster">Youngster</option>
                                             <option value="elder">Elder</option>
                                             <option value="beekeeper">Beekeeper</option>
                                             <option value="scholar">Scholar</option>
@@ -190,10 +186,11 @@
                                             <option value="pirate">Pirate</option>
                                             <option value="poet">Poet</option>
                                             <option value="brewer">Brewer</option>
+                                            <option value="mysterio">Mysterio</option>
                                             <option value="miner">Miner</option>
                                             <option value="cartographer">Cartographer</option>
                                         </select>
-                                        <select id="gift1" name="gift" class="form-control form-control-sm">
+                                        <select id="gift1" name="gift" class="form-control form-control-sm" title="gift">
                                             <option value="" disabled="disabled" selected="selected">gift</option>
                                             <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
                                             <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
@@ -218,7 +215,7 @@
                                             <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
                                             <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
                                         </select>
-                                        <select id="raiment1" name="raiment" class="form-control form-control-sm">
+                                        <select id="raiment1" name="raiment" class="form-control form-control-sm" title="raiment/looks">
                                             <option value="" disabled="disabled" selected="selected">raiment</option>
                                             <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
                                             <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
@@ -235,8 +232,9 @@
                                             <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
                                             <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
                                             <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                            <option value="other" title="please define in notes section">other raiment</option>
                                         </select>
-                                        <select id="goal1" name="goal" class="form-control form-control-sm">
+                                        <select id="goal1" name="goal" class="form-control form-control-sm" title="goal">
                                             <option value="" disabled="disabled" selected="selected">goal</option>
                                             <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
                                             <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
@@ -245,8 +243,9 @@
                                             <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
                                             <option value="lostbees" title="find your lost bees">recover bees</option>
                                             <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
-                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
-                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                            <option value="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good food</option>
+                                            <option value="other" title="please define in notes section">other goal</option>
                                         </select>
                                     </div>
                                 </div>
@@ -255,13 +254,14 @@
                                     <textarea id="notes1" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
 
                                     <div id="rascalityGroup1" name="rascalityGroup" class="input-group input-group-sm align-items-center">
-                                        <button id="restoreRascality1" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <button id="restoreRascality1" name="restoreRascality" class="btn btn-sm btn-outline-light" title="restore rascality to 10 (max)">🐾</button>
                                         <div id="rascality1" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
                                         <div>
                                             <button type="button" id="plusRascality1" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
                                             <button type="button" id="minusRascality1" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
                                         </div>
-                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <button type="button" class="btn btn-sm btn-outline-light" style="margin-left: 0.5em" title="roll 1d6 in the case of Push Yourself or when another player Helps" onclick="roll1d6(1);">🎲</button>
+                                        <div style="margin-left: 0.5em" title="wounded condition will increase rascality cost by 1">🤕?</div>
                                         <input id="wounded1" name="wounded" type="checkbox" title="wounded?" />
                                     </div>
                                 </div>
@@ -272,7 +272,7 @@
 
                                 <div name="skillAddGroup" class="input-group input-group-sm">
                                     <input type="text" class="form-control form-control-sm" id="newSkill1" name="newSkill" placeholder="new skill" />
-                                    <button id="addSkill1" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                    <button id="addSkill1" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark" title="to remove a skill, prefix skill name with 'remove', no space">add</button>
                                 </div>
 
                             </div>
@@ -291,7 +291,7 @@
                                         <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait2" data-toggle="tooltip" alt="image for character 2" onclick="portraitURL(2);" title="" />
                                     </div>
                                     <div class="col-7 p-0">
-                                        <select id="background2" name="background" class="form-control form-control-sm">
+                                        <select id="background2" name="background" class="form-control form-control-sm" title="background">
                                             <option value="" disabled="disabled" selected="selected">background</option>
                                             <option value="cook">Cook</option>
                                             <option value="farmer">Farmer</option>
@@ -303,6 +303,7 @@
                                             <option value="artist">Artist</option>
                                             <option value="forester">Forester</option>
                                             <option value="bellmaker">Bellmaker</option>
+                                            <option value="youngster">Youngster</option>
                                             <option value="elder">Elder</option>
                                             <option value="beekeeper">Beekeeper</option>
                                             <option value="scholar">Scholar</option>
@@ -317,10 +318,11 @@
                                             <option value="pirate">Pirate</option>
                                             <option value="poet">Poet</option>
                                             <option value="brewer">Brewer</option>
+                                            <option value="mysterio">Mysterio</option>
                                             <option value="miner">Miner</option>
                                             <option value="cartographer">Cartographer</option>
                                         </select>
-                                        <select id="gift2" name="gift" class="form-control form-control-sm">
+                                        <select id="gift2" name="gift" class="form-control form-control-sm" title="gift">
                                             <option value="" disabled="disabled" selected="selected">gift</option>
                                             <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
                                             <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
@@ -345,7 +347,7 @@
                                             <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
                                             <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
                                         </select>
-                                        <select id="raiment2" name="raiment" class="form-control form-control-sm">
+                                        <select id="raiment2" name="raiment" class="form-control form-control-sm" title="raiment/looks">
                                             <option value="" disabled="disabled" selected="selected">raiment</option>
                                             <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
                                             <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
@@ -362,8 +364,9 @@
                                             <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
                                             <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
                                             <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                            <option value="other" title="please define in notes section">other raiment</option>
                                         </select>
-                                        <select id="goal2" name="goal" class="form-control form-control-sm">
+                                        <select id="goal2" name="goal" class="form-control form-control-sm" title="goal">
                                             <option value="" disabled="disabled" selected="selected">goal</option>
                                             <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
                                             <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
@@ -372,8 +375,9 @@
                                             <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
                                             <option value="lostbees" title="find your lost bees">recover bees</option>
                                             <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
-                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
-                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                            <option value="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good food</option>
+                                            <option value="other" title="please define in notes section">other goal</option>
                                         </select>
                                     </div>
                                 </div>
@@ -382,13 +386,14 @@
                                     <textarea id="notes2" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
 
                                     <div id="rascalityGroup2" name="rascalityGroup" class="input-group input-group-sm align-items-center">
-                                        <button id="restoreRascality2" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <button id="restoreRascality2" name="restoreRascality" class="btn btn-sm btn-outline-light" title="restore rascality to 10 (max)">🐾</button>
                                         <div id="rascality2" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
                                         <div>
                                             <button type="button" id="plusRascality2" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
                                             <button type="button" id="minusRascality2" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
                                         </div>
-                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <button type="button" class="btn btn-sm btn-outline-light" style="margin-left: 0.5em" title="roll 1d6 in the case of Push Yourself or when another player Helps" onclick="roll1d6(2);">🎲</button>
+                                        <div style="margin-left: 0.5em" title="wounded condition will increase rascality cost by 1">🤕?</div>
                                         <input id="wounded2" name="wounded" type="checkbox" title="wounded?" />
                                     </div>
                                 </div>
@@ -399,7 +404,7 @@
 
                                 <div name="skillAddGroup" class="input-group input-group-sm">
                                     <input type="text" class="form-control form-control-sm" id="newSkill2" name="newSkill" placeholder="new skill" />
-                                    <button id="addSkill2" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                    <button id="addSkill2" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark" title="to remove a skill, prefix skill name with 'remove', no space">add</button>
                                 </div>
 
                             </div>
@@ -418,7 +423,7 @@
                                         <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait3" data-toggle="tooltip" alt="image for character 3" onclick="portraitURL(3);" title="" />
                                     </div>
                                     <div class="col-7 p-0">
-                                        <select id="background3" name="background" class="form-control form-control-sm">
+                                        <select id="background3" name="background" class="form-control form-control-sm" title="background">
                                             <option value="" disabled="disabled" selected="selected">background</option>
                                             <option value="cook">Cook</option>
                                             <option value="farmer">Farmer</option>
@@ -430,6 +435,7 @@
                                             <option value="artist">Artist</option>
                                             <option value="forester">Forester</option>
                                             <option value="bellmaker">Bellmaker</option>
+                                            <option value="youngster">Youngster</option>
                                             <option value="elder">Elder</option>
                                             <option value="beekeeper">Beekeeper</option>
                                             <option value="scholar">Scholar</option>
@@ -444,10 +450,11 @@
                                             <option value="pirate">Pirate</option>
                                             <option value="poet">Poet</option>
                                             <option value="brewer">Brewer</option>
+                                            <option value="mysterio">Mysterio</option>
                                             <option value="miner">Miner</option>
                                             <option value="cartographer">Cartographer</option>
                                         </select>
-                                        <select id="gift3" name="gift" class="form-control form-control-sm">
+                                        <select id="gift3" name="gift" class="form-control form-control-sm" title="gift">
                                             <option value="" disabled="disabled" selected="selected">gift</option>
                                             <option value="hope" title="Hope: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.">hope</option>
                                             <option value="caution" title="Caution: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.">caution</option>
@@ -472,7 +479,7 @@
                                             <option value="disciplined" title="Disciplined: your whole body is a weapon. You can never be deprived.">disciplined</option>
                                             <option value="plucky" title="Plucky: no effect. Good luck out there.">plucky</option>
                                         </select>
-                                        <select id="raiment3" name="raiment" class="form-control form-control-sm">
+                                        <select id="raiment3" name="raiment" class="form-control form-control-sm" title="raiment/looks">
                                             <option value="" disabled="disabled" selected="selected">raiment</option>
                                             <option value="monksrobes" title="Monk's Robes: Clothes, Ceremonial, Clean">monk's robes</option>
                                             <option value="rags" title="Rags: Clothes, Ragged, Dirty">rags</option>
@@ -489,8 +496,9 @@
                                             <option value="stormyeyes" title="Stormy Eyes: Heated, Quick, Suspicious">stormy eyes</option>
                                             <option value="scarredarms" title="Scarred Arms: Armor, Powerful, Damaged">scarred arms</option>
                                             <option value="openarms" title="Open Arms: Tender, Calm, Hopeful">open arms</option>
+                                            <option value="other" title="please define in notes section">other raiment</option>
                                         </select>
-                                        <select id="goal3" name="goal" class="form-control form-control-sm">
+                                        <select id="goal3" name="goal" class="form-control form-control-sm" title="goal">
                                             <option value="" disabled="disabled" selected="selected">goal</option>
                                             <option value="heirloom" title="recover your family’s lost heirloom">recover heirloom</option>
                                             <option value="rescue" title="rescue someone who is lost or taken">rescue</option>
@@ -499,8 +507,9 @@
                                             <option value="revenge" title="get revenge on someone who hurt you">revenge</option>
                                             <option value="lostbees" title="find your lost bees">recover bees</option>
                                             <option value="destiny" title="achieve or avoid your fated destiny">destiny</option>
-                                            <option value="doom" title="doom" title="achieve or avoid your impending doom">doom</option>
-                                            <option value="goodeat" title="find something good to eat">good eat</option>
+                                            <option value="doom" title="achieve or avoid your impending doom">doom</option>
+                                            <option value="goodeat" title="find something good to eat">good food</option>
+                                            <option value="other" title="please define in notes section">other goal</option>
                                         </select>
                                     </div>
                                 </div>
@@ -509,13 +518,14 @@
                                     <textarea id="notes3" name="notes" class="form-control form-control-sm" placeholder="bonds with other characters, acquired gifts, or other notes"></textarea>
 
                                     <div id="rascalityGroup3" name="rascalityGroup" class="input-group input-group-sm align-items-center">
-                                        <button id="restoreRascality3" name="restoreRascality" title="restore rascality to 10 (max)">🐾</button>
+                                        <button id="restoreRascality3" name="restoreRascality" class="btn btn-sm btn-outline-light" title="restore rascality to 10 (max)">🐾</button>
                                         <div id="rascality3" name="rascality" class="form-control-sm text-primary" title="rascality">10</div>
                                         <div>
                                             <button type="button" id="plusRascality3" name="plusRascality" class="btn btn-sm btn-primary"> + </button>
                                             <button type="button" id="minusRascality3" name="minusRascality" class="btn btn-sm btn-primary"> - </button>
                                         </div>
-                                        <div style="margin-left: 2em" title="wounded condition will increase rascality cost by 1">🤕?</div>
+                                        <button type="button" class="btn btn-sm btn-outline-light" style="margin-left: 0.5em" title="roll 1d6 in the case of Push Yourself or when another player Helps" onclick="roll1d6(3);">🎲</button>
+                                        <div style="margin-left: 0.5em" title="wounded condition will increase rascality cost by 1">🤕?</div>
                                         <input id="wounded3" name="wounded" type="checkbox" title="wounded?" />
                                     </div>
                                 </div>
@@ -526,7 +536,7 @@
 
                                 <div name="skillAddGroup" class="input-group input-group-sm">
                                     <input type="text" class="form-control form-control-sm" id="newSkill3" name="newSkill" placeholder="new skill" />
-                                    <button id="addSkill3" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark">add</button>
+                                    <button id="addSkill3" name="addSkill" class="form-control-sm btn btn-sm btn-outline-dark" title="to remove a skill, prefix skill name with 'remove', no space">add</button>
                                 </div>
 
                             </div>
@@ -535,7 +545,7 @@
 
                         <div id="c4" class="col-3 full-height">
                             <div id="commonArea">
-                                <div class="row" class="text-center">
+                                <div class="row text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">
                                         <option value="" disabled="disabled" selected="selected">Bell Songs</option>
                                         <option value="about">about</option>
@@ -639,7 +649,7 @@
             'wildprinciples':
                 '<ul><li>Fill the woods with life</li><li>Live dangerously, live passionately</li><li>Build together</li></ul><p><strong>Fill the woods with life</strong>: when you describe the world, the people that inhabit it, or the structures that embody it, fill them with history. Show the wear, and care, that line them. Don’t assume you know all of the stories of this place - there is more here than anyone could learn in a lifetime.</p><p>Think about your character similarly - fill them with life as well. Treat them as someone you have just met, whose histories and stories are only just before you. Don’t assume you know everything about them: allow yourself to be surprised at the places they take you.</p><p><strong>Live dangerously, live passionately</strong>: go out into the world and find adventure in it. Don’t worry about living or dying in this world - focus on the things in front of you, the dreams you carry with you, and the comrades who fight alongside you.</p><p>Similarly, don’t worry about if your friends will think what you say is cool. It doesn’t matter - just say what you find exciting and fun. Don’t hold yourself back.</p><p><strong>Build together</strong>: the world can be hard, and harsh, and unforgiving - you must do everything in your power to fight back against it. There will be injustice, violence, famine, and homelessness. You must eradicate these where you see them. You must build a world worth living in.</p><p>You must also take care of your friends. If the game pushes into content that is difficult, or content that you can’t contend with, you need to help each other. That might look like processing the things you are feeling together, taking time away from the game to resettle yourselves, or eliding certain content that is too much for someone to handle.</p>',
             'backgrounds':
-                '<p>Your background is your starting place in this story. It is what you bring to the table, your history and your knowledge. Your background tells you what Skills you start with, but you can always learn new ones later.</p><ul><li><strong>Cook</strong>: A paramount chef, happy to feed any who hunger. (starting skill: Cooking <em>or</em> Brewing)</li><li><strong>Farmer</strong>: A hardworking farmhand, ready to tend to their crops. (starting skill: Farming <em>or</em> Weatherwatching)</li><li><strong>River-walker</strong>: A riverboat’s finest guard. (starting skill: Swimming <em>or</em> Slinging)</li><li><strong>Guardian</strong>: A protector and friend to those who are lost. (starting skill: Swinging <em>or</em> Protecting)</li><li><strong>Hunter</strong>: They can track down even the shyest prey. (starting skill: Shooting <em>or</em> Tracking</li><li><strong>Scout</strong>: Swift and silent - when you need to know what is going on, ask them. (starting skill: Sneaking <em>or</em> Mapping)</li><li><strong>Gourmand</strong>: A powerful eater, endowed with a sharp tongue and even sharper nose. (starting skill: Eating <em>or</em> Smelling)</li><li><strong>Artist</strong>: A maker of beauty, who entrance all those who see them. (starting skill: Singing <em>or</em> Painting</li><li><strong>Forester</strong>: A hermit or wanderer - depends on who you ask. (starting skill: Foraging <em>or</em> Running)</li><li><strong>Bellmaker</strong>: A voice of shining joy, they are a clarion to all. (starting skill: Bellmaking <em>or</em> Befriending)</li><li><strong>Elder</strong>: A wise-person, steeped in history and knowledge. (starting skill: Riddling <em>or</em> Storytelling)</li><li><strong>Beekeeper</strong>: A caretaker, a friend to anything they meet. (starting skill: Befriending <em>or</em> Beekeeping)</li><li><strong>Scholar</strong>: A thing-knower, someone who records and rereads. (starting skill: Reading <em>or</em> Writing)</li><li><strong>Kitesailor</strong>: High-flying freedom: who could imagine anything more wondrous. (starting skill: Flying <em>or</em> Weatherwatching)</li><li><strong>Tree-runner</strong>: When you need to get somewhere fast, they’re the one you need to talk to. (starting skill: Climbing <em>or</em> Running)</li><li><strong>Courier</strong>: A friendly face and arms full of packages. (starting skill: Befriending <em>or</em> Carrying)</li><li><strong>Carpenter</strong>: They will build you a home, they will fill it with joy, and they will lay you into the ground when it’s your time. (starting skill: Building <em>or</em> Foraging)</li><li><strong>Maiden</strong>: An innocent heart, full of gentle kindness. (starting skill: Befriending <em>or</em> Singing</li><li><strong>Blacksmith</strong>: A swift hammer stroke and a strong arm. (starting skill: Building <em>or</em> Swinging)</li><li><strong>Thief</strong>: They take from those who do not need, and give to those who do. (starting skill: Sneaking <em>or</em> Stabbing)</li><li><strong>Spearbearer</strong>: A candle in the night; a hand holding yours; a whispered promise. (starting skill: Stabbing <em>or</em> Singing</li><li><strong>Pirate</strong>: A rapscallion, ready to free the imprisoned and overthrow the unjust. (starting skill: Sailing <em>or</em> Swinging)</li><li><strong>Poet</strong>: Words like silk, sewed with tongue-made-knife. (starting skill: Singing <em>or</em> Riddling)</li><li><strong>Brewer</strong>: A barrel of sweetness, bottling heaven. (starting skill: Brewing <em>or</em> Smelling)</li><li><strong>Miner</strong>: The sweat of their labor builds mountains and palaces. The ring of their arms is a fortress. (starting skill: Digging <em>or</em> Carrying)</li><li><strong>Cartographer</strong>: A mapmaker with eyes like needles. (starting skill: Mapping <em>or</em> Weatherwatching)</li></ul>',
+                '<p>Your background is your starting place in this story. It is what you bring to the table, your history and your knowledge. Your background tells you what Skills you start with, but you can always learn new ones later.</p><ul><li><strong>Cook</strong>: A paramount chef, happy to feed any who hunger. (starting skills: Cooking, Brewing, and another skill)</li><li><strong>Farmer</strong>: A hardworking farmhand, ready to tend to their crops. (starting skills: Farming, Weatherwatching, and another skill)</li><li><strong>River-walker</strong>: A riverboat’s finest guard. (starting skills: Swimming, Slinging, and another skill)</li><li><strong>Guardian</strong>: A protector and friend to those who are lost. (starting skills: Swinging, Protecting, and another skill)</li><li><strong>Hunter</strong>: They can track down even the shyest prey. (starting skills: Shooting, Tracking, and another skill)</li><li><strong>Scout</strong>: Swift and silent - when you need to know what is going on, ask them. (starting skills: Sneaking, Mapping, and another skill)</li><li><strong>Gourmand</strong>: A powerful eater, endowed with a sharp tongue and even sharper nose. (starting skills: Eating, Smelling, and another skill)</li><li><strong>Artist</strong>: A maker of beauty, who entrance all those who see them. (starting skills: Singing, Painting, and another skill)</li><li><strong>Forester</strong>: A hermit or wanderer - depends on who you ask. (starting skills: Foraging, Running, and another skill)</li><li><strong>Bellmaker</strong>: A voice of shining joy, they are a clarion to all. (starting skills: Bellmaking, Befriending, and another skill)</li><li><strong>Youngster</strong>: A child, fresh and untouched by suffering. Who will they become? (choose 2 starting skills)</li><li><strong>Elder</strong>: A wise-person, steeped in history and knowledge. (starting skills: Riddling, Storytelling, and another skill)</li><li><strong>Beekeeper</strong>: A caretaker, a friend to anything they meet. (starting skills: Befriending, Beekeeping, and another skill)</li><li><strong>Scholar</strong>: A thing-knower, someone who records and rereads. (starting skills: Reading, Writing, and another skill)</li><li><strong>Kitesailor</strong>: High-flying freedom: who could imagine anything more wondrous. (starting skills: Flying, Weatherwatching, and another skill)</li><li><strong>Tree-runner</strong>: When you need to get somewhere fast, they’re the one you need to talk to. (starting skills: Climbing, Running, and another skill)</li><li><strong>Courier</strong>: A friendly face and arms full of packages. (starting skills: Befriending, Carrying, and another skill)</li><li><strong>Carpenter</strong>: They will build you a home, they will fill it with joy, and they will lay you into the ground when it’s your time. (starting skills: Building, Foraging, and another skill)</li><li><strong>Maiden</strong>: An innocent heart, full of gentle kindness. (starting skills: Befriending, Singing, and another skill)</li><li><strong>Blacksmith</strong>: A swift hammer stroke and a strong arm. (starting skills: Building, Swinging, and another skill)</li><li><strong>Thief</strong>: They take from those who do not need, and give to those who do. (starting skills: Sneaking, Stabbing, and another skill)</li><li><strong>Spearbearer</strong>: A candle in the night; a hand holding yours; a whispered promise. (starting skills: Stabbing, Singing, and another skill)</li><li><strong>Pirate</strong>: A rapscallion, ready to free the imprisoned and overthrow the unjust. (starting skills: Sailing, Swinging, and another skill)</li><li><strong>Poet</strong>: Words like silk, sewed with tongue-made-knife. (starting skills: Singing, Riddling, and another skill)</li><li><strong>Brewer</strong>: A barrel of sweetness, bottling heaven. (starting skills: Brewing, Smelling, and another skill)</li><li><strong>Mysterio</strong>: ??? (starting skills: Riddling, Sneaking, and another skill)</li><li><strong>Miner</strong>: The sweat of their labor builds mountains and palaces. The ring of their arms is a fortress. (starting skills: Digging, Carrying, and another skill)</li><li><strong>Cartographer</strong>: A mapmaker with eyes like needles. (starting skills: Mapping, Weatherwatching, and another skill)</li></ul>',
             'gifts':
                 '<p>Gifts are special to you - treasure them. As you grow close to your fellows, you might learn of their Gifts and be able to put them into practice, but you’ll never lose the Gift you start with.</p><ul><li><strong>Hope</strong>: you pick your Hope on a 3-, and it only costs 2 Rascality to Act on a Hope.</li><li><strong>Caution</strong>: you pick your Complication on a 4-5, and it only costs 2 Rascality to Resist a Complication.</li><li><strong>Insight</strong>: when you ask someone a question, they cannot lie to you.</li><li><strong>Cruelty</strong>: when you act to resolve a threat with violence, restore 3 Rascality.</li><li><strong>Kindness</strong>: when you act to resolve a threat with compassion, restore 3 Rascality.</li><li><strong>Brutality</strong>: when you act to solve a threat with violence, you roll an additional die when you next roll.</li><li><strong>Unmoving</strong>: when you roll a 3-, you are no longer Wounded and you restore your Rascality.</li><li><strong>Wisdom</strong>: when you act to solve a threat with knowledge, history, or cunning, restore 3 Rascality.</li><li><strong>Teaching</strong>: you can Train once without taking your action during Downtime.</li><li><strong>Quick</strong>: when there is a question of who acts first, you do.</li><li><strong>Healing</strong>: you may Act to make someone else no longer Wounded.</li><li><strong>Shelter</strong>: when you sacrifice yourself to protect someone, restore 3 Rascality.</li><li><strong>Intuition</strong>: add “calm down the beasts and the wild things” to your list of Hopes.</li><li><strong>Thrill Seeking</strong>: when someone says what you do to resolve a threat or obstacle is dangerous , uncertain , or both and you choose not to roll, mark 1 Practice with any skill.</li><li><strong>Aid</strong>: you can Help Someone without paying any Rascality.</li><li><strong>Vision</strong>: even when you are apart, you know exactly what befalls the other animals in their journeys.</li><li><strong>Trusty</strong>: when you act to resolve a threat with deception, trickery, or furtiveness, restore 3 Rascality.</li><li><strong>Countermand</strong>: when you ignore orders, break rules, or rebel against authority, restore 3 Rascality.</li><li><strong>Juggernaut</strong>: when you barrel through, rush past, or break something down, restore 3 Rascality.</li><li><strong>Open</strong>: whoever or whatever you speak to will understand you, and you them.</li><li><strong>Disciplined</strong>: your whole body is a weapon. You can never be deprived.</li><li><strong>Plucky</strong>: no effect. Good luck out there.</li></ul>',
             'goals':
@@ -657,7 +667,7 @@
             'challenges':
                 '<p>At any point during your turn, especially when it feels like something interesting should happen, a friend can introduce a threat, an obstacle, or an opportunity.</p><p>When you do something to resolve a threat or obstacle, anyone can say what you do is <strong>dangerous, uncertain, or both</strong>.</p><div class="indented">If it’s <strong>dangerous</strong>, a friend will tell you how you’ve made yourself vulnerable.</div><div class="indented">If it’s <strong>uncertain</strong>, a friend will tell you whether or not you make it, based on their gut instincts.</div><div class="indented">If it’s <strong>both</strong>, a friend will tell you how the situation escalates and becomes worse.</div><br><p>However, you can veto whatever decision they would make by declaring you are going to roll.</p>',
             'rolling':
-                '<p>When you roll, pick one of your skills that feels like it could help you in this situation, and roll a number of six sided dice equal to that skill’s Dot Rating and take the highest.</p><div class="indented"><strong>On a 6</strong>: you describe how you turn the situation to your favor, despite the odds.</div><div class="indented"><strong>On a 4-5</strong>: you describe how you turn the situation to your favor and the threat is resolved, but a friend gets to say what factor <strong>Complicates</strong> your situation.</div><div class="indented"><strong>On a 3-</strong>: you describe how the situation goes completely wrong and you are put in perilous danger, but a friend gets to say what sliver of <strong>Hope</strong> still remains for you.</div><ul><strong>Complications</strong>:<li>It takes extra time</li><li>The danger hasn’t completely left you</li><li>You are Wounded</li><li>You become completely lost</li><li>Some new danger is stalking you</li><li>You leave behind something precious to you</li></ul><ul><strong>Hopes</strong>:<li>Someone appears to help</li><li>You are no longer Wounded</li><li>You find out some important information on your Goal</li><li>A threat or obstacle reveals a weakness to you</li><li>You find a reserve of inner strength you didn’t know you had - restore your Rascality</li></ul>',
+                '<p>When you roll, pick one of your skills that feels like it could help you in this situation, and roll a number of six sided dice equal to that skill’s Dot Rating and take the highest.</p><div class="indented"><strong>On a 6</strong>: you describe how you turn the situation to your favor, despite the odds.</div><div class="indented"><strong>On a 4-5</strong>: you describe how you turn the situation to your favor and the threat is resolved, but a friend gets to say what factor <strong>Complicates</strong> your situation.</div><div class="indented"><strong>On a 3-</strong>: you describe how the situation goes completely wrong and you are put in perilous danger, but a friend gets to say what sliver of <strong>Hope</strong> still remains for you.</div><br><p><strong>Complications</strong>:</p><ul><li>It takes extra time</li><li>The danger hasn’t completely left you</li><li>You are Wounded</li><li>You become completely lost</li><li>Some new danger is stalking you</li><li>You leave behind something precious to you</li></ul><p><strong>Hopes</strong>:</p><ul><li>Someone appears to help</li><li>You are no longer Wounded</li><li>You find out some important information on your Goal</li><li>A threat or obstacle reveals a weakness to you</li><li>You find a reserve of inner strength you didn’t know you had - restore your Rascality</li><li>(with gift "intuition") calm down the beasts and the wild things</li></ul>',
             'rascality':
                 '<p>Rascality is your sheer determination. You have a maximum Rascality of 10.</p><p>You can spend Rascality for various effects.</p><strong>Resist and Act</strong><div class="indented">You can Resist a Complication by spending 3 Rascality. Whatever would happen, it doesn’t instead. You manage to avoid, stop, or counteract it.</div><div class="indented">You can Act on a sliver of Hope by spending 3 Rascality. Pick one of the options on the Hope list - it happens, and you get to say how. You can do this at any time, whether or not you are rolling. Note: you cannot choose to restore your Rascality by Acting.</div><strong>Push Yourself</strong><div class="indented">You can Push Yourself by spending 2 Rascality. When you do so, you roll an additional die on your roll. You can Push Yourself before or after you see the results of your roll.</div><strong>Help Someone</strong><div class="indented">You can Help Someone by spending 1 Rascality. When you do so, they roll an additional die on their roll. You can Help Someone before or after they see the results of the roll. Describe how you aid or assist them.</div><br><h6>Wounded</h6><p>Some effects might cause you to become Wounded. When you are Wounded, if you would spend Rascality, you must instead spend that much Rascality plus one.</p>',
             'downtime':
@@ -820,6 +830,19 @@
             }
         });
 
+        function roll1d6(n=1) {
+            socket.emit('roll 1d6', {'index': (n-1)});
+        }
+        socket.on('1d6 result', function(data) {
+            let character = data.character;
+            let result = data.result;
+            let html = result;
+            updateResult(html);
+            // add roll info to chat
+            html = '<div class="well">' + character + ': (' + result + ')</div>';
+            updateChat(html);
+        });
+
         function skillTest(n=1, skill, level) {
             socket.emit('roll dice', {'index': (n-1), 'skill': skill, 'level': level});
         }
@@ -830,12 +853,12 @@
             var html = data.html;
             updateResult(html);
             // add roll info to chat
-            html = '<div class="well">' + character + ' uses skill "' + skill + '"';
+            html = '<div class="well">' + character + ' tries "' + skill + '"';
             if (result < 4) {
-                html += ' unsuccessfully, but <em>gains practice</em>!';
+                html += ' unsuccessfully; push yourself, get help, or just <em>gain practice</em>?';
             }
             else if (result < 6) {
-                html += ' successfully, but there is a <strong>complication</strong>!';
+                html += ' successfully, but there is a <strong>complication</strong> if you do not push yourself, get help, or resist!';
             }
             else {
                 html += ' successfully!';
@@ -853,13 +876,20 @@
             socket.emit('practice', {'index': (n-1), 'skill': skill});
         }
 
+        socket.on('update skills', function(data) {
+            var index = data.index;
+            var skills = data.skills;
+
+            updateSkillList((index+1), skills);
+        });
+
         socket.on('update field', function(data) {
             var field = data.field;
             var number = data.number;
             var value = data.value;
 
             if (field == 'rascality') {
-                updateRascality(number, value)
+                updateRascality(number, value);
             }
             else {
                 $('#' + field + number).val(value);
@@ -868,16 +898,16 @@
         });
 
         socket.on('update client', function(data) {
-            var users = data.users;
-            var info = data.info;
-            var p = info['profiles'];
+            let users = data.users;
+            let info = data.info;
+            let p = info['profiles'];
 
             updateUserList(users);
             if (info['currentimage']) {
                 updateImage('imageviewImage', info['currentimage']);
             }
 
-            for (var i = 0; i < p.length; i++) {
+            for (let i = 0; i < p.length; i++) {
 
                 updatePortrait(i, p[i]['portrait']);
 
@@ -905,15 +935,18 @@
         });
 
         function updateRascality(n=1, rascality) {
-            var $plusB = $('#plusRascality' + n);
-            var $minusB = $('#minusRascality' + n);
+            let $restoreR = $('#restoreRascality' + n);
+            let $plusB = $('#plusRascality' + n);
+            let $minusB = $('#minusRascality' + n);
 
             $('#rascality' + n).html(rascality);
             if (rascality > 9) {
                 $plusB.addClass('locked');
+                $restoreR.addClass('locked');
             }
             else {
                 $plusB.removeClass('locked');
+                $restoreR.removeClass('locked');
             }
             if (rascality < 1) {
                 $minusB.addClass('locked');
@@ -1041,6 +1074,7 @@
                     if ($(this).prop('id') == 'clear-btn') {
                         if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
                             sketch.background("rgb(220, 217, 205)");
+                            pg.background("rgb(220, 217, 205)"); // graphics buffer
                             stroke = 2;
                             var data = {
                                 'background': 'rgb(220, 217, 205)'

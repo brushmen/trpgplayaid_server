@@ -23,7 +23,7 @@
         background-color: Gainsboro !important;
     }
 
-    #c1, #c2, #c3, #c4, #c5, #c6 {
+    #c1, #c2, #c3, #c4, #c5 {
         position: relative;
     }
 
@@ -47,6 +47,13 @@
         min-height: 190px;
     }
 
+    input[name=pool] {
+        width: 2.5em !important;
+    }
+    button[name=rolldice] {
+        width: 1.8em !important;
+        margin-right: 0.2em !important;
+    }
     div[name=dicepool], div[name=xp] {
         font-weight: bolder;
     }
@@ -76,11 +83,8 @@
         overflow: auto;
     }
 
-    #diceArea {
-        margin-top: 2em;
-    }
-    #rollDice {
-        margin-top: 5px;
+    #commonArea {
+        width: 15.8em;
     }
 
     .traits, .keys, .secrets {
@@ -108,9 +112,9 @@
 
     #infoArea {
         border: 0px solid black;
-        height: 300px;
+        height: 350px;
         overflow: auto;
-        font-size: 1em;
+        font-size: 0.9em;
         line-height: 1.3em;
         padding: 10px;
         overflow-wrap: break-word;
@@ -119,20 +123,21 @@
 
     #resultArea {
         padding: 2px 10px;
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
     #chatSection {
-        height: 220px;
+        width: 17em;
+        height: 180px;
         overflow-y: scroll;
     }
 
-    #mapClick, #npcClick {
+    #mapClick {
         cursor: pointer;
         font-size: 1.5em;
     }
 
-    #worldviewbox, #npcviewbox {
+    #mapviewbox {
         position: absolute;
         top: 0;
         left: 0;
@@ -140,10 +145,10 @@
         overflow: auto;
         z-index: 3;
     }
-    #worldviewboxHeader, #npcviewboxHeader {
+    #mapviewboxHeader {
         padding: 0 10px;
     }
-    #worldviewImage, #npcviewImage {
+    #mapviewImage {
         min-height: 300px;
         max-height: 470px;
     }
@@ -157,32 +162,31 @@
 </head>
 <body>
     <!-- hovering panels -->
-    <div id="loadbox" style="display: none" class="card">
+    <div id="loadbox" style="display: none" class="card shadow">
         <h5 class="card-header">load JSON content</h5>
         <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
         <textarea id="loadboxjson" placeholder="JSON only"></textarea>
-        <button type="submit" class="btn btn-sm btn-warning">send</button>
+        <button type="submit" class="btn btn-sm btn-warning">load</button>
     </div>
-    <div id="worldviewbox" style="display: none" class="card">
-        <h5 id="worldviewboxHeader" class="card-header move">world/landscape/map</h5>
-        <div class="topRightClick" onclick="$('#worldviewbox').hide();">hide</div>
-        <img src="" id="worldviewImage" alt="world view image" title="" />
+    <div id="imageviewbox" style="display: none" class="card shadow">
+        <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
+        <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
+        <img src="" id="imageviewImage" alt="an image" title="an image to show the group" />
         <div class="container-fluid input-group p-0">
-            <input type="text" id="worldviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
-            <button class="btn btn-sm btn-info" onclick="loadImage('worldviewImage', 'worldviewImageURL');">load image</button>
+            <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
         </div>
     </div>
-    <div id="npcviewbox" style="display: none" class="card">
-        <h5 id="npcviewboxHeader" class="card-header move">character/object image</h5>
-        <div class="topRightClick" onclick="$('#npcviewbox').hide();">hide</div>
-        <img src="" id="npcviewImage" alt="character or object image" title="" />
+    <div id="mapviewbox" style="display: none" class="card">
+        <h5 id="mapviewboxHeader" class="card-header move">map</h5>
+        <div class="topRightClick" onclick="$('#mapviewbox').hide();">hide</div>
+        <img src="" id="mapviewImage" alt="map view image" title="" />
         <div class="container-fluid input-group p-0">
-            <input type="text" id="npcviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
-            <button class="btn btn-sm btn-info" onclick="loadImage('npcviewImage', 'npcviewImageURL');">load image</button>
+            <input type="text" id="mapviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('mapviewImage', 'mapviewImageURL');">load image</button>
         </div>
     </div>
-    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
-         hiding it can only make it invisible, not by removing it from DOM -->
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width, hiding it can only make it invisible, not by removing it from DOM -->
     <div id="scratchpadArea" style="visibility: hidden" class="card">
         <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
         <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
@@ -203,6 +207,24 @@
             </div>
         </div>
     </div>
+
+    <!-- right side menu buttons, leave space in between for TogetherJS bar. add/remove buttons as applicable -->
+    <div id="menubuttons" class="btn-group-vertical shadow">
+        <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+        <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
+        <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
+        <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image">🖼</button>
+        <button id="mapbutton" class="btn btn-sm btn-outline-dark" onclick="$('#mapviewbox').toggle(); return false;" title="show a map">🗺</button>
+        <button id="drawbutton" class="btn btn-sm btn-outline-dark" onclick="toggleScratchpad(); return false;" title="draw something">🎨</button>
+        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
+
+        <button class="btn btn-sm locked" style="height: 50px"></button>
+
+        <button id="thumbup" class="btn btn-sm btn-outline-dark" onclick="safetyTool('thumbup'); return false;" title="thumbup to show support">👍</button>
+        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('raisedhand'); return false;" title="indicate in chat that you want to speak">✋</button>
+
+    </div>
+    <button id="clearfieldsbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
 
     <!-- main content -->
     <div id="playArea" class="container-fluid">
@@ -253,31 +275,25 @@
                                     </div>
 
                                     <div id="dicepoolGroup1" name="dicepoolGroup" class="input-group input-group-sm">
-                                        <label id="dicepoolLabel1" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
-                                        <div id="dicepool1" name="dicepool" class="form-control-sm text-primary">7</div>
-                                        <div class="">
-                                            <button type="button" id="plusPoolDice1" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
-                                            <button type="button" id="minusPoolDice1" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
-                                        </div>
+                                        <input type="text" id="pool1" name="pool" class="form-control form-control-sm" placeholder="pool" title="dice to roll to take on a challenge" value="1" />
+                                        <button id="rolldice1" name="rolldice" class="form-control btn btn-sm btn-outline-dark" title="roll dice">🎲</button>
+                                        <button type="button" id="plusPoolDice1" name="plusPoolDice" class="form-control btn btn-sm btn-primary">+</button>
+                                        <button id="dicepool1" name="dicepool" class="form-control btn btn-sm btn-outline-dark text-primary">7</button>
+                                        <button type="button" id="minusPoolDice1" name="minusPoolDice" class="form-control btn btn-sm btn-primary">-</button>
                                     </div>
 
                                     <div id="xpGroup1" name="xpGroup" class="input-group input-group-sm">
-                                        <label id="xpLabel1" class="form-control input-group-text">XP 🏅</label>
-                                        <div id="xp1" name="xp" class="form-control-sm text-success">0</div>
-                                        <div class="">
-                                            <button type="button" id="plusXP1" name="plusXP" class="btn btn-sm btn-success"> + </button>
-                                            <button type="button" id="minusXP1" name="minusXP" class="btn btn-sm btn-success"> - </button>
-                                        </div>
+                                        <label id="xpLabel1" name="xpLabel" class="form-control form-control-sm input-group-text">XP</label>
+                                        <button type="button" id="plusXP1" name="plusXP" class="form-control btn btn-sm btn-success">+</button>
+                                        <button id="xp1" name="xp" class="form-control btn btn-sm btn-outline-dark text-success">0</button>
+                                        <button type="button" id="minusXP1" name="minusXP" class="form-control btn btn-sm btn-success">-</button>
                                     </div>
 
-                                    <div id="conditions1" name="conditions" class="row-fluid w-100 text-center">
-                                        <span title="tired">😴 <input type="checkbox" id="tired1" name="tired" /></span>
-                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry1" name="angry" /></span>
-                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad1" name="sad" /></span>
-                                        <br>
-                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out1" name="out" /></span>
-                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt1" name="hurt"/></span>
-                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead1" name="dead" /></span>
+                                    <div id="conditions1" name="conditions" class="row">
+                                        <div class="col-3"><span title="drained">😴<input type="checkbox" id="drained1" name="drained" /></span></div>
+                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad1" name="mad" /></span></div>
+                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt1" name="hurt"/></span></div>
+                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead1" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -329,31 +345,25 @@
                                     </div>
 
                                     <div id="dicepoolGroup2" name="dicepoolGroup" class="input-group input-group-sm">
-                                        <label id="dicepoolLabel2" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
-                                        <div id="dicepool2" name="dicepool" class="form-control-sm text-primary">7</div>
-                                        <div class="">
-                                            <button type="button" id="plusPoolDice2" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
-                                            <button type="button" id="minusPoolDice2" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
-                                        </div>
+                                        <input type="text" id="pool2" name="pool" class="form-control form-control-sm" placeholder="pool" title="dice to roll to take on a challenge" value="1" />
+                                        <button id="rolldice2" name="rolldice" class="form-control btn btn-sm btn-outline-dark" title="roll dice">🎲</button>
+                                        <button type="button" id="plusPoolDice2" name="plusPoolDice" class="form-control btn btn-sm btn-primary">+</button>
+                                        <button id="dicepool2" name="dicepool" class="form-control btn btn-sm btn-outline-dark text-primary">7</button>
+                                        <button type="button" id="minusPoolDice2" name="minusPoolDice" class="form-control btn btn-sm btn-primary">-</button>
                                     </div>
 
                                     <div id="xpGroup2" name="xpGroup" class="input-group input-group-sm">
-                                        <label id="xpLabel2" class="form-control input-group-text">XP 🏅</label>
-                                        <div id="xp2" name="xp" class="form-control-sm text-success">0</div>
-                                        <div class="">
-                                            <button type="button" id="plusXP2" name="plusXP" class="btn btn-sm btn-success"> + </button>
-                                            <button type="button" id="minusXP2" name="minusXP" class="btn btn-sm btn-success"> - </button>
-                                        </div>
+                                        <label id="xpLabel2" name="xpLabel" class="form-control form-control-sm input-group-text">XP</label>
+                                        <button type="button" id="plusXP2" name="plusXP" class="form-control btn btn-sm btn-success">+</button>
+                                        <button id="xp2" name="xp" class="form-control btn btn-sm btn-outline-dark text-success">0</button>
+                                        <button type="button" id="minusXP2" name="minusXP" class="form-control btn btn-sm btn-success">-</button>
                                     </div>
 
-                                    <div id="conditions2" name="conditions" class="row-fluid w-100 text-center">
-                                        <span title="tired">😴 <input type="checkbox" id="tired2" name="tired" /></span>
-                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry2" name="angry" /></span>
-                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad2" name="sad" /></span>
-                                        <br>
-                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out2" name="out" /></span>
-                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt2" name="hurt"/></span>
-                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead2" name="dead" /></span>
+                                    <div id="conditions2" name="conditions" class="row">
+                                        <div class="col-3"><span title="drained">😴<input type="checkbox" id="drained2" name="drained" /></span></div>
+                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad2" name="mad" /></span></div>
+                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt2" name="hurt"/></span></div>
+                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead2" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -405,31 +415,25 @@
                                     </div>
 
                                     <div id="dicepoolGroup3" name="dicepoolGroup" class="input-group input-group-sm">
-                                        <label id="dicepoolLabel3" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
-                                        <div id="dicepool3" name="dicepool" class="form-control-sm text-primary">7</div>
-                                        <div class="">
-                                            <button type="button" id="plusPoolDice3" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
-                                            <button type="button" id="minusPoolDice3" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
-                                        </div>
+                                        <input type="text" id="pool3" name="pool" class="form-control form-control-sm" placeholder="pool" title="dice to roll to take on a challenge" value="1" />
+                                        <button id="rolldice3" name="rolldice" class="form-control btn btn-sm btn-outline-dark" title="roll dice">🎲</button>
+                                        <button type="button" id="plusPoolDice3" name="plusPoolDice" class="form-control btn btn-sm btn-primary">+</button>
+                                        <button id="dicepool3" name="dicepool" class="form-control btn btn-sm btn-outline-dark text-primary">7</button>
+                                        <button type="button" id="minusPoolDice3" name="minusPoolDice" class="form-control btn btn-sm btn-primary">-</button>
                                     </div>
 
                                     <div id="xpGroup3" name="xpGroup" class="input-group input-group-sm">
-                                        <label id="xpLabel3" class="form-control input-group-text">XP 🏅</label>
-                                        <div id="xp3" name="xp" class="form-control-sm text-success">0</div>
-                                        <div class="">
-                                            <button type="button" id="plusXP3" name="plusXP" class="btn btn-sm btn-success"> + </button>
-                                            <button type="button" id="minusXP3" name="minusXP" class="btn btn-sm btn-success"> - </button>
-                                        </div>
+                                        <label id="xpLabel3" name="xpLabel" class="form-control form-control-sm input-group-text">XP</label>
+                                        <button type="button" id="plusXP3" name="plusXP" class="form-control btn btn-sm btn-success">+</button>
+                                        <button id="xp3" name="xp" class="form-control btn btn-sm btn-outline-dark text-success">0</button>
+                                        <button type="button" id="minusXP3" name="minusXP" class="form-control btn btn-sm btn-success">-</button>
                                     </div>
 
-                                    <div id="conditions3" name="conditions" class="row-fluid w-100 text-center">
-                                        <span title="tired">😴 <input type="checkbox" id="tired3" name="tired" /></span>
-                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry3" name="angry" /></span>
-                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad3" name="sad" /></span>
-                                        <br>
-                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out3" name="out" /></span>
-                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt3" name="hurt"/></span>
-                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead3" name="dead" /></span>
+                                    <div id="conditions3" name="conditions" class="row">
+                                        <div class="col-3"><span title="drained">😴<input type="checkbox" id="drained3" name="drained" /></span></div>
+                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad3" name="mad" /></span></div>
+                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt3" name="hurt"/></span></div>
+                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead3" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -481,31 +485,25 @@
                                     </div>
 
                                     <div id="dicepoolGroup4" name="dicepoolGroup" class="input-group input-group-sm">
-                                        <label id="dicepoolLabel4" class="form-control input-group-text" title="dice pool max out at 10">pool ⚄</label>
-                                        <div id="dicepool4" name="dicepool" class="form-control-sm text-primary">7</div>
-                                        <div class="">
-                                            <button type="button" id="plusPoolDice4" name="plusPoolDice" class="btn btn-sm btn-primary"> + </button>
-                                            <button type="button" id="minusPoolDice4" name="minusPoolDice" class="btn btn-sm btn-primary"> - </button>
-                                        </div>
+                                        <input type="text" id="pool4" name="pool" class="form-control form-control-sm" placeholder="pool" title="dice to roll to take on a challenge" value="1" />
+                                        <button id="rolldice4" name="rolldice" class="form-control btn btn-sm btn-outline-dark" title="roll dice">🎲</button>
+                                        <button type="button" id="plusPoolDice4" name="plusPoolDice" class="form-control btn btn-sm btn-primary">+</button>
+                                        <button id="dicepool4" name="dicepool" class="form-control btn btn-sm btn-outline-dark text-primary">7</button>
+                                        <button type="button" id="minusPoolDice4" name="minusPoolDice" class="form-control btn btn-sm btn-primary">-</button>
                                     </div>
 
                                     <div id="xpGroup4" name="xpGroup" class="input-group input-group-sm">
-                                        <label id="xpLabel4" class="form-control input-group-text">XP 🏅</label>
-                                        <div id="xp4" name="xp" class="form-control-sm text-success">0</div>
-                                        <div class="">
-                                            <button type="button" id="plusXP4" name="plusXP" class="btn btn-sm btn-success"> + </button>
-                                            <button type="button" id="minusXP4" name="minusXP" class="btn btn-sm btn-success"> - </button>
-                                        </div>
+                                        <label id="xpLabel4" name="xpLabel" class="form-control form-control-sm input-group-text">XP</label>
+                                        <button type="button" id="plusXP4" name="plusXP" class="form-control btn btn-sm btn-success">+</button>
+                                        <button id="xp4" name="xp" class="form-control btn btn-sm btn-outline-dark text-success">0</button>
+                                        <button type="button" id="minusXP4" name="minusXP" class="form-control btn btn-sm btn-success">-</button>
                                     </div>
 
-                                    <div id="conditions4" name="conditions" class="row-fluid w-100 text-center">
-                                        <span title="tired">😴 <input type="checkbox" id="tired4" name="tired" /></span>
-                                        <span title="angry" style="color: red">😠 <input type="checkbox" id="angry4" name="angry" /></span>
-                                        <span title="sad" style="color: blue">😢 <input type="checkbox" id="sad4" name="sad" /></span>
-                                        <br>
-                                        <span title="out" class="text-muted">😑 <input type="checkbox" id="out4" name="out" /></span>
-                                        <span title="hurt" class="bg-danger text-light">🤕 <input type="checkbox" id="hurt4" name="hurt"/></span>
-                                        <span title="dead" class="bg-dark text-light">💀 <input type="checkbox" id="dead4" name="dead" /></span>
+                                    <div id="conditions4" name="conditions" class="row">
+                                        <div class="col-3"><span title="drained">😴<input type="checkbox" id="drained4" name="drained" /></span></div>
+                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad4" name="mad" /></span></div>
+                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt4" name="hurt"/></span></div>
+                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead4" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -514,55 +512,7 @@
                         </div>
                     </div>
 
-                    <div id="c5" class="col-1">
-                        <div id="worldview" class="row" style="margin: 5px 0">
-                            <div class="col col-6 p-0 text-center">
-                                <div id="mapClick" onclick="$('#worldviewbox').toggle();" title="share a picture of scene or location with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/203-earth.png" class="icon-sm" alt="globe icon"></div>
-                            </div>
-                            <div class="col col-6 p-0 text-center">
-                                <div id="npcClick" onclick="$('#npcviewbox').toggle();" title="share a picture of NPC or object with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/014-image.png" class="icon-sm" alt="picture icon"></div>
-                            </div>
-                        </div>
-                        <div id="x-card" class="row" onclick="safetyTool('x');" title="x-card"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/272-cross.png" class="icon-md" alt="x icon"></div>
-                        <div id="thumbup" class="row" onclick="safetyTool('thumbup');" title="thumbup"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/thumbup.png" class="icon-md" alt="thumbup icon"></div>
-                        <div id="raisedhand" class="row" onclick="safetyTool('raisedhand');" title="I want to say something"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/260-point-up.png" class="icon-md" alt="hand up icon"></div>
-
-                        <div id="diceArea" class="container-fluid p-0">
-                            <div class="row p-0">
-                                <div class="input-group">
-                                    <select id="dicetoroll" class="form-control form-control-sm">
-                                        <option value="1" selected="selected">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                        <option value="8">8</option>
-                                        <option value="9">9</option>
-                                        <option value="10">10</option>
-                                        <option value="11">11</option>
-                                        <option value="12">12</option>
-                                        <option value="13">13</option>
-                                        <option value="14">14</option>
-                                        <option value="15">15</option>
-                                        <option value="16">16</option>
-                                        <option value="17">17</option>
-                                        <option value="18">18</option>
-                                        <option value="19">19</option>
-                                        <option value="20">20</option>
-                                    </select>
-                                    &nbsp;🎲&nbsp;
-                                </div>
-                            </div>
-                            <div class="row p-0">
-                                <button type="submit" id="rollDice" class="btn btn-sm btn-block btn-info">ROLL</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="c6" class="col-3">
-                        <div class="scratchpadClick" onclick="toggleScratchpad();">🖍</div>
+                    <div id="c5" class="col-3">
                         <div id="commonArea">
                             <div class="row text-center">
                                 <select id="infolist" name="infolist" class="form-control form-control-sm">
@@ -601,7 +551,7 @@
                                 <div id="resultArea">roll results</div>
                             </div>
 
-                            <div id="chatArea">
+                            <div id="chatArea" class="row">
                                 <div class="row">
                                     <form id="messageForm" class="container">
                                         <div id="chatSection">
@@ -648,15 +598,15 @@
         var infotext = {
             'about':
                 '<p><a href="https://brushmen.itch.io/the-escort" target="_new">The Escort</a> is a <em><a href="https://en.wikipedia.org/wiki/Wuxia" target="_new">wuxia</a></em>-themed story-game by Yi Weng that is a hack of John Harper\'s "<a href="http://www.onesevendesign.com/ladyblackbird" target="_new">Lady Blackbird</a>."</p>',
-            'diceroll': "<p>Roll dice to overcome an obstacle. Start with one die. Add a die if you have a Trait that can help. If that Trait has tags that apply, add another die for each such tag. Finally, add any number of dice from your personal dice pool (your pool starts with 7 dice).</p><p>Roll result of 4, 5, and 6 are hits. You need hits to match or surpass the difficulty level (difficult: 3, challenging: 4, extreme: 5, etc.) to overcome the obstacle.</p><p>If you pass, discard all dice you rolled (including any pool dice you or helper used). If not, you don't yet achieve your goal. But, you keep the pool dice rolled (helper keep theirs) and add another die to your pool (max is 10). The GM will escalate the situation, such as give you a condition (hurt, even death, etc.) and you might be able to try again.</p><h5>A variant dice rule</h5><p>(needs everyone to agree to it)</p><p>When hits after a roll...<ul><li>surpass the difficulty: \"Yes, And (player decides another beneficial outcome/detail)\"</li><li>match the difficulty：\"Yes...\" (as usual)</li><li>miss by 1：\"Yes, But (GM decides)\"</li><li>is less but not 0：\"No, But (GM decides)\"</li><li>is 0：\"No, And (GM decides)\"</li></ul></p>",
+            'diceroll': "<p>Roll dice to overcome an obstacle. <strong>Start with one die just for trying</strong>. Add a die if you have a <strong>Trait</strong> that can help. If that Trait has <strong>tags</strong> that apply, add another die for each such tag. Finally, add any number of dice from your personal <strong>dice pool</strong> (start with 7 for a max of 7). Other character(s) can <strong>help</strong> if it can be narratively justified.</p><p>Roll result of 4, 5, and 6 are hits. You need hits to match or surpass the difficulty level (difficult: 3, challenging: 4, extreme: 5, etc.) to overcome the obstacle.</p><p>If you pass, discard all dice you rolled (including any pool dice you or helper used). If not, you don't yet achieve your goal. But, you keep the pool dice rolled (helper keep theirs) and add another die to your pool (up to your pool maximum). The GM will escalate the situation, such as give you a condition (hurt, even death, etc.) and you might be able to try again.</p><h5>A variant dice rule</h5><p>(needs everyone to agree to it)</p><p>When hits after a roll...<ul><li>surpass the difficulty: \"Yes, And (player decides another beneficial outcome/detail)\"</li><li>match the difficulty：\"Yes...\" (as usual)</li><li>miss by 1：\"Yes, But (GM decides)\"</li><li>is less but not 0：\"No, But (GM decides)\"</li><li>is 0：\"No, And (GM decides)\"</li></ul></p>",
 
             'helping': '<p>Describe how you can help another character to give them (at most) one die from your pool.</p>',
 
-            'keysandxp': '<p>When you hit a Key, you can take an experience point (XP) or add a dice to your pool (up to a max of 10). You can trade in 5 XP for an Advance- pick one (if justified in the narrative):<ul><li>Add a new Trait</li><li>Add a new tag to an existing Trait</li><li>Learn a Secret (see its requirement)</li></ul></p><p>You can hold on to advances and spend them at any time, even during a fight! If a buyoff condition occurs, you have the option of removing the Key and earning two advances.</p>',
+            'keysandxp': '<p>When you turn a Key, you can take an experience point (XP) or add a die to your pool (up to your pool maximum).</p><p>Spend xp at any time to:<ul><li>1 xp — Get a pool die (up to your pool maximum).</li><li>3 xp — Unlock a tag on an existing trait.</li><li>5 xp — Increase pool maximum by 1 (and get a pool die).</li><li>5 xp — Add a new trait with 3 tags.</li><li>5 xp — Add a new key you’ve never had before.</li><li>5 xp — Add a new secret.</li></ul></p>',
 
-            'refreshment': '<p>You can refresh your pool back to 7 dice by having a refreshment scene with another character. You may also remove a condition or regain the use of a secret if narratively supported. Ask questions of other characters, and either stay in the present, or use a Flashback to answer those questions. Examples, "Why did you commit that crime?" "Do you think they are innocent?" "Why have I never heard of an amazing archer like you before?" ...</p>',
+            'refreshment': '<p>You can refresh your pool back to your pool maximum by having a refreshment scene with another character. You may also remove a condition or regain the use of a secret if narratively supported. Ask questions of other characters, and either stay in the present, or use a Flashback to answer those questions. Examples, "Why did you commit that crime?" "Do you think they are innocent?" "Why have I never heard of an amazing archer like you before?" ...</p>',
 
-            'newstuff': '<p>Spend 5 XP to buy one new trait (without tags), one new tag under an existing trait, one new key, or one new secret (if meeting its condition).</p><h5>New Traits & Tags</h5><p><div class="traits"><strong>Bodyguard</strong><div class="indented tags">First-Aid, Threats, Unarmed, Heavy-Load, Delay, Endure, Fearless, Cautious, Pressure Points</div><strong>Sailor</strong><div class="indented tags">Dive, Swim, Helms, Sails, Raft, Float, Navigation, Hardy, Shallows, Drinks</div><strong>Wanderer</strong><div class="indented tags">Camping, Secretive, Generous, Tough, Guide, Weapon Master, Forthright, Reputation, Connections, Sentimental, Drink</div><strong>Buddhism</strong><div class="indented tags">Kind, Devout, Tolerant, Reform, Insight, Enlightenment, Persistent, Scripture</div><strong>Herdsman</strong><div class="indented tags">Plains, Scout, Horse-taming, Horsemanship, Wrestle, Sturdy, Husbandry, Sandstorm, Vocal Tricks</div><strong>Detective</strong><div class="indented tags">Perceptive, Keen, Learned, Handy, Eloquent, Imitation, Fearless, Patient, Determined</div><strong>Merchant</strong><div class="indented tags">Generous, Wise, Wealth, Connections, Reputation, Influential Clans, Favors, Deal, Patient, Audacious, Meticulous, Cunning</div><strong>Prodigy</strong><div class="indented tags">Photographic Memory, Focused, Calculator, Strategy, Unorthodox, Unscrupulous, Learned, Speechcraft, Miracle Worker, Geomancy</div><strong>Military</strong><div class="indented tags">Command, Horsemanship, Methods of War, Strategy, Authority, Loyalty, Formations, Negotiation, Ceremony, Military Law, Merciless</div><strong>Assassin</strong><div class="indented tags">Cruel, Endure, Persistent, Hidden Weapons, Weapon Master, Improvise, Lightfoot, Song and Dance, Seduction, Poison, Hidden, Deception</div></div><h5>New Keys</h5><div class="keys"><strong>Key of the Traveler</strong><div class="indented">Hit your key when you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.</div><strong>Key of the Negotiator</strong><div class="indented">Hit your key when you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.</div><strong>Key of the Vow</strong><div class="indented">Hit your key when your vow significantly impacts your decisions. BUYOFF: Break your vow.</div><h5>New Secrets</h5><div class="secrets"><strong>Secret of Experience</strong><div class="indented">Once per session, you can use tags from more than one trait when you make a roll. REQUIRES: Experience in a wide variety of challenges.</div></div>',
+            'newstuff': '<table border="0"><tr><td><h5>New Traits & Tags</h5></td></tr><tr><td><strong>Bodyguard</strong><div class="indented tags">First-Aid, Threats, Unarmed, Heavy-Load, Delay, Endure, Fearless, Cautious, Pressure Points</div></p><strong>Sailor</strong><div class="indented tags">Dive, Swim, Helms, Sails, Raft, Float, Navigation, Hardy, Shallows, Drinks</div><strong>Wanderer</strong><div class="indented tags">Camping, Secretive, Generous, Tough, Guide, Weapon Master, Forthright, Reputation, Connections, Sentimental, Drink</div><strong>Buddhism</strong><div class="indented tags">Kind, Devout, Tolerant, Reform, Insight, Enlightenment, Persistent, Scripture</div><strong>Herdsman</strong><div class="indented tags">Plains, Scout, Horse-taming, Horsemanship, Wrestle, Sturdy, Husbandry, Sandstorm, Vocal Tricks</div><strong>Detective</strong><div class="indented tags">Perceptive, Keen, Learned, Handy, Eloquent, Imitation, Fearless, Patient, Determined</div><strong>Merchant</strong><div class="indented tags">Generous, Wise, Wealth, Connections, Reputation, Influential Clans, Favors, Deal, Patient, Audacious, Meticulous, Cunning</div><strong>Prodigy</strong><div class="indented tags">Photographic Memory, Focused, Calculator, Strategy, Unorthodox, Unscrupulous, Learned, Speechcraft, Miracle Worker, Geomancy</div><strong>Military</strong><div class="indented tags">Command, Horsemanship, Methods of War, Strategy, Authority, Loyalty, Formations, Negotiation, Ceremony, Military Law, Merciless</div><strong>Assassin</strong><div class="indented tags">Cruel, Endure, Persistent, Hidden Weapons, Weapon Master, Improvise, Lightfoot, Song and Dance, Seduction, Poison, Hidden, Deception</div></td></tr><tr><td><h5>New Keys</h5></td></tr><tr><td><strong>Key of the Traveler</strong><div class="indented">Hit your key when you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.</div><strong>Key of the Negotiator</strong><div class="indented">Hit your key when you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.</div><strong>Key of the Vow</strong><div class="indented">Hit your key when your vow significantly impacts your decisions. BUYOFF: Break your vow.</div></td></tr><tr><td><h5>New Secrets</h5><strong>Secret of Experience</strong><div class="indented">Once per session, you can use tags from more than one trait when you make a roll. REQUIRES: Experience in a wide variety of challenges.</div><strong>Secret of Payback</strong><div class="indented">Once per session, you can re-roll a failure when you’re trying to get someone to return a favor. REQUIRES: You have helped them before in time of need.</div></td></tr></table>',
 
             'causesfordeathpenalty': '<p><ul><li>opposing the Emperor</li><li>treason</li><li>insubordination (military)</li><li>humiliating the Imperial relatives</li><li>homicide</li><li>large-scale robbery</li></ul></p>',
 
@@ -682,8 +632,8 @@
         var socket = io('/' + gamehandle);
 
         // prep element effects
-        dragElement(document.getElementById("worldviewbox"));
-        dragElement(document.getElementById("npcviewbox"));
+        dragElement(document.getElementById("mapviewbox"));
+        dragElement(document.getElementById("imageviewbox"));
         dragElement(document.getElementById("scratchpadArea"));
 
         socket.on('connect', function() {
@@ -711,10 +661,6 @@
             $('#message').prop('title', list.length + ' user(s): ' + list.join(', '));
         }
 
-        function save(type='current') {
-            socket.emit('save ' + type);
-        }
-
         // image related
 
         socket.on('update image', function(data) {
@@ -723,20 +669,20 @@
         });
         function updateImage(field='currentmap', url) {
             if (field == 'currentmap') {
-                $('#worldviewImage').prop('src', url);
+                $('#mapviewImage').prop('src', url);
             }
             else if (field == 'currentimage') {
-                $('#npcviewImage').prop('src', url);
+                $('#imageviewImage').prop('src', url);
             }
         }
         function loadImage(imgID, imgURLID) {
             var imgURL = $('#' + imgURLID).val();
             $('#' + imgID).prop('src', imgURL);
 
-            if (imgID == 'worldviewImage') {
+            if (imgID == 'mapviewImage') {
                 socket.emit('update image', {'field': 'currentmap', 'url': imgURL});
             }
-            else if (imgID == 'npcviewImage') {
+            else if (imgID == 'imageviewImage') {
                 socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
             }
         }
@@ -776,9 +722,13 @@
         $('#messageForm').submit(function(e) {
             var $message = $('#message');
             e.preventDefault();
-            socket.emit('message', $message.val());
+            socket.emit('chat message', $message.val());
             $message.val('');
         });
+
+        function loadGame() {
+            $('#loadbox').toggle();
+        }
         $('#loadbox button[type=submit]').click(function(e) {
             e.preventDefault();
             // load JSON textfield
@@ -786,7 +736,7 @@
             // hide the loadbox
             $('#loadbox').hide();
         });
-        socket.on('message', function(data) {
+        socket.on('chat message', function(data) {
             var $message = $('#message');
             var message = data.message;
             var user = data.user;
@@ -803,9 +753,6 @@
             }
             else if(type == 'newgame') {
                 html = '<div class="well text-muted">' + user + ' started a new game</div>';
-                // clear hidden data
-                clearHiddenFields();
-                $('#infoArea').html(infotext['overview']);
             }
             else if (type == 'savegame') {
                 var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
@@ -814,7 +761,7 @@
                 html = '<div class="well text-muted">' + user + ' is saving game data</div>';
             }
             else if (type == 'loadgame') {
-                $('#loadbox').show();
+                loadGame();
             }
             else if (type == 'rollresult') {
                 updateResult(message);
@@ -838,31 +785,35 @@
             }
         }
 
-        $('#rollDice').click(function(e) {
-            e.preventDefault();
-            var n = $('#dicetoroll').val();
-            var command = 'lb' + n;
-            socket.emit('roll dice', {'command': command, 'dice': n});
+        $('button[name=rolldice]').each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+                let i = $(this).prop('id');
+                i = i.slice(-1); // last letter of index is the count number
+                let v = $('#pool' + i).val();
+                var command = 'lb' + v;
+                i = parseInt(i) - 1;
+                socket.emit('roll dice', {'index': i, 'command': command, 'dice': v});
+            });
         });
         socket.on('roll result', function(data) {
-            var user = data.user;
-            var dice = data.dice;
-            var result = data.result;
+            let character = data.character;
+            let result = data.result;
+            let dice = data.dice;
             updateResult(result);
             // add roll info to chat
-            var html = '<div class="well"><strong>' + user + '</strong> rolled for ' + result + '</div>';
+            let html = '<div class="well">' + character + ': ' + result + '</div>';
             updateChat(html);
         });
 
-        $('[name=dicepoolGroup] button, [name=xpGroup] button').each(function() {
+        $('button[name=plusPoolDice], button[name=minusPoolDice], button[name=dicepool], button[name=xp]').each(function() {
             $(this).click(function(e) {
                 e.preventDefault();
-                var field = $(this).prop('name');
-                var i = $(this).prop('id');
+                let field = $(this).prop('name');
+                let i = $(this).prop('id');
                 i = i.slice(-1); // last letter of index is the count number
-                var pooldice = parseInt($('#dicepool' + i).html());
-                var xp = parseInt($('#xp' + i).html());
-                var v;
+                let pooldice = parseInt($('#dicepool' + i).html());
+                let v;
                 if (field == 'plusPoolDice') {
                     field = 'dicepool';
                     v = parseInt(pooldice) + 1;
@@ -871,50 +822,60 @@
                     field = 'dicepool';
                     v = parseInt(pooldice) - 1;
                 }
-                else if (field == 'plusXP') {
-                    field = 'xp';
-                    v = parseInt(xp) + 1;
+                else if (field == 'dicepool') {
+                    v = "max";
                 }
-                else if (field == 'minusXP') {
-                    field = 'xp';
-                    v = parseInt(xp) - 1;
+                else if (field == 'xp') {
+                    field = 'dicepool';
+                    v = parseInt(pooldice) + 1;
+                    socket.emit('increase dicepoolmax', i-1);
                 }
                 i = parseInt(i) - 1;
-                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+                socket.emit('update dicepool', {'field': field, 'index': i, 'value': v});
             });
         });
-        function updateDicePool(n=1, value=0) {
+        function updateDicePool(n=1, value=0, max=7) {
             value = parseInt(value);
             value = value < 0 ? 0 : value;
             $('#dicepool' + n).html(value);
+            $('#dicepool' + n).prop('title', value + ' / ' + max + ' (click to refresh dice pool to max)');
+            $('#minusPoolDice' + n).prop('title', 'subtract when spending for your own roll or when helping');
             if (value < 1) {
-                // lock the "minus" button
-                $('#minusPoolDice' + n).addClass('locked');
-            }
-            else {
-                // unlock the "minus" button
-                $('#minusPoolDice' + n).removeClass('locked');
-            }
-            if (value > 9) {
-                // lock the "plus" button
-                $('#plusPoolDice' + n).addClass('locked');
-            }
-            else {
-                // unlock the "plus" button
+                // lock "minus", unlock "plus", and "restore" button
                 $('#plusPoolDice' + n).removeClass('locked');
+                $('#minusPoolDice' + n).addClass('locked');
+                $('#dicepool' + n).removeClass('locked');
+            }
+            else if (value < max) {
+                // unlock "minus", "plus", and "restore" button
+                $('#minusPoolDice' + n).removeClass('locked');
+                $('#plusPoolDice' + n).removeClass('locked');
+                $('#dicepool' + n).removeClass('locked');
+            }
+            else {
+                // unlock "minus" button, lock "plus" and "restore" button
+                $('#minusPoolDice' + n).removeClass('locked');
+                $('#plusPoolDice' + n).addClass('locked');
+                $('#dicepool' + n).addClass('locked');
             }
         }
+
         function updateXP(n=1, value=0) {
             value = parseInt(value);
             value = value < 0 ? 0 : value;
             $('#xp' + n).html(value);
+            $('#xp' + n).prop('title', 'spend 5 XP to increase dice pool maximum and get 1 pool die?');
             if (value < 1) {
-                // lock the "advance" button
                 $('#minusXP' + n).addClass('locked');
+                $('#xp' + n).addClass('locked');
+            }
+            else if (value < 5) {
+                $('#minusXP' + n).removeClass('locked');
+                $('#xp' + n).addClass('locked');
             }
             else {
-                // unlock the "advance" button
                 $('#minusXP' + n).removeClass('locked');
+                $('#xp' + n).removeClass('locked');
             }
         }
         $('[name=attributes] button').each(function() {
@@ -952,39 +913,67 @@
             });
         });
 
-        $('select[name=role], input[name=player], input[name=character], textarea[name=notes]').each(function() {
+        $('select[name=role], input[name=player], input[name=character], textarea[name=notes], button[name=plusXP], button[name=minusXP]').each(function() {
             $(this).on('change', function(e) {
                 e.preventDefault();
-                var field = $(this).prop('name');
-                var i = $(this).prop('id');
-                var v = $(this).val();
+                let field = $(this).prop('name');
+                let i = $(this).prop('id');
+                let v = $(this).val();
                 i = i.slice(-1); // last letter of index is the count number
-                i = parseInt(i) - 1;
+                let xp = parseInt($('#xp' + i).html());
 
                 if (field == 'role') {
                     // clear the infoarea
                     $('#infoArea').html(infotext['taglines']);
                 }
-
+                else if (field == 'plusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) + 1;
+                }
+                else if (field == 'minusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) - 1;
+                }
+                i = parseInt(i) - 1;
                 //console.log('field ' + field + ' index ' + i + ' value ' + v);
                 socket.emit('update field', {'field': field, 'index': i, 'value': v});
             });
         });
+        $('button[name=plusXP], button[name=minusXP]').each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+                let field = $(this).prop('name');
+                let i = $(this).prop('id');
+                let v = $(this).val();
+                i = i.slice(-1); // last letter of index is the count number
+                let xp = parseInt($('#xp' + i).html());
+
+                if (field == 'plusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) + 1;
+                }
+                else if (field == 'minusXP') {
+                    field = 'xp';
+                    v = parseInt(xp) - 1;
+                }
+                i = parseInt(i) - 1;
+                //console.log('field ' + field + ' index ' + i + ' value ' + v);
+                socket.emit('update field', {'field': field, 'index': i, 'value': v});
+            });
+        });
+
         socket.on('update field', function(data) {
             var field = data.field;
             var number = data.number;
             var value = data.value;
-            if (field == 'tired' || field == 'angry' || field == 'sad' ||
-                field == 'out' || field == 'hurt' || field == 'dead') {
+            if (field == 'drained' || field == 'mad' ||
+                field == 'hurt' || field == 'dead') {
                 $('#' + field + number).prop('checked', value);
             }
             else {
                 $('#' + field + number).val(value);
 
-                if (field == 'dicepool') {
-                    updateDicePool(number, value);
-                }
-                else if (field == 'xp') {
+                if (field == 'xp') {
                     updateXP(number, value);
                 }
             }
@@ -1012,7 +1001,7 @@
                 $('#player' + (i+1)).val(p[i]['player']);
                 $('#character' + (i+1)).val(p[i]['character']);
                 $('#notes' + (i+1)).val(p[i]['notes']);
-                updateDicePool((i+1), p[i]['dicepool']);
+                updateDicePool((i+1), p[i]['dicepool'], p[i]['dicepoolmax']);
                 updateXP((i+1), p[i]['xp']);
 
                 updateTraits((i+1), p[i]['traits']);
@@ -1037,7 +1026,7 @@
         });
 
         function buyTag(tag, trait, number) {
-            if (parseInt($('#xp' + number).html()) > 4) {
+            if (parseInt($('#xp' + number).html()) > 2) {
                 socket.emit('buy tag', {'tag': tag, 'trait': trait, 'index': (number-1)});
             }
             else {
@@ -1081,7 +1070,7 @@
             }
         }
         function buyoffKey(key, number) {
-            if (confirm("Buyoff this key to gain 2 advances, but you won't earn more XP from it. Is that okay?")) {
+            if (confirm("Buyoff this key to gain 5 XP, but you won't earn more XP from it. Is that okay?")) {
                 socket.emit('buyoff key', {'key': key, 'index': (number-1)});
             }
         }
@@ -1105,7 +1094,7 @@
                     tag = traits[t][j];
                     // make bracketed tags a "link" to buy such tag
                     if (tag.substring(0, 1) == '[') {
-                        item = '<div class="btn btn-sm btn-link" title="click to buy with 5 XP" onclick="buyTag(\'' + tag + '\', \'' + t + '\', ' + n + ')">' + tag + '</div>';
+                        item = '<div class="btn btn-sm btn-link" title="click to buy with 3 XP" onclick="buyTag(\'' + tag + '\', \'' + t + '\', ' + n + ')">' + tag + '</div>';
                     }
                     else {
                         item = tag;
@@ -1115,7 +1104,7 @@
                 html += list.join(', ');
                 html += '</div>';
             }
-            html += '<div class="text-muted"><small>A bracketed tag will cost 5 XP.</small></div>';
+            html += '<div class="text-muted"><small>A bracketed tag will cost 3 XP.</small></div>';
             html += '<div class="btn btn-sm btn-link" onclick="buyTrait(' + n + ')">buy a new Trait?</div>';
             html += '</div>';
             $('#traits' + n).html(html);
@@ -1137,7 +1126,7 @@
                 var i = str.indexOf('BUYOFF:');
                 if (i != -1) {
                     var parts = str.split("BUYOFF:");
-                    str = parts[0] + '<div class="btn btn-sm btn-link" title="when condition is met, click to buyoff this key to gain 2 advances (10 XP)" onclick="buyoffKey(' + '\'' + k + '\', ' + n + ')">BUYOFF</div>:' + parts[1];
+                    str = parts[0] + '<div class="btn btn-sm btn-link" title="when condition is met, click to buyoff this key to gain 5 XP" onclick="buyoffKey(' + '\'' + k + '\', ' + n + ')">BUYOFF</div>:' + parts[1];
                 }
                 html += '<div class="indented">' + str + '</div>';
             }
@@ -1228,6 +1217,20 @@
             }
         }
 
+        function safetyTool(type='x-card') {
+            if (type == 'x-card') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+            else if (type == 'raisedhand') {
+                socket.emit('handgesture', type);
+            }
+            else if (type == 'thumbup') {
+                socket.emit('handgesture', type);
+            }
+        }
         socket.on('x-card', function(data) {
             var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
             if (data) {
@@ -1251,20 +1254,6 @@
             }
             updateChat(html);
         });
-        function safetyTool(type='x') {
-            if (type == 'x') { // x-card
-                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
-                if (msg !== null) {
-                    socket.emit('x-card', msg);
-                }
-            }
-            else if (type == 'raisedhand') {
-                socket.emit('handgesture', type);
-            }
-            else if (type == 'thumbup') {
-                socket.emit('handgesture', type);
-            }
-        }
 
         // infoarea related
 
@@ -1274,6 +1263,30 @@
             var $infoArea = $('#infoArea');
             $infoArea.html(infotext[$infolist.val()]);
         });
+
+        function save() {
+            // save the game on the server
+            socket.emit('save');
+        }
+
+        function saveGame() {
+            // download a JSON copy
+            socket.emit('save game');
+        }
+        socket.on('save game', function(data) {
+            var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+            // generate the file to download locally
+            download(filename, data);
+        });
+
+        function newGame() {
+            if(confirm('Start over?')) {
+                // clear hidden data
+                clearHiddenFields();
+                $('#infoArea').html(infotext['overview']);
+                socket.emit('new game');
+            }
+        }
 
         // whiteboard area, new p5 instance
 
@@ -1301,6 +1314,7 @@
                     if ($(this).prop('id') == 'clear-btn') {
                         if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
                             sketch.background("rgb(220, 217, 205)");
+                            pg.background("rgb(220, 217, 205)"); // graphics buffer
                             stroke = 2;
                             var data = {
                                 'background': 'rgb(220, 217, 205)'

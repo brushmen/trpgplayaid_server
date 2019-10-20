@@ -41,7 +41,7 @@
         padding: 5px;
     }
 
-    #c1, #c2, #c3, #c4, #c5, #c6 {
+    #c1, #c2, #c3, #c4 {
         position: relative;
     }
 
@@ -54,6 +54,10 @@
     input[name=ownedelement], textarea[name=notes],
     textarea[name=destiny] {
         width: 100%;
+    }
+    input[name=player] {
+        color: #cccccc;
+        text-align: center;
     }
     input[name=character] {
         font-weight: bolder;
@@ -70,13 +74,17 @@
         resize: vertical;
     }
     textarea[name=notes] {
-        min-height: 90px;
+        min-height: 150px;
     }
 
     textarea[name=destiny] {
-        min-height: 400px;
+        min-height: 340px;
         line-height: 1em;
         font-size: 1em;
+    }
+
+    #commonArea {
+        width: 11.1em;
     }
 
     #infoArea {
@@ -108,26 +116,6 @@
         overflow-y: scroll;
     }
 
-    #mapClick, #npcClick {
-        cursor: pointer;
-        font-size: 1.5em;
-    }
-
-    #worldviewbox, #npcviewbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 10px;
-        overflow: auto;
-        z-index: 3;
-    }
-    #worldviewboxHeader, #npcviewboxHeader {
-        padding: 0 10px;
-    }
-    #worldviewImage, #npcviewImage {
-        max-height: 550px;
-    }
-
     .selected {
         pointer-events: none;
         border: 2px solid orange;
@@ -143,22 +131,13 @@
         <textarea id="loadboxjson" placeholder="JSON only"></textarea>
         <button type="submit" class="btn btn-sm btn-warning">send</button>
     </div>
-    <div id="worldviewbox" style="display: none" class="card">
-        <h5 id="worldviewboxHeader" class="card-header move">world/landscape/map</h5>
-        <div class="topRightClick" onclick="$('#worldviewbox').hide();">hide</div>
-        <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.rX5fOHl4DGPgssIBadPcdgHaGH%26pid%3DApi&f=1" id="worldviewImage" alt="world view image" title="" />
+    <div id="imageviewbox" style="display: none" class="card shadow">
+        <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
+        <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
+        <img src="https://cloudinary-a.akamaihd.net/protagonistlabs/image/upload/a_exif//w_650,h_200,c_fill/e_sharpen:50/h7duwotpsbfmyqntytrn.jpg" id="imageviewImage" alt="an image" title="an image to show the group" />
         <div class="container-fluid input-group p-0">
-            <input type="text" id="worldviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
-            <button class="btn btn-sm btn-info" onclick="loadImage('worldviewImage', 'worldviewImageURL');">load image</button>
-        </div>
-    </div>
-    <div id="npcviewbox" style="display: none" class="card">
-        <h5 id="npcviewboxHeader" class="card-header move">character/object image</h5>
-        <div class="topRightClick" onclick="$('#npcviewbox').hide();">hide</div>
-        <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.JcKapE5KkPjeZBPQu7HIRgHaGk%26pid%3DApi&f=1" id="npcviewImage" alt="character or object image" title="" />
-        <div class="container-fluid input-group p-0">
-            <input type="text" id="npcviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
-            <button class="btn btn-sm btn-info" onclick="loadImage('npcviewImage', 'npcviewImageURL');">load image</button>
+            <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
         </div>
     </div>
     <!-- display:none will remove the element's width, so for p5 canvas to get the container's width,
@@ -183,6 +162,21 @@
             </div>
         </div>
     </div>
+    <!-- right side menu buttons, leave space in between for TogetherJS bar. add/remove buttons as applicable -->
+    <div id="menubuttons" class="btn-group-vertical shadow">
+        <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+        <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
+        <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
+        <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image of character or object">🖼</button>
+        <button id="drawbutton" class="btn btn-sm btn-outline-dark" onclick="toggleScratchpad(); return false;" title="draw something">🎨</button>
+        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
+
+        <button class="btn btn-sm locked" style="height: 50px"></button>
+
+        <button id="resolutionbutton" name="resolutionbutton" class="btn btn-sm btn-outline-dark resolution" title="draw from resolution deck">🂠</button>
+        <button id="fatebutton" name="fatebutton" class="btn btn-sm btn-outline-dark fate" title="draw from fate deck">🃟</button>
+    </div>
+    <button id="clearfieldsbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
 
     <!-- main content -->
     <div class="container-fluid">
@@ -191,8 +185,7 @@
                 <div class="col justify-content-center align-self-center">
                     <div class="row">
 
-                        <div id="c1" class="col-2 full-height">
-                            <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div>
+                        <div id="c1" class="col-3 full-height">
                             <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                             <div id="p1Area" class="row">
 
@@ -213,8 +206,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
                                 <div class="col-12 p-0">
                                     <textarea id="destiny1" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
                                 </div>
@@ -222,8 +213,7 @@
                             </div>
                         </div>
 
-                        <div id="c2" class="col-2 full-height">
-                            <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
+                        <div id="c2" class="col-3 full-height">
                             <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                             <div id="p2Area" class="row">
 
@@ -245,7 +235,6 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
                                 <div class="col-12 p-0">
                                     <textarea id="destiny2" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
                                 </div>
@@ -253,8 +242,7 @@
                             </div>
                         </div>
 
-                        <div id="c3" class="col-2 full-height">
-                            <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
+                        <div id="c3" class="col-3 full-height">
                             <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
                             <div id="p3Area" class="row">
 
@@ -276,7 +264,6 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
                                 <div class="col-12 p-0">
                                     <textarea id="destiny3" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
                                 </div>
@@ -284,58 +271,7 @@
                             </div>
                         </div>
 
-                        <div id="c4" class="col-2 full-height">
-                            <div class="lockClick" onclick="toggleInputLocks('p4Area');">🔒</div>
-                            <div class="hideClick" onclick="$('#p4Area').toggle();">👁</div>
-                            <div id="p4Area" class="row">
-
-                                <div class="container-fluid">
-                                    <div id="profile4" name="profile" class="row form-group">
-
-                                        <input type="text" id="player4" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
-
-                                        <input type="text" id="character4" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
-
-                                        <div class="col-5 portrait p-0">
-                                            <img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png" id="portrait4" data-toggle="tooltip" alt="image for character 4" onclick="portraitURL(4);" title="" />
-                                        </div>
-                                        <div class="col-7 p-0">
-                                            <textarea id="ownedelement4" name="ownedelement" class="form-control form-control-sm" placeholder="owned element(s)"></textarea>
-
-                                            <textarea id="notes4" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 font-weight-bolder text-center" style="margin-top: -20px">DESTINY</div>
-                                <div class="col-12 p-0">
-                                    <textarea id="destiny4" name="destiny" class="form-control form-control-sm destiny" placeholder="destiny point"></textarea>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div id="c5" class="col-1 full-height container-fluid">
-
-                            <div id="worldview" class="row" style="margin: 5px 0">
-                                <div class="col col-6 p-0 text-center">
-                                    <div id="mapClick" onclick="$('#worldviewbox').toggle();" title="share a picture of scene or location with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/203-earth.png" class="icon-sm" alt="globe icon"></div>
-                                </div>
-                                <div class="col col-6 p-0 text-center">
-                                    <div id="npcClick" onclick="$('#npcviewbox').toggle();" title="share a picture of NPC or object with the group"><img src="https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/icons/014-image.png" class="icon-sm" alt="picture icon"></div>
-                                </div>
-                            </div>
-
-                            <div id="cardbuttons" class="row p-0">
-                                <div class="btn-group-vertical" style="width: 100%">
-                                    <button id="resolutionbutton" name="resolutionbutton" class="btn btn-sm btn-outline-dark resolution" style="width: 100%" title="draw from resolution deck">resolution</button>
-                                    <button id="fatebutton" name="fatebutton" class="btn btn-sm btn-outline-dark fate" style="width: 100%" title="draw from fate deck">fate</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="c6" class="col-3 full-height">
-                            <div class="scratchpadClick" onclick="toggleScratchpad();">🖍</div>
+                        <div id="c4" class="col-3 full-height">
                             <div id="commonArea">
                                 <div class="row text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">
@@ -355,7 +291,7 @@
                                     </div>
                                 </div>
 
-                                <div id="chatArea">
+                                <div id="chatArea" class="row">
                                     <div class="row">
                                         <form id="messageForm" class="container">
                                             <div id="chatSection">
@@ -405,16 +341,13 @@
                 '<p>...including your own, you <i>CAN</i>...</p><ul><li>Create or play a secondary character</li><li>Describe events and the environment</li><li>Say "Try a different way"</li><li>Say "Help"</li><li>Say "Harder"</li><li>Say "Describe that in detail"</li><li>Say "That might not be quite so easy" (once per turn; draw resolution, interpreted by another player)</li><li>Say "I would like an interlude after that" (only once per turn, keep it short)</li><li>Veto narration related to elements you own</li></ul>'
         };
 
-        var portraits = [];
-
         var room = 'test';
         var gamehandle = 'archipelago';
         var socket = io('/' + gamehandle);
 
         // prep element effects
         dragElement(document.getElementById("scratchpadArea"));
-        dragElement(document.getElementById("worldviewbox"));
-        dragElement(document.getElementById("npcviewbox"));
+        dragElement(document.getElementById("imageviewbox"));
 
         // socket receive
 
@@ -437,7 +370,7 @@
             updateUserList(data);
         });
 
-        socket.on('new message', function(data) {
+        socket.on('chat message', function(data) {
             var $message = $('#message');
             var message = data.message;
             var user = data.user;
@@ -454,8 +387,6 @@
             }
             else if(type == 'newgame') {
                 html = '<div class="well text-muted">' + user + ' started a new game</div>';
-                updateCard('');
-                save();
             }
             else if (type == 'savegame') {
                 var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
@@ -464,7 +395,7 @@
                 html = '<div class="well text-muted">' + user + ' is saving game data</div>';
             }
             else if (type == 'loadgame') {
-                $('#loadbox').show();
+                loadGame();
             }
             else if (type == 'clearcard') {
                 updateCard('');
@@ -477,11 +408,6 @@
                 html = '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
             }
             updateChat(html);
-        });
-
-        socket.on('update image', function(data) {
-            updateImage(data.field, data.url);
-            save();
         });
 
         socket.on('update portrait', function(data) {
@@ -510,20 +436,16 @@
         });
 
         socket.on('update client', function(data) {
-            var users = data.users;
-            var info = data.info;
-            var p = info['profiles'];
+            let users = data.users;
+            let info = data.info;
+            let p = info['profiles'];
 
             updateUserList(users);
-            if (info['currentmap']) {
-                updateImage('currentmap', info['currentmap']);
-            }
             if (info['currentimage']) {
-                updateImage('currentimage', info['currentimage']);
+                updateImage('imageviewImage', info['currentimage']);
             }
 
-            for (var i = 0; i < p.length; i++) {
-
+            for (let i = 0; i < p.length; i++) {
                 updatePortrait(i, p[i]['portrait']);
 
                 $('#player' + (i+1)).val(p[i]['player']);
@@ -573,10 +495,13 @@
         $('#messageForm').submit(function(e) {
             var $message = $('#message');
             e.preventDefault();
-            socket.emit('send message', $message.val());
+            socket.emit('chat message', $message.val());
             $message.val('');
         });
 
+        function loadGame() {
+            $('#loadbox').toggle();
+        }
         $('#loadbox button[type=submit]').click(function(e) {
             e.preventDefault();
             // load JSON textfield
@@ -584,6 +509,27 @@
             // hide the loadbox
             $('#loadbox').hide();
         });
+
+        function save() {
+            // save the game on the server
+            socket.emit('save');
+        }
+        function saveGame() {
+            // download a JSON copy
+            socket.emit('save game');
+        }
+        socket.on('save game', function(data) {
+            var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+            // generate the file to download locally
+            download(filename, data);
+        });
+
+        function newGame() {
+            if(confirm('Clear all fields?')) {
+                updateCard('');
+                socket.emit('new game');
+            }
+        }
 
         $('button[name=resolutionbutton], button[name=fatebutton]').each(function() {
             $(this).click(function(e) {
@@ -631,7 +577,6 @@
                 var img = new Image();
                 img.src = url;
                 img.onload = function(){
-                    portraits[number] = url;
                     // send info to server
                     socket.emit('update portrait', {'index': (number-1), 'url': url});
                 };
@@ -639,22 +584,6 @@
                     alert("image cannot be loaded");
                 }
             }
-        }
-
-        function loadImage(imgID, imgURLID) {
-            var imgURL = $('#' + imgURLID).val();
-            $('#' + imgID).prop('src', imgURL);
-
-            if (imgID == 'worldviewImage') {
-                socket.emit('update image', {'field': 'currentmap', 'url': imgURL});
-            }
-            else if (imgID == 'npcviewImage') {
-                socket.emit('update image', {'field': 'currentimage', 'url': imgURL});
-            }
-        }
-
-        function save(type='current') {
-            socket.emit('save ' + type);
         }
 
         // local UI related
@@ -693,6 +622,26 @@
             }
         }
 
+        function safetyTool(type='x-card') {
+            if (type == 'x-card') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+        }
+        socket.on('x-card', function(data) {
+            var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
+            if (data) {
+                html += 'please remove "' + data + '"';
+            }
+            else {
+                html += 'ask for clarification if needed';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+
         $('#infolist').on('change', function() {
             // only update locally
             var $infolist = $('#infolist');
@@ -701,17 +650,20 @@
             $infoArea.html(infotext[$infolist.val()]);
         });
 
-        function updateImage(field='currentmap', url) {
-            if (field == 'currentmap') {
-                $('#worldviewImage').prop('src', url);
-            }
-            else if (field == 'currentimage') {
-                $('#npcviewImage').prop('src', url);
-            }
+        socket.on('update image', function(data) {
+            updateImage('imageviewImage', data);console.log('update image');
+            save();
+        });
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+            socket.emit('update image', imgURL);
+        }
+        function updateImage(field='imageviewImage', url) {
+            $('#' + field).prop('src', url);
         }
 
         function updatePortrait(i=0, url) {
-            portraits[i] = url;
             var $e = $('#portrait' + (i+1));
             // hovering tooltip should show the image without distorted porportions
             $e.prop('src', url);
@@ -770,6 +722,7 @@
                     if ($(this).prop('id') == 'clear-btn') {
                         if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
                             sketch.background("rgb(220, 217, 205)");
+                            pg.background("rgb(220, 217, 205)"); // graphics buffer
                             stroke = 2;
                             var data = {
                                 'background': 'rgb(220, 217, 205)'

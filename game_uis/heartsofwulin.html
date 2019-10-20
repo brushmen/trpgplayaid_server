@@ -36,9 +36,13 @@
     #c2 { border: 1px solid green; }
     #c3 { border: 1px solid blue; }
 
+    #commonArea {
+        width: 11.1em;
+    }
+
     #infoArea {
         border: 0px solid black;
-        height: 300px;
+        height: 350px;
         overflow: auto;
         font-size: 1em;
         line-height: 1.3em;
@@ -49,11 +53,11 @@
 
     #resultArea {
         padding: 2px 10px;
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
     #chatSection {
-        height: 220px;
+        height: 180px;
         overflow-y: scroll;
     }
 
@@ -176,28 +180,15 @@
         background-color: mistyrose;
     }
 
-    .randomClick, .entanglementlistClick, .movelistClick
+    .randomClick
      {
         position: absolute;
         cursor: pointer;
         opacity: 0.5;
         z-index: 1;
-    }
-
-    .randomClick {
         top: -13px;
         left: 0;
         font-size: 1.2em;
-    }
-
-    .entanglementlistClick {
-        top: 0;
-        right: 70px;
-    }
-
-    .movelistClick {
-        top: 0;
-        right: 40px;
     }
 
     #entanglementList {
@@ -256,12 +247,57 @@
             <div id="fullPlaybookMovesList_text"></div>
         </div>
     </div>
-    <div id="loadbox" style="display: none" class="card">
+    <div id="loadbox" style="display: none" class="card shadow">
         <h5 class="card-header">load JSON content</h5>
         <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
         <textarea id="loadboxjson" placeholder="JSON only"></textarea>
-        <button type="submit" class="btn btn-sm btn-warning">send</button>
+        <button type="submit" class="btn btn-sm btn-warning">load</button>
     </div>
+    <div id="imageviewbox" style="display: none" class="card shadow">
+        <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
+        <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.n6ITLaHXMZi-J045vs1YEQHaFj%26pid%3DApi&f=1" id="imageviewImage" alt="an image" title="an image to show the group" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
+        </div>
+    </div>
+    <!-- display:none will remove the element's width, so for p5 canvas to get the container's width, hiding it can only make it invisible, not by removing it from DOM -->
+    <div id="scratchpadArea" style="visibility: hidden" class="card">
+        <h5 id="scratchpadAreaHeader" class="card-header move">scratchpad (nothing here is saved!)</h5>
+        <div class="topRightClick" onclick="toggleScratchpad();">hide</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1 p-0">
+                    <div id="strokeOptions" class="btn-group-vertical">
+                        <button id="clear-btn" class="btn btn-sm btn-outline-dark" title="clear">🗑</button>
+                        <button id="erase-btn" class="btn btn-sm btn-outline-dark" title="erase">🧼</button>
+                        <button id="black-btn" class="btn btn-sm btn-outline-dark" title="black">✎</button>
+                        <button id="red-btn" class="btn btn-sm btn-outline-dark" title="red">✎</button>
+                        <button id="green-btn" class="btn btn-sm btn-outline-dark" title="green">✎</button>
+                        <button id="blue-btn" class="btn btn-sm btn-outline-dark" title="blue">✎</button>
+                        <button id="brown-btn" class="btn btn-sm btn-outline-dark" title="brown">✎</button>
+                    </div>
+                </div>
+                <div id="whiteboard" class="col-11 p-0"></div>
+            </div>
+        </div>
+    </div>
+    <!-- right side menu buttons, leave space in between for TogetherJS bar. add/remove buttons as applicable -->
+    <div id="menubuttons" class="btn-group-vertical shadow">
+        <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+        <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
+        <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
+        <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image of character or object">🖼</button>
+        <button id="drawbutton" class="btn btn-sm btn-outline-dark" onclick="toggleScratchpad(); return false;" title="draw something">🎨</button>
+        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
+
+        <button class="btn btn-sm locked" style="height: 50px"></button>
+
+        <button class="btn btn-sm btn-outline-dark" title="entanglement lists" onclick="toggleEntanglementList();">♺</button>
+        <button class="btn btn-sm btn-outline-dark" title="all playbook moves" onclick="togglePlaybookMovesList();">🗒</button>
+    </div>
+    <button id="clearfieldsbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
 
     <!-- main content -->
     <div class="container-fluid">
@@ -275,7 +311,7 @@
                             <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                             <div id="p1Area" class="row">
 
-                                <select id="role1" name="role" class="form-control form-control-sm">
+                                <select id="role1" name="role" class="form-control form-control-sm" title="playbook role">
                                     <option value="" disabled="disabled" selected="selected">Playbook | role</option>
                                     <option value="aware" disabled="disabled">Aware</option>
                                     <option value="master">master</option>
@@ -402,7 +438,7 @@
                             <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                             <div id="p2Area" class="row">
-                                <select id="role2" name="role" class="form-control form-control-sm">
+                                <select id="role2" name="role" class="form-control form-control-sm" title="playbook role">
                                     <option value="" disabled="disabled" selected="selected">Playbook | role</option>
                                     <option value="aware" disabled="disabled">Aware</option>
                                     <option value="master">master</option>
@@ -528,7 +564,7 @@
                             <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div>
                             <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
                             <div id="p3Area" class="row">
-                                <select id="role3" name="role" class="form-control form-control-sm">
+                                <select id="role3" name="role" class="form-control form-control-sm" title="playbook role">
                                     <option value="" disabled="disabled" selected="selected">Playbook | role</option>
                                     <option value="aware" disabled="disabled">Aware</option>
                                     <option value="master">master</option>
@@ -652,8 +688,6 @@
                         </div>
 
                         <div id="c4" class="col-3">
-                            <div class="entanglementlistClick" onclick="toggleEntanglementList();">♺</div>
-                            <div class="movelistClick" onclick="togglePlaybookMovesList();">🗒</div>
                             <div id="commonArea">
                                 <div class="row text-center">
                                     <select id="infolist" name="infolist" class="form-control form-control-sm">
@@ -708,10 +742,10 @@
                                     <p style="font-size: 0.8em"><a href="https://www.kickstarter.com/projects/gauntlet/hearts-of-wulin" target="_new"><i>Hearts of Wulin</i></a> is a game by Lowell Francis and Agatha Cheng.</p>
                                 </div>
 
-                                <div class="row justify-content-center" style="border: 1px solid black">
+                                <div id="resultSection" class="row justify-content-center" style="border: 1px solid black">
                                     <div id="resultArea">roll results</div>
                                 </div>
-                                <div id="chatArea">
+                                <div id="chatArea" class="row">
                                     <div class="row">
                                         <form id="messageForm" class="container">
                                             <div id="chatSection">
@@ -747,6 +781,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="/js/common.js"></script>
 
     <!-- Javascript code -->
@@ -1051,7 +1086,6 @@
         var generals = fillArrayWithNumbers(g_ent.length);
         var romantics = fillArrayWithNumbers(r_ent.length);
 
-        var portraits = [];
         var elements = ['earth', 'fire', 'metal', 'water', 'wood'];
 
         var room = 'test';
@@ -1059,6 +1093,8 @@
         var socket = io('/' + gamehandle);
 
         // prep element effects
+        dragElement(document.getElementById("scratchpadArea"));
+        dragElement(document.getElementById("imageviewbox"));
         dragElement(document.getElementById("entanglementList"));
         dragElement(document.getElementById("playbookMovesList"));
 
@@ -1093,11 +1129,7 @@
             updateChat(html);
         });
 
-        function save(type='current') {
-            socket.emit('save ' + type);
-        }
-
-        socket.on('new message', function(data) {
+        socket.on('chat message', function(data) {
             var $message = $('#message');
             var message = data.message;
             var user = data.user;
@@ -1129,18 +1161,16 @@
                 html += '<div class="well text-muted">' + user + ' is saving game data</div>';
             }
             else if (type == 'loadgame') {
-                $('#loadbox').show();
+                loadGame();
+            }
+            else if (type == 'x-card') {
+                html += '<div class="well text-danger">' + message + '</div>';
             }
             else { // should be regular chat message
                 html += '<div class="well"><strong>' + user + '</strong>: ' + message + '</div>';
             }
 
             updateChat(html);
-        });
-
-        socket.on('update portrait', function(data) {
-            updatePortrait(data.index, data.url);
-            save();
         });
 
         socket.on('update field', function(data) {
@@ -1285,10 +1315,13 @@
         $('#messageForm').submit(function(e) {
             var $message = $('#message');
             e.preventDefault();
-            socket.emit('send message', $message.val());
+            socket.emit('chat message', $message.val());
             $message.val('');
         });
 
+        function loadGame() {
+            $('#loadbox').toggle();
+        }
         $('#loadbox button[type=submit]').click(function(e) {
             e.preventDefault();
             // load JSON textfield
@@ -1296,6 +1329,27 @@
             // hide the loadbox
             $('#loadbox').hide();
         });
+
+        function save() {
+            // save the game on the server
+            socket.emit('save');
+        }
+
+        function saveGame() {
+            // download a JSON copy
+            socket.emit('save game');
+        }
+        socket.on('save game', function(data) {
+            var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+            // generate the file to download locally
+            download(filename, data);
+        });
+
+        function newGame() {
+            if(confirm('Clear all fields?')) {
+                socket.emit('new game');
+            }
+        }
 
         $('[name=role], input[name=player], input[name=character], input[name=faction], textarea[name=notes], textarea[name=ge], textarea[name=re], input[name=xp], input[name=earth], input[name=fire], input[name=metal], input[name=water], input[name=wood]').each(function () {
             $(this).on('change', function(e) {
@@ -1404,7 +1458,6 @@
                 var img = new Image();
                 img.src = url;
                 img.onload = function(){
-                    portraits[number] = url;
                     // send info to server
                     socket.emit('update portrait', {'index': (number-1), 'url': url});
                 };
@@ -1412,6 +1465,35 @@
                     alert("image cannot be loaded");
                 }
             }
+        }
+        function updatePortrait(i=0, url) {
+            var $e = $('#portrait' + (i+1));
+            // hovering tooltip should show the image without distorted porportions
+            $e.prop('src', url);
+            // force browser to use new image instead of cached image
+            $e.tooltip('dispose');
+            $e.tooltip({
+                html: true,
+                placement: 'right',
+                title: '<img src="' + url + '" height="500" />'
+            });
+        }
+        socket.on('update portrait', function(data) {
+            updatePortrait(data.index, data.url);
+            save();
+        });
+
+        socket.on('update image', function(data) {
+            updateImage('imageviewImage', data);
+            save();
+        });
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+            socket.emit('update image', imgURL);
+        }
+        function updateImage(field='imageviewImage', url) {
+            $('#' + field).prop('src', url);
         }
 
         function randomEntanglement(type="g",n=1) {
@@ -1466,6 +1548,26 @@
             }
         }
 
+        function safetyTool(type='x-card') {
+            if (type == 'x-card') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+        }
+        socket.on('x-card', function(data) {
+            var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
+            if (data) {
+                html += 'please remove "' + data + '"';
+            }
+            else {
+                html += 'ask for clarification if needed';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+
         function updateXPButtons(n=1, value=0) {
             value = value < 0 ? 0 : value;
             var html = '+1 XP ' + value;
@@ -1479,20 +1581,6 @@
 
             $infoArea.html(infotext[$infolist.val()]);
         });
-
-        function updatePortrait(i=0, url) {
-            portraits[i] = url;
-            var $e = $('#portrait' + (i+1));
-            // hovering tooltip should show the image without distorted porportions
-            $e.prop('src', url);
-            // force browser to use new image instead of cached image
-            $e.tooltip('dispose');
-            $e.tooltip({
-                html: true,
-                placement: 'right',
-                title: '<img src="' + url + '" height="500" />'
-            });
-        }
 
         function woundedEffects(n=1, wounded=true) {
             var $e = $('#woundedbutton' + n);
@@ -1966,6 +2054,137 @@
             return name;
         }
 
+        // whiteboard area, new p5 instance
+
+        const sketchpad = ( sketch ) => {
+
+            let color = '#000';
+            let stroke = 2;
+            let buttonlist = ['erase-btn', 'black-btn','red-btn','green-btn','blue-btn','brown-btn'];
+            let pg; // graphics buffer
+
+            sketch.setup = function() {
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.offsetWidth;
+                var height = canvasDiv.offsetHeight;
+                sketch.createCanvas(width, height);
+                pg = sketch.createGraphics(width, height); // graphics buffer
+                sketch.background(220, 217, 205);
+                pg.background(220, 217, 205); // graphics buffer
+            };
+
+            $('#clear-btn, #erase-btn, #black-btn, #red-btn, #green-btn, #blue-btn, #brown-btn').each(function() {
+                $(this).click(function(e) {
+                    e.preventDefault();
+
+                    if ($(this).prop('id') == 'clear-btn') {
+                        if (confirm("This will clear the scratchpad for all users here. Proceed?")) {
+                            sketch.background("rgb(220, 217, 205)");
+                            pg.background("rgb(220, 217, 205)"); // graphics buffer
+                            stroke = 2;
+                            var data = {
+                                'background': 'rgb(220, 217, 205)'
+                            };
+                            socket.emit('sketchpad', {'action': 'clear', 'params': data});
+                        }
+                    }
+                    else if ($(this).prop('id') == 'erase-btn') {
+                        color = "rgb(220, 217, 205)";
+                        stroke = 10;
+                    }
+                    else if ($(this).prop('id') == 'black-btn') {
+                        color = "rgb(0, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'red-btn') {
+                        color = "rgb(204, 0, 0)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'green-btn') {
+                        color = "rgb(0, 153, 51)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'blue-btn') {
+                        color = "rgb(0, 102, 255)";
+                        stroke = 2;
+                    }
+                    else if ($(this).prop('id') == 'brown-btn') {
+                        color = "rgb(134, 89, 45)";
+                        stroke = 2;
+                    }
+                    highlightColor($(this).prop('id'), buttonlist);
+
+                    function highlightColor(selected, list) {
+                        for (var c in list) {
+                            if (list[c] == selected) {
+                                $('#' + list[c]).addClass('selected');
+                            }
+                            else {
+                                $('#' + list[c]).removeClass('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            sketch.mouseDragged = function() {
+                sketch.noStroke();
+                sketch.stroke(color);
+                pg.stroke(color); // graphics buffer
+                sketch.strokeWeight(stroke);
+                pg.strokeWeight(stroke); // graphics buffer
+                sketch.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY);
+                pg.line(sketch.mouseX, sketch.mouseY, sketch.pmouseX, sketch.pmouseY); // graphics buffer
+
+                var data = {
+                    'mouseX': sketch.mouseX,
+                    'mouseY': sketch.mouseY,
+                    'pmouseX': sketch.pmouseX,
+                    'pmouseY': sketch.pmouseY,
+                    'color': color,
+                    'stroke': stroke
+                };
+                socket.emit('sketchpad', {'action': 'draw line', 'params': data});
+            };
+
+            socket.on('sketchpad', function(data) {
+                var action = data.action;
+                var params = data.params;
+
+                if (action == 'draw line') {
+                    sketch.noStroke();
+                    sketch.stroke(params.color);
+                    pg.stroke(params.color); // graphics buffer
+                    sketch.strokeWeight(params.stroke);
+                    pg.strokeWeight(params.stroke); // graphics buffer
+                    sketch.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY);
+                    pg.line(params.mouseX, params.mouseY, params.pmouseX, params.pmouseY); // graphics buffer
+                }
+                else if (action == 'clear') {
+                    sketch.background(params.background);
+                    pg.background(params.background); // graphics buffer
+                }
+            });
+
+            sketch.windowResized = function () {
+                //sketch.centerCanvas();
+                var canvasDiv = document.getElementById('whiteboard');
+                var width = canvasDiv.clientWidth;
+                var height = canvasDiv.clientHeight;
+                sketch.resizeCanvas(width, height);
+                sketch.image(pg, 0, 0); // redraw onto canvas from the buffer
+            };
+        };
+        let myp5 = new p5(sketchpad, 'whiteboard');
+
+        function toggleScratchpad() {
+            if ( $('#scratchpadArea').css('visibility') == 'hidden' ) {
+                $('#scratchpadArea').css('visibility','visible');
+            }
+            else {
+                $('#scratchpadArea').css('visibility','hidden');
+            }
+        }
     </script>
 </body>
 </html>

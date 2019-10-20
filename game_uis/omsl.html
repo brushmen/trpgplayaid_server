@@ -63,6 +63,7 @@
     }
 
     #c1, #c2, #c3, #c4 {
+        position: relative;
         overflow-y: visible;
     }
 
@@ -154,16 +155,32 @@
     option:not(:checked) {
         background-color: white;
     }
+
+    #menubuttons-h {
+        position: absolute;
+        bottom: 0;
+        right: 3px;
+        z-index: 2;
+    }
     </style>
 </head>
 
 <body>
     <!-- hovering panels -->
-    <div id="loadbox" style="display: none" class="card">
+    <div id="loadbox" style="display: none" class="card shadow">
         <h5 class="card-header">load JSON content</h5>
         <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
         <textarea id="loadboxjson" placeholder="JSON only"></textarea>
-        <button type="submit" class="btn btn-sm btn-warning">send</button>
+        <button type="submit" class="btn btn-sm btn-warning">load</button>
+    </div>
+    <div id="imageviewbox" style="display: none" class="card shadow">
+        <h6 id="imageviewboxHeader" class="card-header move">image view</h6>
+        <div class="topRightClick" onclick="$('#imageviewbox').hide();">hide</div>
+        <img src="https://cloudinary-a.akamaihd.net/protagonistlabs/image/upload/a_exif//w_650,h_200,c_fill/e_sharpen:50/h7duwotpsbfmyqntytrn.jpg" id="imageviewImage" alt="an image" title="an image to show the group" />
+        <div class="container-fluid input-group p-0">
+            <input type="text" id="imageviewImageURL" class="form-control form-control-sm" placeholder="URL of image" />
+            <button class="btn btn-sm btn-info" onclick="loadImage('imageviewImage', 'imageviewImageURL');">load image</button>
+        </div>
     </div>
 
     <!-- main content -->
@@ -192,7 +209,7 @@
                     <div class="row">
                         <div id="c1" class="col-3 full-height p-0">
                             <div id="mundaneArea" class="row-fluid">
-                                <select id="mundaneProblem" name="problem" class="form-control form-control-sm bg-mundane-light">
+                                <select id="mundaneProblem" name="problem" class="form-control form-control-sm bg-mundane-light" title="a mundane problem">
                                     <option value="" disabled="disabled" selected="selected">a mundane problem</option>
                                     <option value="movingtown">moving town</option>
                                     <option value="planningawedding">planning a wedding</option>
@@ -248,11 +265,19 @@
                                 </div>
                             </div>
 
+                            <div class="row-fluid" style="margin-top: 20px;">
+                                <button id="mergeSchedules" type="submit" class="btn btn-outline-info btn-sm btn-block">merge our schedules</button>
+                            </div>
+
+                            <div class="row-fluid">
+                                <button id="setscenetimer" type="submit" class="btn btn-outline-info btn-sm btn-block locked">set scene timer</button>
+                            </div>
+
                         </div>
 
                         <div id="c2" class="col-3 full-height p-0">
                             <div id="sharedArea" class="row-fluid">
-                                <select id="relationship" name="relationship" class="form-control form-control-sm bg-shared-light">
+                                <select id="relationship" name="relationship" class="form-control form-control-sm bg-shared-light" title="our relationship">
                                     <option value="" disabled="disabled" selected="selected">we are...</option>
                                     <option value="lifepartners">life partners</option>
                                     <option value="parentandchild">parent and child</option>
@@ -317,7 +342,7 @@
 
                         <div id="c3" class="col-3 full-height p-0">
                             <div id="supernaturalArea" class="row-fluid">
-                                <select id="supernaturalProblem" name="problem" class="form-control form-control-sm bg-supernatural-light">
+                                <select id="supernaturalProblem" name="problem" class="form-control form-control-sm bg-supernatural-light" title="a supernatural problem">
                                     <option value="" disabled="disabled" selected="selected">a supernatural problem</option>
                                     <option value="uncontrollable">uncontrollable powers/transformations</option>
                                     <option value="unsavouryneeds">unsavoury needs</option>
@@ -333,7 +358,7 @@
                                         <input type="text" id="supernaturalPronoun" name="pronoun" class="form-control form-control-sm" placeholder="pronoun" />
                                     </div>
                                 </div>
-                                <select id="supernaturalType" name="supernaturaltype" class="form-control form-control-sm bg-supernatural-light">
+                                <select id="supernaturalType" name="supernaturaltype" class="form-control form-control-sm bg-supernatural-light" title="supernatural type">
                                     <option value="" disabled="disabled" selected="selected">I am...</option>
                                     <option value="werewolf">a werewolf</option>
                                     <option value="vampire">a vampire</option>
@@ -381,12 +406,13 @@
                                 </div>
                             </div>
 
-                            <div class="row-fluid" style="margin-top: 5px;">
-                                <button id="mergeSchedules" type="submit" class="btn btn-outline-info btn-sm btn-block">merge our schedules</button>
-                            </div>
-
-                            <div class="row-fluid">
-                                <button id="setscenetimer" type="submit" class="btn btn-outline-info btn-sm btn-block locked">set scene timer</button>
+                            <div id="menubuttons-h" class="btn-group shadow">
+                                <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+                                <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
+                                <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
+                                <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image of character or object">🖼</button>
+                                <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
+                                <button class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
                             </div>
 
                         </div>
@@ -474,6 +500,9 @@
         var gamehandle = 'omsl';
         var socket = io('/' + gamehandle);
 
+        // prep element effects
+        dragElement(document.getElementById("imageviewbox"));
+
         // socket receive
 
         socket.on('connect', function() {
@@ -486,11 +515,7 @@
             socket.emit("join room", room);
         });
 
-        function save(type='current') {
-            socket.emit('save ' + type);
-        }
-
-        socket.on('new message', function(data) {
+        socket.on('chat message', function(data) {
             var message = data.message;
             var type = data.type;
             var role = data.role;
@@ -507,7 +532,7 @@
                 html = '<div class="well text-muted">' + role + ' is saving game data</div>';
             }
             else if (type == 'loadgame') {
-                $('#loadbox').show();
+                loadGame();
             }
             else if (type == "rollresult") {
                 html = '<div class="well"><strong>' + role + '</strong> ( ' + message + ' )</div>';
@@ -524,6 +549,19 @@
             }
             updateChat(html);
         });
+
+        socket.on('update image', function(data) {
+            updateImage('imageviewImage', data);
+            save();
+        });
+        function loadImage(imgID, imgURLID) {
+            var imgURL = $('#' + imgURLID).val();
+            $('#' + imgID).prop('src', imgURL);
+            socket.emit('update image', imgURL);
+        }
+        function updateImage(field='imageviewImage', url) {
+            $('#' + field).prop('src', url);
+        }
 
         socket.on('unlock timer', function() {
             unlockTimer();
@@ -711,7 +749,7 @@
         $('#messageForm').submit(function(e) {
             e.preventDefault();
             var $message = $('#message');
-            socket.emit('send message', $message.val());
+            socket.emit('chat message', $message.val());
             $message.val('');
         });
 
@@ -745,6 +783,26 @@
             socket.emit('set timer');
         });
 
+        function safetyTool(type='x-card') {
+            if (type == 'x-card') { // x-card
+                var msg = prompt("What content to remove? Click OK to send the notice regardless.");
+                if (msg !== null) {
+                    socket.emit('x-card', msg);
+                }
+            }
+        }
+        socket.on('x-card', function(data) {
+            var html = '<div class="text-danger"><strong>X-Card</strong> used, ';
+            if (data) {
+                html += 'please remove "' + data + '"';
+            }
+            else {
+                html += 'ask for clarification if needed';
+            }
+            html += '</div>';
+            updateChat(html);
+        });
+
         // local UI related
 
         function updateChat(html) {
@@ -763,12 +821,36 @@
             $infoArea.html(infotext[$infolist.val()]);
         });
 
+        function loadGame() {
+            $('#loadbox').toggle();
+        }
         $('#loadbox button[type=submit]').click(function(e) {
             e.preventDefault();
             socket.emit('load json', $('#loadboxjson').val());
             // hide the loadbox
             $('#loadbox').hide();
         });
+
+        function save() {
+            // save the game on the server
+            socket.emit('save');
+        }
+
+        function saveGame() {
+            // download a JSON copy
+            socket.emit('save game');
+        }
+        socket.on('save game', function(data) {
+            var filename = gamehandle + '_' + room + '_' + getTodayString() + '.json';
+            // generate the file to download locally
+            download(filename, data);
+        });
+
+        function newGame() {
+            if(confirm('Clear all fields?')) {
+                socket.emit('new game');
+            }
+        }
 
         // timer
 
