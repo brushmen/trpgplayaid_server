@@ -5,6 +5,7 @@
 
 .portrait img {
     width: 100%;
+    cursor: pointer;
 }
 
 .locked {
@@ -197,13 +198,4 @@ div.tooltip-inner {
 }
 #brown-btn {
     background-color: rgb(134, 89, 45) !important;
-}
-
-/* safety tools */
-
-#x-card, #raisedhand, #thumbup {
-    width: 50px;
-    margin: auto;
-    cursor: pointer;
-    padding: 0;
 }
