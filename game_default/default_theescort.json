@@ -23,6 +23,7 @@
 			        "Secret of the Genius": "Once per session, you can describe a solution to a puzzle narratively without rolling dice."
 				},
 				"dicepool": 7,
+				"dicepoolmax": 7,
 				"xp": 0,
 				"conditions": []
 			},
@@ -49,6 +50,7 @@
 			        "Secret of Capture": "Once per session, you can restrain an NPC without rolling dice."
 				},
 				"dicepool": 7,
+				"dicepoolmax": 7,
 				"xp": 0,
 				"conditions": []
 			},
@@ -75,6 +77,7 @@
 			        "Secret of Leadership": "Once per session, you can give someone else a chance to re-roll a failed roll by giving them orders, advice, or setting a good example."
 				},
 				"dicepool": 7,
+				"dicepoolmax": 7,
 				"xp": 0,
 				"conditions": []
 			},
@@ -101,6 +104,7 @@
 			        "Secret of Faking Death": "First \"resurrection\" is free. Second time requires a narrative explanation that is convincing to the group. On the third death, you can narrate a short epilogue of what happened to your character, but you can no longer contribute to an ongoing story with this identity (play as support characters or discuss with group)."
 				},
 				"dicepool": 7,
+				"dicepoolmax": 7,
 				"xp": 0,
 				"conditions": []
 			}

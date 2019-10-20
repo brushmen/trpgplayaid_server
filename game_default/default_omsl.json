@@ -126,6 +126,7 @@
             "indicesofactivitygonewrong": []
         },
         "timerstate": null,
-        "scenelength": null
+        "scenelength": null,
+        "currentimage": null
 	}
 }

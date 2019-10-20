@@ -2,43 +2,18 @@
 	"heartsofwulin": {
 		"profiles": [
 			{
-				"role": "trickster",
-				"portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.2erCDJEPL5Rrbi-kWn55YgAAAA%26pid%3DApi&f=1",
-				"player": "",
-				"character": "Wu",
-				"faction": "White Leaves Society",
-				"notes": "",
-				"style": "earth",
-				"earth": 2,
-				"fire": 1,
-				"metal": 1,
-				"water": 0,
-				"wood": -1,
-				"wounded": false,
-				"marked": [],
-				"bonds": [
-                    {
-						"name": "faction",
-						"amount": 1
-                    }
-                ],
-				"xp": 0,
-				"ge": "",
-				"re": ""
-			},
-			{
-				"role": "official",
-				"portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.iKPlw6jkh8DONZ5n9EW7DgDdEs%26pid%3DApi&f=1",
-				"player": "",
-				"character": "Lin",
-				"faction": "Tailwind Constables",
-				"notes": "",
-				"style": "fire",
-				"earth": 2,
-				"fire": 2,
+				"role": null,
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"faction": null,
+				"notes": null,
+				"style": null,
+				"earth": 0,
+				"fire": 0,
 				"metal": 0,
 				"water": 0,
-				"wood": -1,
+				"wood": 0,
 				"wounded": false,
 				"marked": [],
 				"bonds": [
@@ -52,16 +27,41 @@
 				"re": ""
 			},
 			{
-				"role": "swordsman",
-				"portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.Tb9II8Id2jXc-O30v0I6ogHaKl%26pid%3DApi&f=1",
-				"player": "",
-				"character": "Qing",
-				"faction": "Gathering Storm Clan",
-				"notes": "",
-				"style": "metal",
-				"earth": 1,
-				"fire": 1,
-				"metal": 1,
+				"role": null,
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"faction": null,
+				"notes": null,
+				"style": null,
+				"earth": 0,
+				"fire": 0,
+				"metal": 0,
+				"water": 0,
+				"wood": 0,
+				"wounded": false,
+				"marked": [],
+				"bonds": [
+                    {
+						"name": "faction",
+						"amount": 1
+                    }
+                ],
+				"xp": 0,
+				"ge": "",
+				"re": ""
+			},
+			{
+				"role": null,
+				"portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+				"player": null,
+				"character": null,
+				"faction": null,
+				"notes": null,
+				"style": null,
+				"earth": 0,
+				"fire": 0,
+				"metal": 0,
 				"water": 0,
 				"wood": 0,
 				"wounded": false,
@@ -76,6 +76,7 @@
 				"ge": "",
 				"re": ""
 			}
-		]
+		],
+		"currentimage": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.n6ITLaHXMZi-J045vs1YEQHaFj%26pid%3DApi&f=1"
 	}
 }

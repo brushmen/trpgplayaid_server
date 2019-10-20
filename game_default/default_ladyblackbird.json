@@ -1,0 +1,172 @@
+{
+    "data": {
+        "roles": {
+            "blackbird": {
+                "dicepool": 7,
+                "xp": 0,
+                "portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.JOx8T9S1MesQDpe-c-7_-wHaJ4%26pid%3DApi&f=1",
+                "traits": [ "Imperial Noble", "Master Sorcerer", "Athletic", "Charm", "Cunning" ],
+                "tags": {
+                    "Imperial Noble": [
+                        "Etiquette", "Dance", "Educated", "History", "Science", "Wealth", "Connections", "House Blackbird"
+                    ],
+                    "Master Sorcerer": [
+                        "Spellcaster", "Channeling", "Stormblood", "Wind", "Lightning", "[Fly]", "[Blast]", "[Sense]"
+                    ],
+                    "Athletic": [
+                        "Run", "Fencing", "Rapier", "Duels", "Shooting", "[Pistol]", "[Acrobatics]"
+                    ],
+                    "Charm": [
+                        "Charisma", "Presence", "Command", "Nobles", "Servants", "[Soldiers]"
+                    ],
+                    "Cunning": [
+                        "Deception", "Misdirection", "Disguise", "Codes", "[Sneak]", "[Hide]"
+                    ]
+                },
+                "keys": ["Paragon", "Mission", "Impostor"],
+                "secrets": ["Stormblood", "Inner Focus"],
+                "conditions": {
+                    "injured": false,
+                    "dead": false,
+                    "tired": false,
+                    "angry": false,
+                    "lost": false,
+                    "hunted": false,
+                    "trapped": false
+                }
+            },
+            "bishop": {
+                "dicepool": 7,
+                "xp": 0,
+                "portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP._i7WKtxvwV_cbnrK5aFs9gAAAA%26pid%3DApi&f=1",
+                "traits": ["Pit-Fighter", "Bodyguard", "Ex-Slave", "Keen"],
+                "tags": {
+                    "Pit-Fighter": [
+                        "Combat Tested", "Brutal", "Living Weapon", "Fast", "Hard", "[Strong]", "[Bone-breaking]", "[Scary Look]"
+                    ],
+                    "Bodyguard": [
+                        "Awareness", "Threats", "Defend", "Disarm", "Restrain", "Carry", "Delay", "[Security]", "[First Aid]"
+                    ],
+                    "Ex-Slave": [
+                        "Sneak", "Hide", "Run", "Tough", "Endure", "Scrounge", "Nobles", "[Hatred]", "[Iron Will]"
+                    ],
+                    "Keen": [
+                        "Insightful", "Aware", "Coiled", "Liars", "Traps", "[Danger]", "[Sense Motives]"
+                    ]
+                },
+                "keys": ["Guardian", "Vengeance", "Warrior"],
+                "secrets": ["Destruction", "Bodyguard"],
+                "conditions": {
+                    "injured": false,
+                    "dead": false,
+                    "tired": false,
+                    "angry": false,
+                    "lost": false,
+                    "hunted": false,
+                    "trapped": false
+                }
+            },
+            "vance": {
+                "dicepool": 7,
+                "xp": 0,
+                "portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.QLjCw530X0si_cOdADMe1AHaJ3%26pid%3DApi&f=1",
+                "traits": ["Ex-Imperial Soldier", "Smuggler", "Survivor", "Warrior"],
+                "tags": {
+                    "Ex-Imperial Soldier": [
+                        "Tactics", "Command", "Soldiers", "Rank", "Connections", "Maps", "Imperial War Ships"
+                    ],
+                    "Smuggler": [
+                        "Haggle", "Deception", "Sneak", "Hide", "Camouflage", "Forgery", "Pilot", "Navigation", "[Repair]", "[Gunnery]"
+                    ],
+                    "Survivor": [
+                        "Tough", "Run", "Scrounge", "Endure", "Creepy Stare", "Intimidate", "[Medic]"
+                    ],
+                    "Warrior": [
+                        "Battle-Hardened", "Shooting", "Two-Gun Style", "Pistol", "Fencing", "Sword", "[Brawl]", "[Hail of Lead]"
+                    ]
+                },
+                "keys": ["Commander", "Hidden Longing", "Outcast"],
+                "secrets": ["Leadership", "Warpblood"],
+                "conditions": {
+                    "injured": false,
+                    "dead": false,
+                    "tired": false,
+                    "angry": false,
+                    "lost": false,
+                    "hunted": false,
+                    "trapped": false
+                }
+            },
+            "arkam": {
+                "dicepool": 7,
+                "xp": 0,
+                "portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.mgqLqNlWxI2n-pKEzoRwjgAAAA%26pid%3DApi&f=1",
+                "traits": ["Burglar", "Tricky", "Petty Magic", "Mechanic"],
+                "tags": {
+                    "Burglar": [
+                        "Quiet", "Sneak", "Hide", "Dextrous", "Locks", "Perceptive", "Traps", "Darkness", "[Alarms]", "[Distractions]"
+                    ],
+                    "Tricky": [
+                        "Quick", "Dirty Fighting", "Tumbler", "Escape", "Contortionist", "[Sleight of Hand]", "[Acrobatics]", "[Dagger]"
+                    ],
+                    "Petty Magic": [
+                        "Light spell", "Dark spell", "Jump spell", "Shatter Spell", "[Channeling]", "[Spellcaster]"
+                    ],
+                    "Mechanic": [
+                        "Repair", "Engines", "Efficiency", "Spare Parts", "Sabotage", "[Enhancements]", "[Ship Weapons]"
+                    ]
+                },
+                "keys": ["Greed", "Job", "Fraternity"],
+                "secrets": ["Concealment", "Reflexes"],
+                "conditions": {
+                    "injured": false,
+                    "dead": false,
+                    "tired": false,
+                    "angry": false,
+                    "lost": false,
+                    "hunted": false,
+                    "trapped": false
+                }
+            },
+            "snargle": {
+                "dicepool": 7,
+                "xp": 0,
+                "portrait": "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.FhbnuFeB4QUkdEqddOnCngAAAA%26pid%3DApi&f=1",
+                "traits": ["Pilot", "Sky Sailor", "Goblin", "Sly"],
+                "tags": {
+                    "Pilot": [
+                        "Daring", "Steady", "Maneuvering", "Evasion", "Tricky Flying", "Navigation", "Maps", "Atmospherics", "[The Owl]", "[Battle]", "[Ramming]"
+                    ],
+                    "Sky Sailor": [
+                        "Gunnery", "Aim", "Maintenance", "Observation", "Signals", "Empire", "Pirates", "Free Worlds", "Haven", "[Repair]", "[Connections]"
+                    ],
+                    "Goblin": [
+                        "Warp Shape", "Glide", "Nightvision", "Agile", "Quick", "Tumbler", "Teeth & Claws", "[Mimic Shape]", "[Reckless]", "[Connections]"
+                    ],
+                    "Sly": [
+                        "Crafty", "Sneaky", "Distractions", "Bluff", "Languages", "Trade Speak", "[Sharp]", "[Disguise]"
+                    ]
+                },
+                "keys": ["Daredevil", "Conscience", "Banter"],
+                "secrets": ["Shape Warping", "Lucky Break"],
+                "conditions": {
+                    "injured": false,
+                    "dead": false,
+                    "tired": false,
+                    "angry": false,
+                    "lost": false,
+                    "hunted": false,
+                    "trapped": false
+                }
+            }
+        },
+        "owl": {
+            "conditions": {
+                "fuel": true,
+                "supplies": false,
+                "repairs": false,
+                "speed": false
+                }
+            }
+        }
+}
