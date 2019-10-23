@@ -2,21 +2,16 @@
 module.exports = function(app, socketio, helper) {
     console.log('module "The Escort" running...');
 
-    var io = socketio.of('/theescort'); // custom namespace
+    var gamehandle = 'theescort';
+    var io = socketio.of('/' + gamehandle); // custom namespace
     var fs = require('fs'); // file stream
-
-    // variables
-
     var users = {}; // users in rooms
     var connections = []; // all connections to this namespace
     var datafiles = []; // data json filenames for each room
-
-    var gamehandle = 'theescort';
     var defaultroom = 'test';
     var defaultdatapath = '/../game_default/';
     var datapath = '/../game_data/';
     var defaultfile = __dirname + defaultdatapath + 'default_' + gamehandle + '.json';
-
     var gamedata = {}; // includes data for each individual rooms
     var locked = {}; // local locked profiles, not to be saved with save file
 
@@ -80,7 +75,7 @@ module.exports = function(app, socketio, helper) {
         'Sailor':
             ['[Dive]', '[Swim]', '[Helms]', '[Sails]', '[Raft]', '[Float]', '[Navigation]', '[Hardy]', '[Shallows]', '[Drink]'],
         'Wanderer':
-            ['[Camping]', '[Secretive]', '[Generous]', '[Tough]', '[Guide]', '[Weapon Master]', '[Forthright]', '[Reputation]', '[Connections]', '[Sentimental]', 'Drink]'],
+            ['[Camping]', '[Secretive]', '[Generous]', '[Tough]', '[Guide]', '[Weapon Master]', '[Forthright]', '[Reputation]', '[Connections]', '[Sentimental]', '[Drink]'],
         'Buddhism':
             ['[Kind]', '[Devout]', '[Tolerant]', '[Reform]', '[Insight]', '[Enlightenment]', '[Persistent]', '[Scripture]'],
         'Herdsman':
@@ -98,9 +93,9 @@ module.exports = function(app, socketio, helper) {
     };
 
     var new_keys = {
-        'Key of the Traveler': 'Hit your key when you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.',
-        'Key of the Negotiator': 'Hit your key when you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.',
-        'Key of the Vow': 'Hit your key when your vow significantly impacts your decisions. BUYOFF: Break your vow.'
+        'Key of the Traveler': 'Turn this key when you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.',
+        'Key of the Negotiator': 'Turn this key when you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.',
+        'Key of the Vow': 'Turn this key when your vow significantly impacts your decisions. BUYOFF: Break your vow.'
     };
 
     var new_secrets = {
