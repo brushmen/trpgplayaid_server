@@ -127,6 +127,11 @@ div.tooltip-inner {
     overflow: auto;
     z-index: 3;
 }
+#loadbox .card-header {
+    font-size: 12pt !important;
+    line-height: 12pt !important;
+    height: 1.5em !important;
+}
 #loadboxjson {
     width: 600px;
     height: 300px;
@@ -148,6 +153,7 @@ div.tooltip-inner {
 }
 #imageviewboxHeader, #mapviewboxHeader, #rulesboxHeader {
     padding: 0 10px;
+    height: 1.5em;
 }
 #imageviewImage, #mapviewImage {
     width: 100%;
