@@ -4,8 +4,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>The Escort</title>
-    <meta name="description" content="playaids for The Escort built with Javascript">
+    <title>Lady Blackbird</title>
+    <meta name="description" content="playaids for Lady Blackbird built with Javascript">
     <meta name="author" content="brushmen">
 
     <!-- Bootstrap CSS -->
@@ -23,7 +23,7 @@
         background-color: Gainsboro !important;
     }
 
-    #c1, #c2, #c3, #c4, #c5 {
+    #c1, #c2, #c3, #c4, #c5, #c6 {
         position: relative;
     }
 
@@ -31,6 +31,7 @@
     #c2 { border: 1px solid green; }
     #c3 { border: 1px solid blue; }
     #c4 { border: 1px solid aliceblue; }
+    #c5 { border: 1px solid black; }
 
     input[name=character] {
         font-weight: bolder;
@@ -56,6 +57,10 @@
     }
     div[name=dicepool], div[name=xp] {
         font-weight: bolder;
+    }
+    #owlconditions p {
+        margin: 0.5em;
+        font-size: 0.8em;
     }
 
     input[type=checkbox] {
@@ -84,7 +89,11 @@
     }
 
     #commonArea {
-        width: 15.8em;
+        width: 6em;
+    }
+
+    #owlStat {
+        height: 340px;
     }
 
     .traits, .keys, .secrets {
@@ -110,25 +119,17 @@
         color: red !important;
     }
 
-    #infoArea {
-        border: 0px solid black;
-        height: 350px;
-        overflow: auto;
-        font-size: 0.9em;
-        line-height: 1.3em;
-        padding: 10px;
-        overflow-wrap: break-word;
-        background-color: Gainsboro;
-    }
-
     #resultArea {
-        padding: 2px 10px;
-        font-size: 1.5em;
+        text-align: center;
+        width: 100%;
+        padding: 2px 20px;
+        font-size: 1.2em;
+        border: 1px solid black;
     }
 
     #chatSection {
-        width: 17em;
-        height: 180px;
+        width: 9em;
+        height: 250px;
         overflow-y: scroll;
     }
 
@@ -141,6 +142,33 @@
 </head>
 <body>
     <!-- hovering panels -->
+    <div id="rulesbox" style="display: none" class="card shadow">
+        <h6 id="rulesboxHeader" class="card-header move"><p>John Harper's <a href="http://ladyblackbird.org" target="new">Lady Blackbird</a></h6>
+        <div class="topRightClick" onclick="$('#rulesbox').hide();">hide</div>
+        <div class="container card-body">
+            <select id="infolist" name="infolist" class="form-control form-control-sm">
+                <option value="about" selected="selected">about Lady Blackbird</option>
+                <option value="diceroll">dice rolling</option>
+                <option value="keysandxp">keys and xp</option>
+                <option value="advancements">advancements</option>
+                <option value="refreshment">refreshment</option>
+                <option value="questions">starter questions</option>
+                <option value="theowl">the owl</option>
+                <option value="theworlds">the worlds</option>
+                <option value="namelists">name lists</option>
+            </select>
+            <div id="infoArea" class="row">
+                <em>
+                    <p>Lady Blackbird is on the run from an arranged marriage to Count Carlowe. She hired a smuggler skyship, The Owl, to take her from her palace on the Imperial world of Ilysium to the far reaches of the Remnants, so she could be with her once secret lover, the pirate king Uriah Flint.</p>
+                    <p>However—Just before reaching the halfway point of Haven, The Owl was pursued and captured by the Imperial cruiser Hand of Sorrow, under charges of flying a false flag.</p>
+                    <p>Even now Lady Blackbird, her bodyguard, and the crew of The Owl are detained in the brig, while the commander of the cruiser, Captain Hollas, runs the smuggler ship’s registry over the wireless. It’s only a matter of time before they discover the outstanding warrants and learn that The Owl is owned by none other than the infamous outcast Cyrus Vance.</p>
+                    <p>How will lady blackbird and the others escape the hand of sorrow?</p>
+                    <p>What dangers lie in their path?</p>
+                    <p>Will they be able to find the secret lair of the pirate king? If they do, will uriah flint accept lady blackbird as his bride? By the time they get there, will she want him to?</p>
+                </em>
+            </div>
+        </div>
+    </div>
     <div id="loadbox" style="display: none" class="card shadow">
         <h5 class="card-header">load JSON content</h5>
         <div class="topRightClick" onclick="$('#loadbox').hide();">hide</div>
@@ -190,20 +218,16 @@
     <!-- right side menu buttons, leave space in between for TogetherJS bar. add/remove buttons as applicable -->
     <div id="menubuttons" class="btn-group-vertical shadow">
         <!-- <button id="togetherjsbutton" class="btn btn-sm btn-outline-dark" onclick="TogetherJS(this); return false;" title="start TogetherJS to collaborate with friends">👥</button> -->
+        <button id="rulesbutton" class="btn btn-sm btn-outline-dark" onclick="showRules(); return false;" title="show game rules">📖</button>
         <button id="loadjsonbutton" class="btn btn-sm btn-outline-dark" onclick="loadGame(); return false;" title="load a JSON file of the game content">📂</button>
         <button id="savejsonbutton" class="btn btn-sm btn-outline-dark" onclick="saveGame(); return false;" title="save current game content to a JSON file to download">💾</button>
         <button id="imagebutton" class="btn btn-sm btn-outline-dark" onclick="$('#imageviewbox').toggle(); return false;" title="show an image">🖼</button>
         <button id="mapbutton" class="btn btn-sm btn-outline-dark" onclick="$('#mapviewbox').toggle(); return false;" title="show a map">🗺</button>
         <button id="drawbutton" class="btn btn-sm btn-outline-dark" onclick="toggleScratchpad(); return false;" title="draw something">🎨</button>
         <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('x-card'); return false;" title="X-Card: request that a story detail be removed from the game">❎</button>
-
-        <button class="btn btn-sm locked" style="height: 50px"></button>
-
-        <button id="thumbup" class="btn btn-sm btn-outline-dark" onclick="safetyTool('thumbup'); return false;" title="thumbup to show support">👍</button>
-        <button id="xcardbutton" class="btn btn-sm btn-outline-dark" onclick="safetyTool('raisedhand'); return false;" title="indicate in chat that you want to speak">✋</button>
-
+        <button id="clearallbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
     </div>
-    <button id="clearfieldsbutton" class="btn btn-sm btn-outline-dark shadow" onclick="newGame(); return false;" title="clear fields, start over">🗑</button>
+
 
     <!-- main content -->
     <div id="playArea" class="container-fluid">
@@ -212,15 +236,15 @@
                 <div class="row">
 
                     <div id="c1" class="col-2 full-height">
-                        <!-- <div class="lockClick" onclick="toggleInputLocks('p1Area');">🔒</div> -->
                         <div class="hideClick" onclick="$('#p1Area').toggle();">👁</div>
                         <div id="p1Area" class="row">
                             <select id="role1" name="role" class="form-control form-control-sm">
                                 <option value="" disabled="disabled" selected="selected">I am...</option>
-                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
-                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
-                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
-                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                                <option value="noble" title="An Imperial noble, in disguise, escaping an arranged marriage so she can be with her lover">The Noble</option>
+                                <option value="bodyguard" title="Former pit-fighter and bodyguard to Lady Blackbird">The Bodyguard</option>
+                                <option value="outcast" title="An ex-Imperial soldier turned smuggler and soldier-of-fortune, Captain of The Owl">The Outcast</option>
+                                <option value="mechanic" title="A burglar and petty sorcerer, first mate and mechanic of The Owl">The Mechanic</option>
+                                <option value="pilot" title="A goblin sky-sailor and pilot of The Owl">The Pilot</option>
                             </select>
 
                             <div class="container-fluid">
@@ -269,10 +293,11 @@
                                     </div>
 
                                     <div id="conditions1" name="conditions" class="row">
-                                        <div class="col-3"><span title="drained" class="bg-light">😴<input type="checkbox" id="drained1" name="drained" /></span></div>
-                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad1" name="mad" /></span></div>
-                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt1" name="hurt"/></span></div>
-                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead1" name="dead" /></span></div>
+                                        <div class="col-2"><span title="tired" class="bg-light">😴<input type="checkbox" id="tired1" name="tired" /></span></div>
+                                        <div class="col-2"><span title="angry">😠<input type="checkbox" id="angry1" name="angry" /></span></div>
+                                        <div class="col-2"><span title="trapped" class="bg-secondary">😬<input type="checkbox" id="trapped1" name="trapped" /></span></div>
+                                        <div class="col-2"><span title="injured" class="bg-danger text-light">🤕<input type="checkbox" id="injured1" name="injured"/></span></div>
+                                        <div class="col-2"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead1" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -282,15 +307,15 @@
                     </div>
 
                     <div id="c2" class="col-2 full-height">
-                        <!-- <div class="lockClick" onclick="toggleInputLocks('p2Area');">🔒</div> -->
                         <div class="hideClick" onclick="$('#p2Area').toggle();">👁</div>
                         <div id="p2Area" class="row">
                             <select id="role2" name="role" class="form-control form-control-sm">
                                 <option value="" disabled="disabled" selected="selected">I am...</option>
-                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
-                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
-                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
-                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                                <option value="noble" title="An Imperial noble, in disguise, escaping an arranged marriage so she can be with her lover">The Noble</option>
+                                <option value="bodyguard" title="Former pit-fighter and bodyguard to Lady Blackbird">The Bodyguard</option>
+                                <option value="outcast" title="An ex-Imperial soldier turned smuggler and soldier-of-fortune, Captain of The Owl">The Outcast</option>
+                                <option value="mechanic" title="A burglar and petty sorcerer, first mate and mechanic of The Owl">The Mechanic</option>
+                                <option value="pilot" title="A goblin sky-sailor and pilot of The Owl">The Pilot</option>
                             </select>
 
                             <div class="container-fluid">
@@ -339,10 +364,11 @@
                                     </div>
 
                                     <div id="conditions2" name="conditions" class="row">
-                                        <div class="col-3"><span title="drained" class="bg-light">😴<input type="checkbox" id="drained2" name="drained" /></span></div>
-                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad2" name="mad" /></span></div>
-                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt2" name="hurt"/></span></div>
-                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead2" name="dead" /></span></div>
+                                        <div class="col-2"><span title="tired" class="bg-light">😴<input type="checkbox" id="tired2" name="tired" /></span></div>
+                                        <div class="col-2"><span title="angry">😠<input type="checkbox" id="angry2" name="angry" /></span></div>
+                                        <div class="col-2"><span title="trapped" class="bg-secondary">😬<input type="checkbox" id="trapped2" name="trapped" /></span></div>
+                                        <div class="col-2"><span title="injured" class="bg-danger text-light">🤕<input type="checkbox" id="injured2" name="injured"/></span></div>
+                                        <div class="col-2"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead2" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -352,15 +378,15 @@
                     </div>
 
                     <div id="c3" class="col-2 full-height">
-                        <!-- <div class="lockClick" onclick="toggleInputLocks('p3Area');">🔒</div> -->
                         <div class="hideClick" onclick="$('#p3Area').toggle();">👁</div>
                         <div id="p3Area" class="row">
                             <select id="role3" name="role" class="form-control form-control-sm">
                                 <option value="" disabled="disabled" selected="selected">I am...</option>
-                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
-                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
-                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
-                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                                <option value="noble" title="An Imperial noble, in disguise, escaping an arranged marriage so she can be with her lover">The Noble</option>
+                                <option value="bodyguard" title="Former pit-fighter and bodyguard to Lady Blackbird">The Bodyguard</option>
+                                <option value="outcast" title="An ex-Imperial soldier turned smuggler and soldier-of-fortune, Captain of The Owl">The Outcast</option>
+                                <option value="mechanic" title="A burglar and petty sorcerer, first mate and mechanic of The Owl">The Mechanic</option>
+                                <option value="pilot" title="A goblin sky-sailor and pilot of The Owl">The Pilot</option>
                             </select>
 
                             <div class="container-fluid">
@@ -409,10 +435,11 @@
                                     </div>
 
                                     <div id="conditions3" name="conditions" class="row">
-                                        <div class="col-3"><span title="drained" class="bg-light">😴<input type="checkbox" id="drained3" name="drained" /></span></div>
-                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad3" name="mad" /></span></div>
-                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt3" name="hurt"/></span></div>
-                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead3" name="dead" /></span></div>
+                                        <div class="col-2"><span title="tired" class="bg-light">😴<input type="checkbox" id="tired3" name="tired" /></span></div>
+                                        <div class="col-2"><span title="angry">😠<input type="checkbox" id="angry3" name="angry" /></span></div>
+                                        <div class="col-2"><span title="trapped" class="bg-secondary">😬<input type="checkbox" id="trapped3" name="trapped" /></span></div>
+                                        <div class="col-2"><span title="injured" class="bg-danger text-light">🤕<input type="checkbox" id="injured3" name="injured"/></span></div>
+                                        <div class="col-2"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead3" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -422,15 +449,15 @@
                     </div>
 
                     <div id="c4" class="col-2 full-height">
-                        <!-- <div class="lockClick" onclick="toggleInputLocks('p4Area');">🔒</div> -->
                         <div class="hideClick" onclick="$('#p4Area').toggle();">👁</div>
                         <div id="p4Area" class="row">
                             <select id="role4" name="role" class="form-control form-control-sm">
                                 <option value="" disabled="disabled" selected="selected">I am...</option>
-                                <option value="thecharge" title="Vindicate at all cost, or die with dignity?">The Charge</option>
-                                <option value="theconstable" title="Justice has no humanity. But we do.">The Constable</option>
-                                <option value="theentrusted" title="Life is full of compromises.">The Entrusted</option>
-                                <option value="themercenary" title="Who is pulling on my string?">The Mercenary</option>
+                                <option value="noble" title="An Imperial noble, in disguise, escaping an arranged marriage so she can be with her lover">The Noble</option>
+                                <option value="bodyguard" title="Former pit-fighter and bodyguard to Lady Blackbird">The Bodyguard</option>
+                                <option value="outcast" title="An ex-Imperial soldier turned smuggler and soldier-of-fortune, Captain of The Owl">The Outcast</option>
+                                <option value="mechanic" title="A burglar and petty sorcerer, first mate and mechanic of The Owl">The Mechanic</option>
+                                <option value="pilot" title="A goblin sky-sailor and pilot of The Owl">The Pilot</option>
                             </select>
 
                             <div class="container-fluid">
@@ -479,10 +506,11 @@
                                     </div>
 
                                     <div id="conditions4" name="conditions" class="row">
-                                        <div class="col-3"><span title="drained" class="bg-light">😴<input type="checkbox" id="drained4" name="drained" /></span></div>
-                                        <div class="col-3"><span title="mad" style="color: red">😠<input type="checkbox" id="mad4" name="mad" /></span></div>
-                                        <div class="col-3"><span title="hurt" class="bg-danger text-light">🤕<input type="checkbox" id="hurt4" name="hurt"/></span></div>
-                                        <div class="col-3"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead4" name="dead" /></span></div>
+                                        <div class="col-2"><span title="tired" class="bg-light">😴<input type="checkbox" id="tired4" name="tired" /></span></div>
+                                        <div class="col-2"><span title="angry">😠<input type="checkbox" id="angry4" name="angry" /></span></div>
+                                        <div class="col-2"><span title="trapped" class="bg-secondary">😬<input type="checkbox" id="trapped4" name="trapped" /></span></div>
+                                        <div class="col-2"><span title="injured" class="bg-danger text-light">🤕<input type="checkbox" id="injured4" name="injured"/></span></div>
+                                        <div class="col-2"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead4" name="dead" /></span></div>
                                     </div>
 
                                 </div>
@@ -491,46 +519,93 @@
                         </div>
                     </div>
 
-                    <div id="c5" class="col-3">
-                        <div id="commonArea">
-                            <div class="row text-center">
-                                <select id="infolist" name="infolist" class="form-control form-control-sm">
-                                    <option value="" disabled="disabled" selected="selected">The Escort</option>
-                                    <option value="about">about</option>
-                                    <option value="diceroll">dice rolling</option>
-                                    <option value="helping">helping</option>
-                                    <option value="keysandxp">keys and xp</option>
-                                    <option value="newstuff">new stuff</option>
-                                    <option value="refreshment">refreshment</option>
-                                    <option value="" disabled="disabled">Setting</option>
-                                    <option value="overview">overview</option>
-                                    <option value="jianghu">"Jianghu"</option>
-                                    <option value="causesfordeathpenalty">causes for death penalty</option>
-                                    <option value="namelists">name lists</option>
-                                    <option value="" disabled="disabled">Appendices</option>
-                                    <option value="historicaltidbits">historical tidbits</option>
-                                    <option value="wuxiatropes">wuxia tropes</option>
-                                    <option value="wuxiafactions">wuxia factions</option>
-                                    <option value="morenames">more names</option>
-                                </select>
-                            </div>
-                            <div id="infoArea" class="row card-body">
-                                <em>
-                                    <p>A violent robbery left behind a broken caravan, a scattering of valuables, and unmoving bodies, blocking the road ahead.</p>
-                                    <p>The four stop to scan the area, bracing for a possible trap.</p>
-                                    <p>What awaits them behind boulders and bushes, and in broad day light no less?</p>
-                                    <p>Will Xin (pronounced like "shin") survive an attack while shackled inside a caged wagon?</p>
-                                    <p>Will Dao the Constable upkeep the law?</p>
-                                    <p>Will Yu lead the escort through any attempt to end the mission before it reaches the execution ground?</p>
-                                    <p>And will Gong the mercenary help or hinder them?</p>
-                                </em>
-                            </div>
+                    <div id="c5" class="col-2 full-height">
+                        <div class="hideClick" onclick="$('#p5Area').toggle();">👁</div>
+                        <div id="p5Area" class="row">
+                            <select id="role5" name="role" class="form-control form-control-sm">
+                                <option value="" disabled="disabled" selected="selected">I am...</option>
+                                <option value="noble" title="An Imperial noble, in disguise, escaping an arranged marriage so she can be with her lover">The Noble</option>
+                                <option value="bodyguard" title="Former pit-fighter and bodyguard to Lady Blackbird">The Bodyguard</option>
+                                <option value="outcast" title="An ex-Imperial soldier turned smuggler and soldier-of-fortune, Captain of The Owl">The Outcast</option>
+                                <option value="mechanic" title="A burglar and petty sorcerer, first mate and mechanic of The Owl">The Mechanic</option>
+                                <option value="pilot" title="A goblin sky-sailor and pilot of The Owl">The Pilot</option>
+                            </select>
 
-                            <div class="row justify-content-center" style="border: 1px solid black">
-                                <div id="resultArea">roll results</div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="profile5" name="profile">
+                                        <input type="text" id="player5" name="player" class="form-control form-control-sm text-muted" placeholder="player" />
+
+                                        <input type="text" id="character5" name="character" class="form-control form-control-sm text-primary" placeholder="character" />
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-6 portrait p-0">
+                                                    <img src="" id="portrait5" data-toggle="tooltip" alt="image for character 5" onclick="portraitURL(5);" title="" />
+                                                </div>
+                                                <div class="col-6 p-0">
+                                                    <div id="attributes5" name="attributes" class="input-group btn-group-vertical">
+                                                        <button id="traitsButton5" name="traitsButton" class="btn btn-sm btn-outline-dark">traits 🎭</button>
+                                                        <button id="keysButton5" name="keysButton" class="btn btn-sm btn-outline-dark">keys 🗝</button>
+                                                        <button id="secretsButton5" name="secretsButton" class="btn btn-sm btn-outline-dark">secrets ⍰</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- hidden traits, keys, secrets detail storage -->
+
+                                                <div id="traits5" name="traits"></div>
+                                                <div id="keys5" name="keys"></div>
+                                                <div id="secrets5" name="secrets"></div>
+
+                                            </div>
+                                        </div>
+                                        <textarea id="notes5" name="notes" class="form-control form-control-sm" placeholder="notes"></textarea>
+                                    </div>
+
+                                    <div id="dicepoolGroup5" name="dicepoolGroup" class="input-group input-group-sm">
+                                        <input type="text" id="pool5" name="pool" class="form-control form-control-sm" placeholder="pool" title="dice to roll to take on a challenge" value="1" />
+                                        <button id="rolldice5" name="rolldice" class="form-control btn btn-sm btn-outline-dark" title="roll dice">🎲</button>
+                                        <button type="button" id="plusPoolDice5" name="plusPoolDice" class="form-control btn btn-sm btn-primary">+</button>
+                                        <button id="dicepool5" name="dicepool" class="form-control btn btn-sm btn-outline-dark text-primary">7</button>
+                                        <button type="button" id="minusPoolDice5" name="minusPoolDice" class="form-control btn btn-sm btn-primary">-</button>
+                                    </div>
+
+                                    <div id="xpGroup5" name="xpGroup" class="input-group input-group-sm">
+                                        <label id="xpLabel5" name="xpLabel" class="form-control form-control-sm input-group-text">XP</label>
+                                        <button type="button" id="plusXP5" name="plusXP" class="form-control btn btn-sm btn-success">+</button>
+                                        <button id="xp5" name="xp" class="form-control btn btn-sm btn-outline-dark text-success">0</button>
+                                        <button type="button" id="minusXP5" name="minusXP" class="form-control btn btn-sm btn-success">-</button>
+                                    </div>
+
+                                    <div id="conditions5" name="conditions" class="row">
+                                        <div class="col-2"><span title="tired" class="bg-light">😴<input type="checkbox" id="tired5" name="tired" /></span></div>
+                                        <div class="col-2"><span title="angry">😠<input type="checkbox" id="angry5" name="angry" /></span></div>
+                                        <div class="col-2"><span title="trapped" class="bg-secondary">😬<input type="checkbox" id="trapped5" name="trapped" /></span></div>
+                                        <div class="col-2"><span title="injured" class="bg-danger text-light">🤕<input type="checkbox" id="injured5" name="injured"/></span></div>
+                                        <div class="col-2"><span title="dead" class="bg-dark text-light">💀<input type="checkbox" id="dead5" name="dead" /></span></div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="c6" class="col-2">
+                        <div id="commonArea" class="row-fluid">
+                            <div id="owlStat">
+                                <h5>The Owl</h5>
+                                <div id="owlconditions" name="owlconditions" class="row-fluid">
+                                    <p>🦉 needs...</p>
+                                    <p><span title="fuel">💧 <input type="checkbox" id="needFuel" name="needFuel" /></span></p>
+                                    <p><span title="supplies">🍕 <input type="checkbox" id="needSupplies" name="needSupplies" /></span></p>
+                                    <p><span title="repairs">🔧 <input type="checkbox" id="needRepairs" name="needRepairs" /></span></p>
+                                    <p><span title="speed">🚀 <input type="checkbox" id="needSpeed" name="needSpeed" /></span></p>
+                                </div>
                             </div>
 
                             <div id="chatArea" class="row">
+                                <div id="resultArea">rolls</div>
+
                                 <div class="row">
                                     <form id="messageForm" class="container">
                                         <div id="chatSection">
@@ -576,41 +651,38 @@
     <script>
         var infotext = {
             'about':
-                '<p><a href="https://brushmen.itch.io/the-escort" target="_new">The Escort</a> is a <em><a href="https://en.wikipedia.org/wiki/Wuxia" target="_new">wuxia</a></em>-themed story-game by Yi Weng that is a hack of John Harper\'s "<a href="http://ladyblackbird.org" target="_new">Lady Blackbird</a>."</p>',
-            'diceroll': "<p>Roll dice to overcome an obstacle. <strong>Start with one die just for trying</strong>. Add a die if you have a <strong>Trait</strong> that can help. If that Trait has <strong>tags</strong> that apply, add another die for each such tag. Finally, add any number of dice from your personal <strong>dice pool</strong> (start with 7 for a max of 7). Other character(s) can <strong>help</strong> if it can be narratively justified.</p><p>Roll result of 4, 5, and 6 are hits. You need hits to match or surpass the difficulty level (difficult: 3, challenging: 4, extreme: 5, etc.) to overcome the obstacle.</p><p>If you pass, discard all dice you rolled (including any pool dice you or helper used). If not, you don't yet achieve your goal. But, you keep the pool dice rolled (helper keep theirs) and add another die to your pool (up to your pool maximum). The GM will escalate the situation, such as give you a condition (hurt, even death, etc.) and you might be able to try again.</p><h5>PC vs. PC</h5><p>If your character contends with another player character, both players roll against a difficulty level set by the GM. If one player succeeds, that player wins the conflict and discards dice normally. The other player keeps their rolled pool dice and gets another. If both players succeed, no pool dice are discarded or gained, but the GM interrupts the conflict in whatever manner they see fit. If both players fail, they keep their pool dice and get another die, and the GM escalates the situation or introduces a new obstacle.</p><h5>A variant dice rule</h5><p>(needs everyone to agree to it)</p><p>When hits after a roll...<ul><li>surpass the difficulty: \"Yes, And (player decides another beneficial outcome/detail)\"</li><li>match the difficulty：\"Yes...\" (as usual)</li><li>miss by 1：\"Yes, But (GM decides)\"</li><li>is less but not 0：\"No, But (GM decides)\"</li><li>is 0：\"No, And (GM decides)\"</li></ul></p>",
+                '<p>Lady Blackbird is on the run from an arranged marriage to Count Carlowe. She hired a smuggler skyship, The Owl, to take her from her palace on the Imperial world of Ilysium to the far reaches of the Remnants, so she could be with her once secret lover, the pirate king Uriah Flint.</p><p>However—Just before reaching the halfway point of Haven, The Owl was pursued and captured by the Imperial cruiser Hand of Sorrow, under charges of flying a false flag.</p><p>Even now Lady Blackbird, her bodyguard, and the crew of The Owl are detained in the brig, while the commander of the cruiser, Captain Hollas, runs the smuggler ship’s registry over the wireless. It’s only a matter of time before they discover the outstanding warrants and learn that The Owl is owned by none other than the infamous outcast Cyrus Vance.</p><p>How will lady blackbird and the others escape the hand of sorrow?</p><p>What dangers lie in their path?</p><p>Will they be able to find the secret lair of the pirate king? If they do, will uriah flint accept lady blackbird as his bride? By the time they get there, will she want him to?</p>',
+            'diceroll':
+                "<p>When you try to overcome an obstacle, you roll dice. Follow these steps to determine how many dice you get to roll.</p><p><strong>TRY</strong>: Start with one die just for trying.</p> <p><strong>TRAIT</strong>: Select one trait that applies, add a die for that.</p><p><strong>TAGS</strong>: If that trait has any tags that apply, add another die for each filled circle on that tag. Tags with empty circles cannot be used until you unlock them with experience. Some tags are grouped in a box; you can use only one tag within that box per roll.</p><p><strong>POOL</strong>: Finally, add any number of dice from your personal <strong>dice pool</strong> (start with 7 for a max of 7). Other character(s) can <strong>help</strong> if it can be narratively justified.</p><p>Roll all the dice you’ve gathered. Each <strong>4, 5 or 6</strong> (or each x if you’re using 50/50 dice) is a hit. Each 1, 2 or 3 (or each blank) is a miss. You need hits equal to the difficulty level (easy: 2, difficult: 3, challenging: 4, extreme: 5, etc.) to succeed.</p><p><strong>If you succeed</strong>, discard all the dice you rolled (including any pool dice you used). Don’t worry, you can get your pool dice back.</p><p><strong>If you fail</strong>, you don’t yet achieve your goal. But, you get to keep the pool dice you rolled and add another die to your pool (up to your maximum pool size). The GM will escalate the danger of the situation and probably inflict a condition. You might be able to try again.</p><p>The GM may give some obstacles two difficulty levels (typically two steps apart, for example 2 and 4). Getting a number of hits equal to the higher difficulty level allows for a greater success.</p><p>Example: <em>“Yes, Naomi, you can take down those two guards, the difficulty level is 3. However, if you get 5 hits, then you can clear all the marines out of this section of the ship.”</em></p><h5>Helping</h5><p>If your character is in a position to help another pc, you can give that player a die from your pool. Say what your character does to help. The outcome of the roll affects both pcs.</p><h5>Conditions</h5><p>When events warrant or especially when you fail a roll, the GM may impose a condition on your character: Injured, Drained, etc. A condition might incease the difficulty level of a roll, or may restrict your choice of action (you can’t be reasonable if you’re angry). note: The “dead” condition just means “presumed dead” unless you say otherwise.</p><h5>PC vs. PC</h5><p>If your character contends with another player character, both players roll against a difficulty level set by the GM. If one player succeeds, that player wins the conflict and discards dice normally. The other player keeps their rolled pool dice and gets another. If both players succeed, no pool dice are discarded or gained, but the GM interrupts the conflict in whatever manner they see fit. If both players fail, they keep their pool dice and get another die, and the GM escalates the situation or introduces a new obstacle.</p>",
 
-            'helping': '<p>Describe how you can help another character to give them (at most) one die from your pool.</p>',
+            'keysandxp':
+                '<p>When you turn a Key, you can take an experience point (XP) or add a die to your pool (up to your pool maximum).</p><p>Spend xp at any time to:<ul><li>1 xp — Get a pool die (up to your pool maximum).</li><li>3 xp — Unlock a tag on an existing trait.</li><li>5 xp — Increase pool maximum by 1 (and get a pool die).</li><li>5 xp — Add a new trait with 3 tags.</li><li>5 xp — Add a new key you’ve never had before.</li><li>5 xp — Add a new secret.</li></ul></p>',
 
-            'keysandxp': '<p>When you turn a Key, you can take an experience point (XP) or add a die to your pool (up to your pool maximum).</p><p>Spend xp at any time to:<ul><li>1 xp — Get a pool die (up to your pool maximum).</li><li>3 xp — Unlock a tag on an existing trait.</li><li>5 xp — Increase pool maximum by 1 (and get a pool die).</li><li>5 xp — Add a new trait with 3 tags.</li><li>5 xp — Add a new key you’ve never had before.</li><li>5 xp — Add a new secret.</li></ul></p>',
+            'refreshment':
+                '<p>In between dice rolls, characters can have refreshment scenes with each other. Refreshment scenes are a good way for the characters to show their personalities and develop their relationships with one another. The conversation between characters can happen in the moment, but can also take the form of a flashback.</p><p>After a refreshment scene, each character:</p> <ul><li>Restores their pool back to their maximum pool.</li><li>Removes one condition (if they did something during the scene to deal with the condition).</li><li>Regains the use of their secrets.</li></ul>',
 
-            'refreshment': '<p>You can refresh your pool back to your pool maximum by having a refreshment scene with another character. You may also remove a condition or regain the use of a secret if narratively supported. Ask questions of other characters, and either stay in the present, or use a Flashback to answer those questions. Examples, "Why did you commit that crime?" "Do you think they are innocent?" "Why have I never heard of an amazing archer like you before?" ...</p>',
+            'advancements':
+                '<table border="0"><tr><td><h5>New Traits & Tags</h5></td></tr><tr><td><strong>Reputation</strong><div class="indented tags">Trustworthy, Reliable, Fearless, Reckless, Ruthless, Underhanded, Dangerous, Deadly, Cruel, Unpredictable, Heroic, Honorable, Compassionate</div></p><strong>Crew</strong><div class="indented tags">Gunnery, Aim, Maintenance, Damage Control, Observation, Signals, The Owl, Cargo, Supplies, First Aid, Boarding Action</div><strong>Explorer</strong><div class="indented tags">Curious, Aware, Nimble, Hardy, Ancient Lore, Languages, Ruins, Monsters, Myths, Maps</div><strong>Investigator</strong><div class="indented tags">Search, Deduction, Perceptive, Seduce, Interrogate, Bribe, Coerce, Contacts, Sneak, Deception, Insight, Logic, Fisticuffs, Pistol</div><strong>Miner</strong><div class="indented tags">Tunnels, Labor, Strong, Pickaxe, Dim Light, Hold Breath, Ores, Resist Cold, Endure</div><strong>Bold</strong><div class="indented tags">Brave, Daring, Heroic, Rescue, Falling, Fire, Reckless, Explosions, Escapes, Outnumbered, Underdog</div><strong>Sky Pirate</strong><div class="indented tags">Vicious, Hack & Slash, Cutlass, Knife, Shooting, Boomstick, Gunner, Boarding Action, Crew, Loot, Capture, Drink, Hardy, Treacherous, Intimidating, Contacts, Underworld</div><strong>Ghostblood</strong><div class="indented tags">Fly, Possess, Insubstantial, Control Technology, Electrical, Dominate, Terrify, Sneak, Overload</div><strong>Stoneblood</strong><div class="indented tags">Harden, Make Heavy, Meld Into Stone, Petrify, Immovable, Mauler, Move Through Stone, Shape Rock, Tough</div><strong>Voidblood</strong><div class="indented tags">Invisibility, Vacuum, Make Weightless, Pass Through, Erase Mind, Counterspell, Disintegrate</div><strong>Dreamblood</strong><div class="indented tags">Sedate, Manipulate Dream, Enter Dream, Hallucination, Blind Fighting, Read Mind</div><strong>Bloodhunter</strong><div class="indented tags">Gather Information, Interrogate, Intimidate, Incognito, Recognize Blood, Reflexes, Authority, Firefights</div></td></tr><tr><td><h5>New Keys</h5></td></tr><tr><td><strong>Key of the Traveler</strong><div class="indented">You love exploring new places. Turn this key when you share an interesting detail about things you’ve seen or when you go somewhere exciting. Buyoff: Pass up the opportunity to see something new.</div><strong>The Key of the Broker</strong><div class="indented">You like to make deals and trade favors. Turn this key when you bargain, make a new contact, or exchange a favor. Buyoff: Cut yourself off from your network of contacts.</div><strong>The Key of the Tinkerer</strong><div class="indented">You just can’t leave it alone. Turn this key when you modify, improve, repair, or patch some tech. Buyoff: Pass up the opportunity to mess around with technology.</div><strong>The Key of the Pirate</strong><div class="indented">You pillage, raid, and terrorize the Wild Blue. Turn this key when you impress someone with your piratical nature or do something to add to your reputation. Buyoff: Turn over a new leaf and go straight.</div><strong>Key of the Vow</strong><div class="indented">You have a vow of personal behavior that you have sworn not to break. Turn this key when your vow significantly impacts your decisions. Buyoff: Break your vow.</div></td></tr><tr><td><h5>New Secrets</h5><strong>The Secret of the True Course</strong><div class="indented">You know how to navigate the Remnants. Requires: You need to learn the navigation codes from someone who has the secret.</div><strong>The Secret of the Explorer</strong><div class="indented">You’ve been all over the Blue, seen a lot of strange things. Once per refresh, you can re-roll a failure when you’re dealing with local customs or strange places. Requires: You’ve traveled from one side of the Blue to the other.</div><strong>The Secret of the Sky Song</strong><div class="indented">You know how to call sky squid and can attempt to communicate with them when they appear. Requires: You’ve trained with a master of the Sky Song or have been dream-linked to a sky squid.</div><strong>The Secret of the Shootist</strong><div class="indented">You’re deadly with a firearm (or two). Once per refresh, you can re-roll a failure when you’re shooting. Requires: You’ve been in a lot of gunfights or are learning from someone who has.</div><strong>Secret of Experience</strong><div class="indented">Once per refresh, you can use tags from more than one trait when you make a roll. Requires: Experience in a wide variety of dangerous situations.</div></td></tr></table>',
 
-            'newstuff': '<table border="0"><tr><td><h5>New Traits & Tags</h5></td></tr><tr><td><strong>Bodyguard</strong><div class="indented tags">First-Aid, Threats, Unarmed, Heavy-Load, Delay, Endure, Fearless, Cautious, Pressure Points</div></p><strong>Sailor</strong><div class="indented tags">Dive, Swim, Helms, Sails, Raft, Float, Navigation, Hardy, Shallows, Drinks</div><strong>Wanderer</strong><div class="indented tags">Camping, Secretive, Generous, Tough, Guide, Weapon Master, Forthright, Reputation, Connections, Sentimental, Drink</div><strong>Buddhism</strong><div class="indented tags">Kind, Devout, Tolerant, Reform, Insight, Enlightenment, Persistent, Scripture</div><strong>Herdsman</strong><div class="indented tags">Plains, Scout, Horse-taming, Horsemanship, Wrestle, Sturdy, Husbandry, Sandstorm, Vocal Tricks</div><strong>Detective</strong><div class="indented tags">Perceptive, Keen, Learned, Handy, Eloquent, Imitation, Fearless, Patient, Determined</div><strong>Merchant</strong><div class="indented tags">Generous, Wise, Wealth, Connections, Reputation, Influential Clans, Favors, Deal, Patient, Audacious, Meticulous, Cunning</div><strong>Prodigy</strong><div class="indented tags">Photographic Memory, Focused, Calculator, Strategy, Unorthodox, Unscrupulous, Learned, Speechcraft, Miracle Worker, Geomancy</div><strong>Military</strong><div class="indented tags">Command, Horsemanship, Methods of War, Strategy, Authority, Loyalty, Formations, Negotiation, Ceremony, Military Law, Merciless</div><strong>Assassin</strong><div class="indented tags">Cruel, Endure, Persistent, Hidden Weapons, Weapon Master, Improvise, Lightfoot, Song and Dance, Seduction, Poison, Hidden, Deception</div></td></tr><tr><td><h5>New Keys</h5></td></tr><tr><td><strong>Key of the Traveler</strong><div class="indented">When you share an interesting detail about a person, place, or thing. BUYOFF: Pass up the opportunity to see something new.</div><strong>Key of the Negotiator</strong><div class="indented">When you bargain or exchange a favor. BUYOFF: Cut yourself off from your network of contacts.</div><strong>Key of the Vow</strong><div class="indented">When your vow significantly impacts your decisions. BUYOFF: Break your vow.</div></td></tr><tr><td><h5>New Secrets</h5><strong>Secret of Experience</strong><div class="indented">Once per session, you can use tags from more than one trait when you make a roll. REQUIRES: Experience in a wide variety of challenges.</div><strong>Secret of Payback</strong><div class="indented">Once per session, you can re-roll a failure when you’re trying to get someone to return a favor. REQUIRES: You have helped them before in time of need.</div></td></tr></table>',
+            'questions':
+                "<h5>General</h5><ul><li>Can anyone learn magic or do you need to have noble blood?</li><li>What kind of trouble are pirates known to cause?</li><li>Have you ever seen a real sky squid?</li><li>What did you notice about the Hand of Sorrow as you were lead to the brig?</li><li>What game are the guards playing outside the brig right now?</li></ul><h5>Natasha Syri | Lady Blackbird</h5><ul><li>How did you fall in love with Uriah Flint?</li><li>Does anyone in the crew know that you are the Lady Blackbird?</li><li>How did you arrange hiring The Owl?</li><li>What would a very observant person notice about you that would indicate that you’re a noble?</li><li>How did you become a Master Sorcerer?</li></ul><h5>N. Bishop</h5><ul><li>How did the guards manage to take you alive?</li><li>How did you become Lady Blackbird’s bodyguard?</li><li>Why did you leave pit-fighting?</li><li>Who was your biggest rival in the pits?</li><li>Have you ever been to Haven or any of the other Free Worlds?</li></ul><h5>C. Vance</h5><ul><li>What do you usually smuggle?</li><li>What did you do to be exiled from the Empire?</li><li>Whose fault is it that you were captured for flying a false flag?</li><li>Who was the pilot before Snargle?</li><li>How do you know Captain Hollas and what did Hollas do to make an enemy of you?</li></ul><h5>K. Arkham</h5><ul><li>What created such a deep bond between you and the Captain?</li><li>You are on a mission to get Lady Blackbird to the Pirate King. What’s in it for you?</li><li>Who does the Captain like more: you or Snargle?</li><li>What are you hiding in the spot the guards forget to search?</li><li>What weird thing has been going on with The Owl lately?</li></ul><h5>Snargle</h5><ul><li>How are goblins treated by the Empire?</li><li>Who does the Captain like more: you or Kale?</li><li>The Owl is low on fuel. How were you going to pay for it?</li><li>What’s the most dangerous escape you’ve ever made?</li><li>Is it rare for a goblin to the the pilot of a skyship?</li></ul>",
 
-            'causesfordeathpenalty': '<p><ul><li>opposing the Emperor</li><li>treason</li><li>insubordination (military)</li><li>humiliating the Imperial relatives</li><li>homicide</li><li>large-scale robbery</li></ul></p>',
+            'namelists':
+                '<p><strong>male</strong>: Abel, Artemis, August, Bram, Charles, Dmitri, Edmund, Eli, Giovanni, Ivan, Jack, Jefferson, Jonas, Kerim, Leo, Logan, Malachi, Mario, Micah, Nahum, Noah, Orlence, Oscar, Samuel, Silas, Thaddeus, Victor, Vlad, Wellington, Wester</p><p><strong>female</strong>: Alice, Ardent, Ashlyn, Brena, Caess, Clare, Daphne, Elena, Eveline, Fiona, Grace, Hannah, Hazel, Hester, Isabel, Jezebel, Josephine, Krista, Leah, Lucile, Lydia, Melinda, Odessa, Rachel, Rosie, Seraphina, Sonya, Sophie, Veronica, Violet</p><p><strong>surnames</strong>: Bell, Bowen, Canter, Carson, Cross, Durrant, Faber, Harwood, Hollas, Hunter, Judge, Kalra, Keel, Lang, Moreau, Morgan, Porter, Pickett, Quinn, Rowe, Sidhu, Soto, Thrush, Torrez, Vakharia, Walker, Winter, Wright, York</p><p><strong>noble houses</strong>: Ash, Blackbird, Firefly, Mooncloud, Nightsong, Snow, Twilight, Whitethorn</p><p><strong>goblins</strong>: Aka, Barra, Boggin, Chank, Edder, Fenya, Gabba, Gimble, Hob, Ippa, Mogga, Molok, Olf, Skitter, Tork, Wamba</p>',
 
-            'namelists': '<p><b>Given Names</b>: Hai, Shan, Dang, Jing, Tao, Tian, Ming, Lang, Zhong, Mei, Lian, Yue, Huan, Ling, Yun, Hui, Jian, Pan</p><p><b>Clans</b>: Zhao, Sun, Li, Bai, Liu, Tang, Huangfu, Murong</p><p><b>Nicknames</b>: Butcher, Handy, Fragrant, Gutsy, Turtle, Roaring</p>',
+            'theworlds':
+                "<h5>Adrift in the Blue</h5><p>The worlds of the Wild Blue float in a sky of breathable gases circling a small, cold star. Scholars believe that the star is made from pure Essence—the strange energy that sorcerers channel for their magic. This “solar system” is much smaller than you might think—it takes about six weeks to cross from one side to the other on a standard sky ship. Most of the worlds of the Empire are so closely positioned that it takes only a day or two to travel from one to another.</p><h5>The Lower Depths</h5><p>The heavier gases form a dense layer of fog below the “sky” of the Wild Blue. This fog is corrosive—people need to wear gas-masks to breathe and most airship hulls will start to corrode after a single exposure. Pirates and other criminals sometimes use the lower depths to evade Imperial patrols and launch raids from hiding. Unfortunately, the depths are home to sky squid and other monstrous things...</p><h5>Ilysium</h5><p>The capitol world of the Empire, home to the great noble houses. Ilysium is rich and decadent, attended by servants, slaves, and the elite bodyguards of the nobility.</p><h5>Olympia</h5><p>The staging world of the Imperial Sky Fleet. From here, expeditions are launched into the colonial expanse and all across the Wild Blue. Olympia is also home to the finest brewers and distillers in the Empire.</p><h5>Haven</h5><p>The most prominent of the Free Worlds. Here, in the sprawling city hubs, the Trade Union tries to impose some order on the bickering clans and factions of the Free Peoples. Slavery is outlawed here, so many ex-slaves make Haven their home.</p><h5>Nightport</h5><p>Unlike other worlds, Nightport does not rotate, which means one face is always in darkness. It is on this side that pirates and smugglers have built a hidden port city in which to carry out their nefarious dealings. This hive of scum and villainy is a dangerous place, but almost anything may be bought or sold there, including secrets.</p><h5>The Remnants</h5><p>A swirling maelstrom of spinning world-shards. The Remnants are almost impossible to navigate, even for the best airship pilots. It’s said that pirate royalty keep a secret fortress somewhere deep within the Remnants and only those who know the secret of the true course can ever reach it.</p>",
 
-            'jianghu': '<p>"Jianghu" is any environment where martial artists follow an unspoken code of conduct that is distinct from imperial laws. Its sectarianism can be even more extreme than traditional clan politics.</p>',
-
-            'overview': "<p>Consider this an alternate history inspired by China's Sui dynasty. If the geography is too complex, limit the scope to be a westward journey from Chang'An (1) to Tianshui (2), Longxi (3), Jincheng (4), Xiping (5), Wuwei (6), and Zhangye (7).</p><p>Chang'An (1) the capital is home to the relatives of the Emperor and other influential clans. Where power consolidates, corruption is sure to follow.</p><p>Cities along the shore (2-6) can be skipped for one-shot or short campaigns. Either go straight to Zhangye, or move the execution ground closer.</p><p>The Northern Nomadic tribes such as the Turkic resent their southern neighbor for pushing into their land, and the recent humiliating defeat by the Emperor had made them all too eager to wage guerrilla warfare for some payback.</p><p>Zhangye (7), the oasis beneath Qilian (pronounced as \"chi-leeann\") Mountain is the gateway city that opens the trade routes to the western territories. Despite its liveliness, however, the desert on its outskirts also forms a natural execution ground.</p>",
-
-            'historicaltidbits': '<p>(only for inspiration, disregard if uninterested)</p><p>The Turkic north of Sui is a slave-driven society. At the time, an internal power struggle in the royal Ashina clan led to four Khagans (Ishbara, Anluo, Apa, and Tardu) each holding a military force. The Emperor of Sui then used the strategy of "divide and conquer" to defeat them.</p><p>Possible Turkic Names: Barqin ("charismatic"), Bilgea ("learned"), Tughrul ("dexterous"), Turkan, Iqsin ("soft breeze"), Amol ("sedate"), Earik ("brave"), Bearik ("steady"), Bugu ("farsighted"), Ayukh ("protector")</p><p>Along with the military domination over the Tuyuhun region along the western border (in year 609), the Zhangye Commandery on the Silk Road was also a political tool for Emperor Yang to show off the might of the "Central Plain" to the western kingdoms. The influx of artists, scholars, troopers, and merchants created a brilliant melting pot of cultures in the region. The Emperor, as insatiable as his ambition was, made great strides in expanding the borders of the Kingdom and in revamping the Imperial Civil Examination System. However, his thirst for conquest eventually drove the masses to rebel, and he lost it all to a mutiny only 38 years after the start of the Sui dynasty.</p>',
-
-            'wuxiatropes': "<p><ul><li>Joust for a Spouse (often hosted by a wealthy family for the martially talented daughter)</li><li>Royalty-Bestowed Marriage (often against the will of one or both people involved)</li><li>Crossdressing (often for survival reason)</li><li>One or more \"chi\" practitioners use external transfer method to push poison out of the patient's body</li><li>Fight poison with poison</li><li>The Emperor or an Imperial relative disguises themself in order to quietly blend into an environment among the commoners (for the purpose of observation)</li><li>Childhood sweethearts</li><li>If our destinies diverge, let's try again in our next lifetime</li><li>Martial Arts Tournament (often about power-play than good sportsmanship)</li><li>No discord, no concord</li></ul></p>",
-
-            'wuxiafactions': "<p>Schools or Organizations in Jianghu can be distinguished by their different focus:<ul><li>Clan-based, such as Tang, Hong</li><li>Region-based, such as Mount Hua Sect</li><li>Religion-based (Daoism, Buddhism, Zoroastrianism, etc.), such as Wudang Sect, E-mei (\"uh-may\") Sect (Buddhist nuns)</li><li>Goal-based (charity, mutual support, anti-government, anti-foreigner, etc.), such as The Beggars' Sect, The Society of Heaven and Earth</li></ul><p><p>Whether a faction is considered Orthodox or Unorthodox depends on who obeys the dominant authority on morality of the time. Winner writes the rules. In general, the Unorthodox does not respect the moral standards of the majority, but it doesn't mean they are always inhumane. In fact, it's often the Orthodox factions that would carry out blind justice.</p>",
-
-            'taglines': '<p>The Charge: Vindicate at all cost, or die with dignity?</p><p>The Constable: Justice has no humanity. But we do.</p><p>The Entrusted: Life is full of compromises.</p><p>The Mercenary: Who is pulling on my string?</p>',
-
-            'morenames': '<table border="1"><tr><th><center>given name*</center></th><th><center>possible interpretations</center></th></tr><tr><td>Ban</td><td>(masculine) <b>class, board, handle</b>; (feminine) <i>petal</i>; (neutral) spot, partner</td></tr><tr><td>Chao</td><td><b>tide</b>; super</td></tr><tr><td>Hai</td><td>sea</td></tr><tr><td>Hao</td><td><b>vast, heroic, weasel bristle</b>; <i>good</i>; bright</td></tr><tr><td>Huan</td><td><b>joyous, fantasy, lustrous, pillar</b>; <i>ring, call, dissolve</i></td></tr><tr><td>Hui</td><td><b>splendor, converge, emblem</b>; <i>favor, intelligent, plants</i>; regret</td></tr><tr><td>Jian</td><td><b>sword, arrow, firm, simple</b>; build</td></tr><tr><td>Jing</td><td><b>chaste tree, scenary, respect</b>; <i>clean, quiet</i></td></tr><tr><td>Lian</td><td><b>connection, refine</b>; <i>lotus, sympathy, longing</i></td></tr><tr><td>Ling</td><td><b>hill, ridge, rise high, command, lead</b>; <i>quick, spirit, bell, feather</i></td></tr><tr><td>Mei</td><td><b>eyebrow, mongoose</b>; <i>sister, beautiful, rose, charm</i>; plum</td></tr><tr><td>Pan</td><td><b>coil, judge</b>; <i>hope</i></td></tr><tr><td>Shan</td><td><b>mountain, flash</b>; <i>coral, kind</i></td></tr><tr><td>Shu</td><td><b>book, vertical, method, number, uncle, tree</b>; <i>relax, virtuous</i>; distant</td></tr><tr><td>Su</td><td><b>lodging, common, solemn, speed</b>; <i>dawn</i> unadorned, narrate, sincere, crisp, millet</td></tr><tr><td>Tao</td><td><b>wave, hide, pottery, cleanse</b>; <i>wave, peach, pottery</i></td></tr><tr><td>Tian</td><td><b>sky, farm</b>; <i>peaceful, sweet</i></td></tr><tr><td>Ting</td><td><b>main hall, thunderclap，sandbank, raised path, listen</b>; <i>graceful, dragonfly, listen</i></td></tr><tr><td>Yu</td><td><b>fish</b>; feather, jade, rain, spoken word, residual</td></tr><tr><td>Yue</td><td><b>surpass, treaty, music, bright</b>; <i>pleased, music</i>; moon</td></tr><tr><td>Yun</td><td><b>cloud, transport, permit, evenly</b>; <i>rhyme, common rue, profoundity</i></td></tr><tr><td>Wei</td><td><b>might, defend, great</b>; <i>royal fern, precious, miniature</i></td></tr></table><small>*you can also combine syllables (at most 2 per given name), or even offer other suggestions if you know some Chinese</small><p><b>Surnames</b>: Bai, Chen, Dai, Fan, Gao, Han, Hu, Huangfu, Jin, Kang, Lai, Li, Liu, Lu, Murong, Nangong, Ren, Shao, Song, Su, Sun, Tan, Tang, Tao, Wang, Wei, Wu, Yang, Yuan, Zhao</p>',
+            'theowl':
+                '<p>An old but reliable skyship, outfitted for smuggling.</p><h5>Details & Statistics</h5><p>The Owl was once a Sky Hauler C9 cargo ship but has since been extensively customized by Cyrus and Kale. It has a smaller cargo area and four passenger berths in the reclaimed space. It also has hidden smuggling compartments scattered throughout the vessel.</p><p>The Owl is an old ship, but it can hold its own with more modern vessels thanks to its custom engines and supercharged steam drive. Snargle has also made several unique adjustments to the controls to allow the large ship to maneuver like a much smaller craft.</p><p>Unfortunately, all of these modi cations put a lot of strain on the old girl. Kale keeps the ship running day to day, but when it’s put under a lot of stress (as it often is) things can go awry—broken pipes, vented steam, leaking uids, and worse.</p><p>Still, The Owl is not just a skyship, it’s a home to its crew. They gather around the beat-up old wooden dinner table in the galley every night and thank the four winds that fortune saw fit to bless them with such a fine craft.</p><table><tr><td><strong>Length</strong>: 48 meters</p><p><strong>Crew</strong>: 2–3</p><p><strong>Berths</strong>: 6 (2 crew, 4 passenger)</p><p><strong>Cargo Capacity</strong>: 30,000 pounds (6 cargo pods)</p><p><strong>Powerplant</strong>: <ul><li>Tri-Valve Reciprocal Steam Drive</li><li>(2) Twin-Coil Induction Thrusters</li></ul></p><p><strong>Cruise Speed</strong>: 160 knots</p><p><strong>Flank Speed</strong>: 310 knots under boost</p><p><strong>Weapons</strong>: Top-mounted external gun turret</p><p><strong>Wireless</strong>: Midrange Multi-Band with Signal Mask</p><p><strong>Sensors</strong>: <ul><li>Short-Range Sonar</li><li>Atmosphere/Pressure Analyzer</li></ul></p><p><strong>Hull</strong>: Treated to resist corrosion in the lower depths for up to 4 hours.</p></td></tr></table>'
         };
 
         var room = 'test';
-        var gamehandle = 'theescort';
+        var gamehandle = 'ladyblackbird';
         var socket = io('/' + gamehandle);
 
         // prep element effects
+        dragElement(document.getElementById("rulesbox"));
         dragElement(document.getElementById("mapviewbox"));
         dragElement(document.getElementById("imageviewbox"));
         dragElement(document.getElementById("scratchpadArea"));
@@ -704,6 +776,10 @@
             socket.emit('chat message', $message.val());
             $message.val('');
         });
+
+        function showRules() {
+            $('#rulesbox').toggle();
+        }
 
         function loadGame() {
             $('#loadbox').toggle();
@@ -869,12 +945,15 @@
                 // display the hidden values in the info panel
                 if (field == 'traitsButton') {
                     $infoArea.html($('#traits' + i).html());
+                    showRules();
                 }
                 else if (field == 'keysButton') {
                     $infoArea.html($('#keys' + i).html());
+                    showRules();
                 }
                 else if (field == 'secretsButton') {
                     $infoArea.html($('#secrets' + i).html());
+                    showRules();
                 }
             });
         });
@@ -888,9 +967,25 @@
                 i = i.slice(-1); // last letter of id is the count number
                 i = parseInt(i) - 1;
 
+                if (field == "needFuel" || field == "needSupplies" ||
+                    field == "needRepairs" || field == "needSpeed") {
+                    i = null;
+                }
                 socket.emit('update condition', {'index': i, 'condition': field, 'state': v});
             });
         });
+        function updateOwlConditions(conditions) {
+            let checkboxes = $('#owlconditions input[type=checkbox]');
+            for (let j = 0; j < checkboxes.length; j++) {
+                let c = $(checkboxes[j]).prop('name');
+                if (conditions.indexOf(c) != -1) {
+                    $(checkboxes[j]).prop('checked', true);
+                }
+                else {
+                    $(checkboxes[j]).prop('checked', false);
+                }
+            }
+        }
 
         $('select[name=role], input[name=player], input[name=character], textarea[name=notes], button[name=plusXP], button[name=minusXP]').each(function() {
             $(this).on('change', function(e) {
@@ -945,9 +1040,13 @@
             var field = data.field;
             var number = data.number;
             var value = data.value;
-            if (field == 'drained' || field == 'mad' ||
-                field == 'hurt' || field == 'dead') {
+            if (field == 'tired' || field == 'angry' || field == 'trapped' ||
+                field == 'injured' || field == 'dead') {
                 $('#' + field + number).prop('checked', value);
+            }
+            else if (field == 'needFuel' || field == 'needSupplies' ||
+                     field == 'needRepairs' || field == 'needSpeed') {
+                $('#' + field).prop('checked', value);
             }
             else {
                 $('#' + field + number).val(value);
@@ -959,9 +1058,10 @@
             save();
         });
         socket.on('update client', function(data) {
-            var users = data.users;
-            var info = data.info;
-            var p = info['profiles'];
+            let users = data.users;
+            let info = data.info;
+            let conditions;
+            let p = info['profiles'];
 
             updateUserList(users);
             if (info['currentmap']) {
@@ -971,7 +1071,10 @@
                 updateImage('currentimage', info['currentimage']);
             }
 
-            for (var i = 0; i < p.length; i++) {
+            // owl conditions
+            updateOwlConditions(info['owl']['conditions']);
+
+            for (let i = 0; i < p.length; i++) {
 
                 $('#role' + (i+1)).val(p[i]['role']);
 
@@ -989,10 +1092,10 @@
 
                 updateSecrets((i+1), p[i]['secrets']);
 
-                // conditions
-                let conditions = $('#conditions' + (i+1) + ' input[type=checkbox]');
-                for (var j = 0; j < conditions.length; j++) {
-                    var c = $(conditions[j]).prop('name');
+                // character conditions
+                conditions = $('#conditions' + (i+1) + ' input[type=checkbox]');
+                for (let j = 0; j < conditions.length; j++) {
+                    let c = $(conditions[j]).prop('name');
                     if (p[i]['conditions'].indexOf(c) != -1) {
                         $(conditions[j]).prop('checked', true);
                     }
@@ -1014,7 +1117,7 @@
         }
         function buyTrait(number) {
             if (parseInt($('#xp' + number).html()) > 4) {
-                var trait = prompt("type in the exact name of the new trait based on the \"new stuff\" listing");
+                var trait = prompt("type in the exact name of the new trait based on the \"advancements\" listing");
                 trait = sanitize(trait, 'name').trim();
                 if (trait) {
                     socket.emit('buy trait', {'trait': trait, 'index': (number-1)});
@@ -1026,7 +1129,7 @@
         }
         function buyKey(number) {
             if (parseInt($('#xp' + number).html()) > 4) {
-                var key = prompt("type in the exact name of the new key based on the \"new stuff\" listing");
+                var key = prompt("type in the exact name of the new key based on the \"advancements\" listing");
                 key = sanitize(key, 'name').trim();
                 if (key) {
                     socket.emit('buy key', {'key': key, 'index': (number-1)});
@@ -1038,7 +1141,7 @@
         }
         function buySecret(number) {
             if (parseInt($('#xp' + number).html()) > 4) {
-                var secret = prompt("type in the exact name of the new secret based on the \"new stuff\" listing");
+                var secret = prompt("type in the exact name of the new secret based on the \"advancements\" listing");
                 secret = sanitize(secret, 'name').trim();
                 if (secret) {
                     socket.emit('buy secret', {'secret': secret, 'index': (number-1)});
@@ -1139,63 +1242,6 @@
             });
         }
 
-        // input lock related
-
-        socket.on('togglelock profile', function(data) {
-            var id = data.profileid;
-            var lockit = data.lockit;
-
-            if (lockit) {
-                lockInputs(id);
-            }
-            else {
-                unlockInputs(id);
-            }
-        });
-        function toggleInputLocks(id) {
-            var subElements = lockableInputs(id);
-            for (var i = 0; i < subElements.length; i++) {
-                if ($(subElements[i]).prop('disabled')) {
-                    $(subElements[i]).prop('disabled', false);
-                    socket.emit('togglelock profile', {'profileid': id, 'lockit': false});
-                }
-                else {
-                    $(subElements[i]).prop('disabled', true);
-                    socket.emit('togglelock profile', {'profileid': id, 'lockit': true});
-                }
-            }
-        }
-        socket.on('locked profiles', function(data) {
-            var locked = data;
-            var list = ['p1Area', 'p2Area', 'p3Area', 'p4Area'];
-
-            for (var i = 0; i < list.length; i++) {
-                if (locked.indexOf(list[i]) !== -1) {
-                    lockInputs(list[i]);
-                }
-                else {
-                    unlockInputs(list[i]);
-                }
-            }
-        });
-        function lockableInputs(id) {
-            var subElements = $('#' + id).find('select[name=role], input[name=player], input[name=character]');
-
-            return subElements;
-        }
-        function lockInputs(id) {
-            var subElements = lockableInputs(id);
-            for (var i = 0; i < subElements.length; i++) {
-                $(subElements[i]).prop('disabled', true);
-            }
-        }
-        function unlockInputs(id) {
-            var subElements = lockableInputs(id);
-            for (var i = 0; i < subElements.length; i++) {
-                $(subElements[i]).prop('disabled', false);
-            }
-        }
-
         function safetyTool(type='x-card') {
             if (type == 'x-card') { // x-card
                 var msg = prompt("What content to remove? Click OK to send the notice regardless.");
@@ -1262,7 +1308,7 @@
             if(confirm('Start over?')) {
                 // clear hidden data
                 clearHiddenFields();
-                $('#infoArea').html(infotext['overview']);
+                $('#infoArea').html(infotext['theworlds']);
                 socket.emit('new game');
             }
         }
