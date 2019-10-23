@@ -12,6 +12,7 @@ var clientpages = {
     'bellsongs': 'bellsongs.html',
     'dicechat': 'dicechat.html',
     'heartsofwulin': 'heartsofwulin.html',
+    'ladyblackbird': 'ladyblackbird.html',
     'omsl': 'omsl.html',
     'theescort': 'theescort.html'
 };
@@ -40,6 +41,9 @@ app.get('/dicechat', function(req, res) {
 app.get('/heartsofwulin', function(req, res) {
     res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['heartsofwulin']);
 });
+app.get('/ladyblackbird', function(req, res) {
+    res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['ladyblackbird']);
+});
 app.get('/omsl', function(req, res) {
     res.sendFile(__dirname + '/' + game_ui_path + '/' + clientpages['omsl']);
 });
@@ -64,5 +68,6 @@ var archipelago = require('./game_modules/archipelago.js')(app, io, helper);
 var bellsongs = require('./game_modules/bellsongs.js')(app, io, helper);
 var dicechat = require('./game_modules/dicechat.js')(app, io, helper);
 var heartsofwulin = require('./game_modules/heartsofwulin.js')(app, io, helper);
+var ladyblackbird = require('./game_modules/ladyblackbird.js')(app, io, helper);
 var omsl = require('./game_modules/omsl.js')(app, io, helper);
 var theescort = require('./game_modules/theescort.js')(app, io, helper);
