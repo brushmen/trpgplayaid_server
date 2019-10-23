@@ -1,0 +1,188 @@
+{
+    "ladyblackbird": {
+        "profiles": [
+            {
+                "role": "noble",
+                "player": null,
+                "character": "Natasha Syri",
+                "dicepool": 7,
+                "dicepoolmax": 7,
+                "notes": null,
+                "xp": 0,
+                "portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+                "traits": {
+                    "Imperial Noble": [
+                        "Etiquette", "Dance", "Educated", "History", "Science", "Wealth", "Connections", "House Blackbird"
+                    ],
+                    "Master Sorcerer": [
+                        "Spellcaster", "Channeling", "Stormblood", "Wind", "Lightning", "[Fly]", "[Blast]", "[Sense]"
+                    ],
+                    "Athletic": [
+                        "Run", "Fencing", "Rapier", "Duels", "Shooting", "[Pistol]", "[Acrobatics]"
+                    ],
+                    "Charm": [
+                        "Charisma", "Presence", "Command", "Nobles", "Servants", "[Soldiers]"
+                    ],
+                    "Cunning": [
+                        "Deception", "Misdirection", "Disguise", "Codes", "[Sneak]", "[Hide]"
+                    ]
+                },
+                "keys": {
+                    "Key of the Paragon": "As a noble, you're a cut above the common man. Hit your key when you demonstrate your superiority or when your noble traits overcome a problem. BUYOFF: Disown your noble heritage.",
+                    "Key of the Mission": "You must escape the Empire and rendezvous with your once secret lover, the Pirate King Uriah Flint, whom you haven't seen in six years. Hit your key when you take action to complete the mission. BUYOFF: Give up on your mission.",
+                    "Key of the Impostor": "You are in disguise, passing yourself off as commoner. Hit your key when you perform well enough to fool someone with your disguise. BUYOFF: Reveal your true identity to someone you fooled."
+                },
+                "secrets": {
+                    "Secret of Stormblood": "As long as you can speak, you can channel magical power and do Sorcery. You have the Master Sorcerer trait and the Stormblood tag.",
+                    "Secret of Inner Focus": "Once per session, you can re-roll a failure when doing Sorcery."
+                },
+                "conditions": []
+            },
+
+            {
+                "role": "bodyguard",
+                "player": null,
+                "character": "Naomi Bishop",
+                "dicepool": 7,
+                "dicepoolmax": 7,
+                "notes": null,
+                "xp": 0,
+                "portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+                "traits": {
+                    "Pit-Fighter": [
+                        "Combat Tested", "Brutal", "Living Weapon", "Fast", "Hard", "[Strong]", "[Bone-breaking]", "[Scary Look]"
+                    ],
+                    "Bodyguard": [
+                        "Awareness", "Threats", "Defend", "Disarm", "Restrain", "Carry", "Delay", "[Security]", "[First Aid]"
+                    ],
+                    "Ex-Slave": [
+                        "Sneak", "Hide", "Run", "Tough", "Endure", "Scrounge", "Nobles", "[Hatred]", "[Iron Will]"
+                    ],
+                    "Keen": [
+                        "Insightful", "Aware", "Coiled", "Liars", "Traps", "[Danger]", "[Sense Motives]"
+                    ]
+                },
+                "keys": {
+                    "Key of the Guardian": "You are Lady Blackbird's loyal defender. Hit your key when you make a decision influenced by Lady Blackbird or protect her from harm. BUYOFF: Sever your relationship with the Lady.",
+                    "Key of Vengeance": "The Empire enslaved you and made you kill for sport. You will have your revenge on them and watch their cities burn. Hit your key when you strike a blow against the Empire (especially by killing an Imperial). BUYOFF: Forgive them for what they did to you.",
+                    "Key of the Warrior": "You crave the crash and roar of battle, the tougher the better. Hit your key when you do battle with worthy or superior foes. BUYOFF: Pass up an opportunity for a good fight."
+                },
+                "secrets": {
+                    "Secret of Destruction": "You can break things with your bare hands as if you were swinging a sledgehammer. It's scary.",
+                    "Secret of the Bodyguard": "Once per session, you can re-roll a failure when protecting someone."
+                },
+                "conditions": []
+            },
+
+            {
+                "role": "outcast",
+                "player": null,
+                "character": "Cyrus Vance",
+                "dicepool": 7,
+                "dicepoolmax": 7,
+                "notes": null,
+                "xp": 0,
+                "portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+                "traits": {
+                    "Ex-Imperial Soldier": [
+                        "Tactics", "Command", "Soldiers", "Rank", "Connections", "Maps", "Imperial War Ships"
+                    ],
+                    "Smuggler": [
+                        "Haggle", "Deception", "Sneak", "Hide", "Camouflage", "Forgery", "Pilot", "Navigation", "[Repair]", "[Gunnery]"
+                    ],
+                    "Survivor": [
+                        "Tough", "Run", "Scrounge", "Endure", "Creepy Stare", "Intimidate", "[Medic]"
+                    ],
+                    "Warrior": [
+                        "Battle-Hardened", "Shooting", "Two-Gun Style", "Pistol", "Fencing", "Sword", "[Brawl]", "[Hail of Lead]"
+                    ]
+                },
+                "keys":{
+                    "Key of the Commander": "You are accustomed to giving orders and having them obeyed. Hit your trait when you come up with a plan and give orders to make it happen. BUYOFF: Acknowledge someone else as the leader.",
+                    "Key of Hidden Longing": "You are completely enthralled by Lady Blackbird, but you don't want her to know it. Hit your key when you make a decision based on this secret affection or when you somehow show it indirectly. BUYOFF: Give up on your secret desire or make it public.",
+                    "Key of the Outcast": "You got exiled from the Empire. Hit your key when your outcast status causes you trouble or is important in a scene. BUYOFF: Regain your former standing or join a new group."
+                },
+                "secrets": {
+                    "Secret of Leadership": "Once per session, you can give someone else a chance to re-roll a failed roll, by giving them orders, advice, or setting a good example.",
+                    "Secret of Warpblood": "Once per session, you can teleport yourself or someone you're touching."
+                },
+                "conditions": []
+            },
+
+            {
+                "role": "mechanic",
+                "player": null,
+                "character": "Kale Arkam",
+                "dicepool": 7,
+                "dicepoolmax": 7,
+                "notes": null,
+                "xp": 0,
+                "portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+                "traits": {
+                    "Burglar": [
+                        "Quiet", "Sneak", "Hide", "Dextrous", "Locks", "Perceptive", "Traps", "Darkness", "[Alarms]", "[Distractions]"
+                    ],
+                    "Tricky": [
+                        "Quick", "Dirty Fighting", "Tumbler", "Escape", "Contortionist", "[Sleight of Hand]", "[Acrobatics]", "[Dagger]"
+                    ],
+                    "Petty Magic": [
+                        "Light spell", "Dark spell", "Jump spell", "Shatter Spell", "[Channeling]", "[Spellcaster]"
+                    ],
+                    "Mechanic": [
+                        "Repair", "Engines", "Efficiency", "Spare Parts", "Sabotage", "[Enhancements]", "[Ship Weapons]"
+                    ]
+                },
+                "keys": {
+                    "Key of Greed": "You like the shiny things. Hit your key when you steal something cool or score a big payoff. BUYOFF: Swear off stealing forever.",
+                    "Key of the Job": "You must safely deliver Lady Blackbird to the Pirate King Uriah Flint, so she can marry him. Hit your key when you take action to complete the mission. BUYOFF: Give up the mission.",
+                    "Key of Fraternity": "You are sworn to Captain Vance in a bond of brotherhood. Hit your key when your character is influenced by Vance or when you show how deep your bond is. BUYOFF: Sever the relationship"
+                },
+                "secrets": {
+                    "Secret of Concealment": "No matter how thoroughly you're searched, you always have a few key items with you. You can produce any common, simple item at a moment's notice.",
+                    "Secret of Reflexes": "Once per session, you can re-roll a failure when doing anything involving grace, dexterity, or quick reflexes."
+                },
+                "conditions": []
+            },
+
+            {
+                "role": "pilot",
+                "player": null,
+                "character": "Snargle",
+                "dicepool": 7,
+                "dicepoolmax": 7,
+                "notes": null,
+                "xp": 0,
+                "portrait": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/portraiticon.png",
+                "traits": {
+                    "Pilot": [
+                        "Daring", "Steady", "Maneuvering", "Evasion", "Tricky Flying", "Navigation", "Maps", "Atmospherics", "[The Owl]", "[Battle]", "[Ramming]"
+                    ],
+                    "Sky Sailor": [
+                        "Gunnery", "Aim", "Maintenance", "Observation", "Signals", "Empire", "Pirates", "Free Worlds", "Haven", "[Repair]", "[Connections]"
+                    ],
+                    "Goblin": [
+                        "Warp Shape", "Glide", "Nightvision", "Agile", "Quick", "Tumbler", "Teeth & Claws", "[Mimic Shape]", "[Reckless]", "[Connections]"
+                    ],
+                    "Sly": [
+                        "Crafty", "Sneaky", "Distractions", "Bluff", "Languages", "Trade Speak", "[Sharp]", "[Disguise]"
+                    ]
+                },
+                "keys": {
+                    "Key of the Daredevil": "You thrive in dangerous situations. Hit your key when you do something cool that is risky or reckless (especially piloting stunts). BUYOFF: Be very very careful.",
+                    "Key of Conscience": "You don't like to see anyone suffer, even enemies. Hit your key when you help someone who is in trouble or when you change someone's life for the better BUYOFF: Ignore a request for help.",
+                    "Key of Banter": "You have a knack for snappy comments. Hit your key when Snargle says something that makes the other players laugh or when you explain something using your pilot techno jargon. BUYOFF: Everyone groans at one of your comments."
+                },
+                "secrets": {
+                    "Secret of Shape Warping": "As a goblin, you can change your shape, growing shorter, taller, fatter, thinner, or changing your skin color, at will.",
+                    "Secret of the Lucky Break": "Once per session, you can keep your pool dice when you succeed (so go ahead and use ‘em all)."
+                },
+                "conditions": []
+            }
+        ],
+        "owl": {
+            "conditions": ["needFuel"]
+            },
+        "currentimage": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/ladyblackbird_owlsquidsorrow.jpg",
+        "currentmap": "https://raw.githubusercontent.com/brushmen/trpgplayaid_server/master/public/images/ladyblackbird_wildblue.jpg"
+        }
+}
